@@ -1,0 +1,340 @@
+.table > tbody > tr.active > td {
+    background-color: #f5f5f5;
+}
+
+/* /openerp_website/static/src/less/-old/pricing.less defined in bundle 'web.assets_frontend' */
+#pricing-packs .table > thead > tr.no-border > th {
+    border: 0;
+}
+
+#pricing-packs .table > thead > tr > th {
+    text-align: center;
+    vertical-align: top;
+}
+
+#pricing-packs .table > tbody > tr.no-border > td {
+    border: 0;
+}
+
+#pricing-packs .table > tbody > tr > td {
+    text-align: center;
+    vertical-align: middle;
+    border-top-color: #F2F2F2;
+}
+
+#pricing-packs .table > tbody > tr > td:first-child {
+    text-align: left;
+}
+
+#pricing-packs .table > tbody > tr > td .fa-info-circle {
+    font-size: 1.25em;
+    vertical-align: middle;
+}
+
+#pricing-packs .table > tbody > tr:first-child > td {
+    vertical-align: top;
+    padding: 20px 15px;
+}
+
+.openerp_website_pricing_app {
+    padding: 5px;
+}
+
+.openerp_website_pricing_users, .openerp_website_pricing_custom {
+    padding: 0;
+    display: inline-block;
+}
+
+.openerp_website_pricing input.form-control[type='number'] {
+    width: 100px;
+    text-align: center;
+}
+
+.openerp_website_pricing_app_name {
+    padding-right: 0;
+}
+
+.openerp_website_pricing_app_name .fa-link {
+    color: #21b799;
+}
+
+.openerp_website_pricing_app_icon {
+    padding-right: 0;
+}
+
+.openerp_website_pricing_app_real_name {
+    background-color: #F2F2F2;
+    padding-left: 5px;
+}
+
+.openerp_website_pricing_app_real_name > span {
+    font-size: 12px;
+}
+
+.openerp_website_pricing_step_body input {
+    display: inline-block;
+}
+
+.openerp_website_pricing_pack_name {
+    text-transform: capitalize;
+}
+
+.openerp_website_pricing_app_icon {
+    padding-right: 0;
+}
+
+.openerp_website_pricing_app_price {
+    font-size: 14px;
+    padding: 2px 5px 10px 5px;
+}
+
+.openerp_website_pricing_table_oneshot > thead > tr > th {
+    border-top: 0;
+}
+
+.openerp_website_pricing_table_total {
+    margin-bottom: 0;
+}
+
+.openerp_website_pricing_table_total tbody > tr > td {
+    border: 0;
+    padding: 0 15px;
+}
+
+.odoo_pricing_board .btn {
+    margin-top: 0;
+}
+
+.odoo_pricing_board .btn.btn-lg {
+    margin-top: 10px;
+}
+
+.odoo_pricing_board .btn.btn-success {
+    color: #fff;
+    border-color: #21b799;
+    background-color: #21b799;
+}
+
+.odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #0e4b3f;
+}
+
+.odoo_pricing_board .btn.btn-success:hover {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #18836e;
+}
+
+.odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.active, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #18836e;
+}
+
+.odoo_pricing_board .btn.btn-success:active:hover, .odoo_pricing_board .btn.btn-success.active:hover, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success:active:focus, .odoo_pricing_board .btn.btn-success.active:focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success:active.focus, .odoo_pricing_board .btn.btn-success.active.focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    background-color: #146e5c;
+    border-color: #0e4b3f;
+}
+
+.odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.active, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success {
+    background-image: none;
+}
+
+.odoo_pricing_board .btn.btn-success.disabled, .odoo_pricing_board .btn.btn-success[disabled], fieldset[disabled] .odoo_pricing_board .btn.btn-success, .odoo_pricing_board .btn.btn-success.disabled:hover, .odoo_pricing_board .btn.btn-success[disabled]:hover, fieldset[disabled] .odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success.disabled:focus, .odoo_pricing_board .btn.btn-success[disabled]:focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.disabled.focus, .odoo_pricing_board .btn.btn-success[disabled].focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success.focus, .odoo_pricing_board .btn.btn-success.disabled:active, .odoo_pricing_board .btn.btn-success[disabled]:active, fieldset[disabled] .odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.disabled.active, .odoo_pricing_board .btn.btn-success[disabled].active, fieldset[disabled] .odoo_pricing_board .btn.btn-success.active {
+    background-color: #21b799;
+    border-color: #21b799;
+}
+
+.odoo_pricing_board .btn.btn-success .badge {
+    color: #21b799;
+    background-color: #fff;
+}
+
+.odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #0e4b3f;
+}
+
+.odoo_pricing_board .btn.btn-success:hover {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #18836e;
+}
+
+.odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.active, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success {
+    color: #fff;
+    background-color: #198c75;
+    border-color: #18836e;
+}
+
+.odoo_pricing_board .btn.btn-success:active:hover, .odoo_pricing_board .btn.btn-success.active:hover, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success:active:focus, .odoo_pricing_board .btn.btn-success.active:focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success:active.focus, .odoo_pricing_board .btn.btn-success.active.focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    background-color: #146e5c;
+    border-color: #0e4b3f;
+}
+
+.odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.active, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success {
+    background-image: none;
+}
+
+.odoo_pricing_board .btn.btn-success.disabled, .odoo_pricing_board .btn.btn-success[disabled], fieldset[disabled] .odoo_pricing_board .btn.btn-success, .odoo_pricing_board .btn.btn-success.disabled:hover, .odoo_pricing_board .btn.btn-success[disabled]:hover, fieldset[disabled] .odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success.disabled:focus, .odoo_pricing_board .btn.btn-success[disabled]:focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.disabled.focus, .odoo_pricing_board .btn.btn-success[disabled].focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success.focus, .odoo_pricing_board .btn.btn-success.disabled:active, .odoo_pricing_board .btn.btn-success[disabled]:active, fieldset[disabled] .odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.disabled.active, .odoo_pricing_board .btn.btn-success[disabled].active, fieldset[disabled] .odoo_pricing_board .btn.btn-success.active {
+    background-color: #21b799;
+    border-color: #21b799;
+}
+
+.odoo_pricing_board .btn.btn-success .badge {
+    color: #21b799;
+    background-color: #fff;
+}
+
+.odoo_pricing_board .btn.btn-success .o_ripple {
+    background-color: #218470;
+}
+
+.odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    border-color: #21b799;
+    background-color: #21b799;
+}
+
+.odoo_pricing_board .btn.btn-success:hover {
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1), 0 2px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.odoo_pricing_board .btn.btn-success:hover.deep_hover:hover {
+    -webkit-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    -moz-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    -o-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    box-shadow: 0 13px 25px 0 rgba(0, 0, 0, 0.1), 0 11px 7px 0 rgba(0, 0, 0, 0.09);
+}
+
+.odoo_pricing_board .btn.btn-success:hover.deep_hover:hover {
+    -webkit-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    -moz-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    -o-transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    transition: box-shadow 0.3s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    box-shadow: 0 13px 25px 0 rgba(0, 0, 0, 0.1), 0 11px 7px 0 rgba(0, 0, 0, 0.09);
+}
+
+.odoo_pricing_board .btn.btn-success:active, .odoo_pricing_board .btn.btn-success.active, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success {
+    color: #fff;
+    background-color: #218470;
+    border-color: #218470;
+    box-shadow: none;
+    background-image: none;
+}
+
+.odoo_pricing_board .btn.btn-success:active:hover, .odoo_pricing_board .btn.btn-success.active:hover, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success:active:focus, .odoo_pricing_board .btn.btn-success.active:focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success:active.focus, .odoo_pricing_board .btn.btn-success.active.focus, .open > .dropdown-toggle.odoo_pricing_board .btn.btn-success.focus {
+    color: #fff;
+    background-color: #218470;
+    border-color: #218470;
+    box-shadow: none;
+}
+
+.odoo_pricing_board .btn.btn-success.disabled, .odoo_pricing_board .btn.btn-success[disabled], fieldset[disabled] .odoo_pricing_board .btn.btn-success, .odoo_pricing_board .btn.btn-success.disabled:hover, .odoo_pricing_board .btn.btn-success[disabled]:hover, fieldset[disabled] .odoo_pricing_board .btn.btn-success:hover, .odoo_pricing_board .btn.btn-success.disabled:focus, .odoo_pricing_board .btn.btn-success[disabled]:focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success:focus, .odoo_pricing_board .btn.btn-success.disabled.focus, .odoo_pricing_board .btn.btn-success[disabled].focus, fieldset[disabled] .odoo_pricing_board .btn.btn-success.focus {
+    opacity: 0.8;
+    background-color: #3c9c89;
+    border-color: #3c9c89;
+}
+
+.odoo_pricing_board .btn.btn-success .badge {
+    color: #21b799;
+    background-color: #fff;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse {
+    color: #19f2c7;
+    border-color: #19f2c7;
+    color: #3fffd9;
+    border-color: #3fffd9;
+    background-color: transparent;
+    font-weight: 500;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse .badge {
+    color: #000000;
+    background-color: #19f2c7;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse:hover, .odoo_pricing_board .btn.btn-success.o_btn_inverse:focus, .odoo_pricing_board .btn.btn-success.o_btn_inverse.focus {
+    color: #3fffd9;
+    background-color: transparent;
+    border-color: #3fffd9;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse:hover .badge, .odoo_pricing_board .btn.btn-success.o_btn_inverse:focus .badge, .odoo_pricing_board .btn.btn-success.o_btn_inverse.focus .badge {
+    color: #000000;
+    background-color: #3fffd9;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse .badge {
+    color: #000000;
+    background-color: #3fffd9;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse:hover, .odoo_pricing_board .btn.btn-success.o_btn_inverse:focus, .odoo_pricing_board .btn.btn-success.o_btn_inverse.focus {
+    color: #72ffe3;
+    background-color: transparent;
+    border-color: #72ffe3;
+}
+
+.odoo_pricing_board .btn.btn-success.o_btn_inverse:hover .badge, .odoo_pricing_board .btn.btn-success.o_btn_inverse:focus .badge, .odoo_pricing_board .btn.btn-success.o_btn_inverse.focus .badge {
+    color: #000000;
+    background-color: #72ffe3;
+}
+
+.odoo_pricing_board .btn .fa {
+    display: none;
+}
+
+.odoo_pricing_board .nav-tabs {
+    border: 0;
+}
+
+.odoo_pricing_board .nav-tabs > li.active > a, .odoo_pricing_board .nav-tabs > li.active > a:hover, .odoo_pricing_board .nav-tabs > li.active > a:focus {
+    background-color: #21b799;
+    color: #FFF;
+    border: 0;
+}
+
+.odoo_pricing_board .nav-tabs > li.active > a .text-muted, .odoo_pricing_board .nav-tabs > li.active > a:hover .text-muted, .odoo_pricing_board .nav-tabs > li.active > a:focus .text-muted {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.odoo_pricing_board .nav-tabs > li > a, .odoo_pricing_board .nav-tabs > li > a:hover, .odoo_pricing_board .nav-tabs > li > a:focus {
+    border: 0;
+}
+
+.odoo_pricing_board .nav-tabs > li > a:hover {
+    color: #21b799;
+}
+
+.openerp_website_pricing .table > tbody > tr > td {
+    padding: 8px;
+}
+
+#yearly tr td:not(:first-child) {
+    text-align: right;
+}
+
+.openerp_website_pricing_app.selected div.openerp_website_pricing_app_real_name {
+    background-color: #00bcd4;
+    color: white;
+}
+
+.openerp_website_pricing_app.selected div.openerp_website_pricing_app_real_name .fa {
+    color: #DDD;
+}
+
+.openerp_website_pricing_app :hover {
+    cursor: pointer;
+}
+
+.openerp_website_pricing_app label {
+    display: inline;
+}

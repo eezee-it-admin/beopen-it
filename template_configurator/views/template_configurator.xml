@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Tree view for Market -->
+        <record model="ir.ui.view" id="botc_market_tree_view">
+            <field name="name">botc_market.tree</field>
+            <field name="model">botc.market</field>
+            <field name="arch" type="xml">
+                <tree string="Market Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Market -->
+        <record model="ir.ui.view" id="botc_market_form_view">
+            <field name="name">botc_market.form</field>
+            <field name="model">botc.market</field>
+            <field name="arch" type="xml">
+                <form string="Market Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Market -->
+        <record model="ir.actions.act_window" id="botc_market_list_action">
+            <field name="name">Markets</field>
+            <field name="res_model">botc.market</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Markets
+                </p>
+            </field>
+        </record>
+
+
+        <!-- Tree view for Goal -->
+        <record model="ir.ui.view" id="botc_type_tree_view">
+            <field name="name">botc_goal.tree</field>
+            <field name="model">botc.goal</field>
+            <field name="arch" type="xml">
+                <tree string="Goal Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Goal -->
+        <record model="ir.ui.view" id="botc_type_form_view">
+            <field name="name">botc_goal.form</field>
+            <field name="model">botc.goal</field>
+            <field name="arch" type="xml">
+                <form string="Goal Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Goal -->
+        <record model="ir.actions.act_window" id="botc_goal_list_action">
+            <field name="name">Goals</field>
+            <field name="res_model">botc.goal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Goals
+                </p>
+            </field>
+        </record>
+
+
+        <!-- Tree view for MarketType -->
+        <record model="ir.ui.view" id="botc_markettype_tree_view">
+            <field name="name">botc_markettype.tree</field>
+            <field name="model">botc.markettype</field>
+            <field name="arch" type="xml">
+                <tree string="MatketType Tree">
+                    <field name="name"/>
+                    <field name="market_id"/>
+                    <field name="goal_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for MarketType -->
+        <record model="ir.ui.view" id="botc_type_form_view">
+            <field name="name">botc_markettype.form</field>
+            <field name="model">botc.markettype</field>
+            <field name="arch" type="xml">
+                <form string="MarketType Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="template_database"/>
+                            <field name="template_username"/>
+                            <field name="template_password" password="True"/>
+                            <field name="price"/>
+                            <field name="currency_id"/>
+                            <field name="market_id"/>
+                            <field name="goal_id"/>
+                            <field name="available_module_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="module_id"/>
+                                    <field name="included"/>
+                                    <field name="order"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for MarketType -->
+        <record model="ir.actions.act_window" id="botc_markettype_list_action">
+            <field name="name">Market Types</field>
+            <field name="res_model">botc.markettype</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Market Types
+                </p>
+            </field>
+        </record>
+
+        <!-- Tree view for Module -->
+        <record model="ir.ui.view" id="botc_module_tree_view">
+            <field name="name">botc_module.tree</field>
+            <field name="model">botc.module</field>
+            <field name="arch" type="xml">
+                <tree string="Module Tree">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="odoo_module_name"/>
+                    <field name="price"/>
+                    <field name="currency_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Module -->
+        <record model="ir.ui.view" id="botc_module_form_view">
+            <field name="name">botc_module.form</field>
+            <field name="model">botc.module</field>
+            <field name="arch" type="xml">
+                <form string="Module Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="odoo_module_name"/>
+                            <field name="price"/>
+                            <field name="currency_id"/>
+                            <field name="active"/>
+                            <field name="image"/>
+                            <field name="module_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Module -->
+        <record model="ir.actions.act_window" id="botc_module_list_action">
+            <field name="name">Modules</field>
+            <field name="res_model">botc.module</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Modules
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="main_template_configurator_menu" name="Configurator"/>
+        <menuitem id="configurator_template_configurator_menu" name="Configurator"
+                  parent="main_template_configurator_menu"/>
+        <menuitem id="markettypes_menu" name="Types" parent="configurator_template_configurator_menu"
+                  action="botc_markettype_list_action"/>
+
+        <menuitem id="configuration_template_configurator_menu" name="Configuration"
+                  parent="main_template_configurator_menu"/>
+        <menuitem id="markets_menu" name="Markets" parent="configuration_template_configurator_menu"
+                  action="botc_market_list_action"/>
+        <menuitem id="goals_menu" name="Goals" parent="configuration_template_configurator_menu"
+                  action="botc_goal_list_action"/>
+        <menuitem id="modules_menu" name="Modules" parent="configuration_template_configurator_menu"
+                  action="botc_module_list_action"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <template id="module_prices">
+            <t t-call="website.layout">
+                <t t-set="title">Module Prices</t>
+                <div class="oe_structure">
+                    <div class="container">
+                        <div class="oe_structure"/>
+
+                        <section class="container openerp_website_pricing bg-white">
+
+                            <form class="openerp_website_pricing_form form-inline" name="configurator">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <div class="openerp_website_pricing_step">
+                                            <div class="openerp_website_pricing_step_head">
+                                                <h3 class="mt16 mb16 text-violet-dark">Module prices
+                                                </h3>
+                                            </div>
+                                            <div class="openerp_website_pricing_step_body mb24">
+                                                <div class="row">
+
+                                                    <t t-foreach="modules" t-as="module">
+
+                                                        <div class="col-md-3">
+                                                            <t t-set="dependenciesastext" t-value="str(module.description)+' '"/>
+                                                            <t t-if="module.module_ids">
+                                                                <t t-set="dependenciesastext" t-value="dependenciesastext+' '+'Requires : '"/>
+
+                                                                <t t-foreach="module.module_ids" t-as="dependent_module">
+                                                                    <t t-set="dependenciesastext" t-value="dependenciesastext+' '+dependent_module.name+','"/>
+                                                                 </t>
+                                                            </t>
+                                                            <div class="row openerp_website_pricing_app selected" data-toggle="tooltip" animation="true" html="true"
+                                                                 t-att-title="dependenciesastext[:-1]">
+                                                                <label>
+                                                                    <div class="col-md-3 col-xs-3 openerp_website_pricing_app_icon">
+                                                                        <span t-field="module.image"
+                                                                              t-field-options='{"widget": "image", "style": "width: 36px; height: 36px;"}'
+                                                                              class="img-responsive icon_radius"/>
+                                                                    </div>
+                                                                    <div class="col-md-7 col-xs-7 openerp_website_pricing_app_name">
+                                                                        <div class="openerp_website_pricing_app_real_name">
+                                                                            <span>
+                                                                                <t t-esc="module.name"/>
+                                                                            </span>
+
+
+                                                                            <t t-if="module.module_ids">
+                                                                                <i class="fa fa-1x fa-link hidden-md"/>
+                                                                            </t>
+
+                                                                        </div>
+                                                                        <div class="openerp_website_pricing_app_price">
+                                                                            <b>
+                                                                                <t t-esc="module.price"/>
+                                                                                <span class="openerp_website_pricing_currency">
+                                                                                    <t t-esc="module.currency_id.name"/>
+                                                                                </span>
+                                                                            </b>
+                                                                            / month
+                                                                        </div>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                    </t>
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </section>
+
+                        <script>$(function () {
+                          $('[data-toggle="tooltip"]').tooltip();
+                        })
+                        </script>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</openerp>
