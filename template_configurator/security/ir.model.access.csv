@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+model_botc_markettype_all,model_botc_markettype_all,model_botc_markettype,,1,0,0,0
+model_botc_market_all,model_botc_market_all,model_botc_market,,1,0,0,0
+model_botc_goal_all,model_botc_goal_all,model_botc_goal,,1,0,0,0
+model_botc_module_all,model_botc_module_all,model_botc_module,,1,0,0,0
+model_botc_availablemodules_all,model_botc_availablemodules_all,model_botc_availablemodules,,1,0,0,0
