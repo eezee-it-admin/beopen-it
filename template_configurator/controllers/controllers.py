@@ -134,9 +134,9 @@ class Configurator(http.Controller):
 
         lead_id = pool["crm.lead"].create(cr, SUPERUSER_ID, values_lead, context=context)
 
-        template_id = pool['ir.model.data'].xmlid_to_res_id(cr, uid, 'template_configurator.mail_template_configurator')
+        template_id = pool['ir.model.data'].xmlid_to_res_id(cr, SUPERUSER_ID, 'template_configurator.mail_template_configurator')
         if template_id:
-            pool['mail.template'].send_mail(cr, uid, template_id, lead_id, force_send=True, context=context)
+            pool['mail.template'].send_mail(cr, SUPERUSER_ID, template_id, lead_id, force_send=True, context=context)
         else:
             _logger.warning("No email template found for sending email to the configurator user")
 
