@@ -225,9 +225,9 @@ class Configurator(http.Controller):
             _logger.info("ID's for modules on instance %s are %s", domain, IDList)
             if len(IDList) > 0:
                 for (id, name) in IDList:
-                    self._write_log(domain, "Installing module {0}".format(name))
+                    self._write_log(domain, "Installing module {0}".format(name.encode('utf-8')))
 
-                    _logger.info("Installing module %s in instance %s", name, domain)
+                    _logger.info("Installing module %s in instance %s", name.encode('utf-8'), domain)
                     # database_status[domain] = "Installing module " + name + " ..."
                     models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
                                       [[id],
