@@ -113,6 +113,8 @@ class Configurator(http.Controller):
         language = "en"
         country_code = "nl_BE"
 
+        _logger.info("Creating instance for %s", domain)
+
         default_modules, markettype, optional_modules = self.get_markettype(market_type)
 
         modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
@@ -121,9 +123,11 @@ class Configurator(http.Controller):
         description = "URL : http://" + domain + ".beopen.be\n"
         description += "Username : " + user + "\n"
         description += "Password : " + password + "\n\n"
+        description += "Package  : " + markettype.name + "\n"
         description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
         description += "Price after trial : " + price + " " + markettype.currency_id.name
 
+        _logger.info("Create lead for %s", domain)
 
         values_lead = {
             "name": "new database " + domain,
@@ -136,6 +140,7 @@ class Configurator(http.Controller):
 
         template_id = pool['ir.model.data'].xmlid_to_res_id(cr, SUPERUSER_ID, 'template_configurator.mail_template_configurator')
         if template_id:
+            _logger.info("Send mail for %s to %s", domain, email)
             pool['mail.template'].send_mail(cr, SUPERUSER_ID, template_id, lead_id, force_send=True, context=context)
         else:
             _logger.warning("No email template found for sending email to the configurator user")
@@ -144,10 +149,20 @@ class Configurator(http.Controller):
         template_passwd = markettype.template_password
         template_database = markettype.template_database
 
-        pid = os.fork()
-        if pid == 0:
-            self._create_database(country_code, domain, language, markettype, modules_to_install, password, user, template_user, template_passwd, template_database)
-        #thread.start_new_thread(self._create_database_thread, (country_code, domain, language, modules_to_install, password, user ))
+        _logger.info("Fork process for creating %s", domain)
+        p1 = os.fork()
+        if p1 != 0:
+            os.waitpid(p1, 0)
+        else:
+            p2 = os.fork()
+            if p2 != 0:
+                os._exit(0)
+            else:
+                self._create_database(country_code, domain, language, markettype, modules_to_install, password, user,
+                                      template_user, template_passwd, template_database)
+
+            os._exit(0)
+        _logger.info("Process forked for %s", domain)
 
         return {"type": "ok"}
 
@@ -179,58 +194,62 @@ class Configurator(http.Controller):
 
     def _create_database(self, country_code, domain, language, markettype, modules_to_install, password, user, template_user, template_passwd, template_database):
         try:
+            _logger.info("Forked process for %s", domain)
             self._write_log(domain, "Creating database " + domain)
 
             # Create database
             #db.exp_create_database(domain, False, language, password, user, country_code)
             master_pwd = openerp.tools.config['admin_passwd']
+            _logger.info("Duplicate database %s to %s", template_database, domain)
             request.session.proxy("db").duplicate_database(master_pwd, template_database, domain)
 
 
             #authenticate to new created database
             url = "http://localhost:8069"
 
+            _logger.info("Authenticate on instance %s", domain)
             common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
 
             uid = common.authenticate(domain, template_user, template_passwd, {})
-            _logger.info("uid %s", uid)
             models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
-            _logger.info("models %s", models)
 
 
+            _logger.info("Receiving ID's for modules on instance %s", domain)
             #Install modules
             IDList = []
             for module_to_install in modules_to_install:
                 module_record = models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'search',
                                                   [[['name', '=', module_to_install[0]]]])
-                _logger.info("website %s", module_record)
                 IDList.append((module_record[0], module_to_install[1]))
-                _logger.info("IDList %s", IDList)
 
+            _logger.info("ID's for modules on instance %s are %s", domain, IDList)
             if len(IDList) > 0:
                 for (id, name) in IDList:
                     self._write_log(domain, "Installing module " + name)
 
-                    _logger.info("Installing module %s", name)
+                    _logger.info("Installing module %s in instance %s", name, domain)
                     # database_status[domain] = "Installing module " + name + " ..."
                     models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
                                       [[id],
                                        {'lang': language, 'tz': 'false', 'uid': uid, 'search_default_app': '1',
                                         'params': {'action': '36'}}])
 
-                    self._write_log(domain, "Done")
-
-            #Reset database
+            _logger.info("Resetting password instance %s", domain)
             models.execute_kw(domain, uid, template_passwd, 'res.users', 'write',[[1], {
                         'login': user, 'password': password
                     }])
+            _logger.info("Instance %s ready", domain)
+            self._write_log(domain, "Done")
+
             sys.exit(0)
 
         except (db.DatabaseExists) as e:
             self._write_log(domain, "ERROR : " + str(e))
+            _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
         except (Exception) as e :
             self._write_log(domain, "ERROR : " + str(e))
+            _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
 
 
