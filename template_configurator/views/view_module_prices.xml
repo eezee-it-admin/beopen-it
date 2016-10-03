@@ -26,7 +26,12 @@
                                                     <t t-foreach="modules" t-as="module">
 
                                                         <div class="col-md-3">
-                                                            <t t-set="dependenciesastext" t-value="str(module.description)+' '"/>
+                                                            <t t-if="module.description">
+                                                                <t t-set="dependenciesastext" t-value="module.description+' '"/>
+                                                            </t>
+                                                            <t t-if="not module.description">
+                                                                <t t-set="dependenciesastext" t-value="''"/>
+                                                            </t>
                                                             <t t-if="module.module_ids">
                                                                 <t t-set="dependenciesastext" t-value="dependenciesastext+' '+'Requires : '"/>
 
