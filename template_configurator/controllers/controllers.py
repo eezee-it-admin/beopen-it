@@ -195,7 +195,7 @@ class Configurator(http.Controller):
     def _create_database(self, country_code, domain, language, markettype, modules_to_install, password, user, template_user, template_passwd, template_database):
         try:
             _logger.info("Forked process for %s", domain)
-            self._write_log(domain, "Creating database " + domain)
+            self._write_log(domain, "Creating instance {0}".format(domain))
 
             # Create database
             #db.exp_create_database(domain, False, language, password, user, country_code)
@@ -225,7 +225,7 @@ class Configurator(http.Controller):
             _logger.info("ID's for modules on instance %s are %s", domain, IDList)
             if len(IDList) > 0:
                 for (id, name) in IDList:
-                    self._write_log(domain, "Installing module " + name)
+                    self._write_log(domain, "Installing module {0}".format(name))
 
                     _logger.info("Installing module %s in instance %s", name, domain)
                     # database_status[domain] = "Installing module " + name + " ..."
@@ -244,11 +244,11 @@ class Configurator(http.Controller):
             sys.exit(0)
 
         except (db.DatabaseExists) as e:
-            self._write_log(domain, "ERROR : " + str(e))
+            self._write_log(domain, "ERROR : {0}".format(e))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
         except (Exception) as e :
-            self._write_log(domain, "ERROR : " + str(e))
+            self._write_log(domain, "ERROR : {0}".format(e))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
 
