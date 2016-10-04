@@ -37,6 +37,8 @@ class Configurator(http.Controller):
         return "".join(pwd)
 
     def _write_log(self, key, text):
+        key = key.lower()
+
         tempdir = tempfile.gettempdir();
         with open(tempdir + "/" + key + ".txt", "w") as file:
             file.write(text)
@@ -45,6 +47,8 @@ class Configurator(http.Controller):
 
     def _read_log(self, key):
         try:
+            key = key.lower()
+
             tempdir = tempfile.gettempdir();
             with open(tempdir + "/" + key + ".txt", "r") as file:
                 text = file.readline()
