@@ -184,7 +184,7 @@ class ContainerInstance(models.Model):
 
         command += " %s" % self.docker_image_id.image_name
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username, \
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
         return self.create_action(log)
@@ -193,7 +193,7 @@ class ContainerInstance(models.Model):
     def delete_docker_container(self):
         command = "docker rm %s" % self.domain
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username, \
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port,
                                                              command)
 
@@ -203,7 +203,7 @@ class ContainerInstance(models.Model):
     def stop_docker_container(self):
         command = "docker stop %s" % self.domain
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username, \
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
         return self.create_action(log)
 
@@ -211,7 +211,7 @@ class ContainerInstance(models.Model):
     def start_docker_container(self):
         command = "docker start %s" % self.domain
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username, \
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
         return self.create_action(log)
@@ -220,7 +220,7 @@ class ContainerInstance(models.Model):
     def inspect_docker_container(self):
         command = "docker inspect %s" % self.domain
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username, \
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
 
@@ -228,36 +228,86 @@ class ContainerInstance(models.Model):
 
     @api.multi
     def configure_http_server(self):
-        http_server = self.httpserver_id
-        filename = "/tmp/%s.conf" %self.domain
-        filecontents = http_server.config_template
-        filecontents = filecontents.replace("%domain%",self.domain)
-        filecontents = filecontents.replace("%docker_server%",self.docker_server_id.ip)
-        filecontents = filecontents.replace("%longpolling_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "longpolling"][0]))
-        filecontents = filecontents.replace("%xmlrpc_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "xmlrpc"][0]))
+        try:
+            http_server = self.httpserver_id
+            filename = "/tmp/%s.conf" %self.domain
+            filecontents = http_server.config_template
+            filecontents = filecontents.replace("%domain%",self.domain)
+            filecontents = filecontents.replace("%docker_server%",self.docker_server_id.ip)
+            filecontents = filecontents.replace("%longpolling_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "longpolling"][0]))
+            filecontents = filecontents.replace("%xmlrpc_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "xmlrpc"][0]))
 
-        log = self.env["botc.executedcommand"].sftp_write_to_file(http_server.ip, http_server.username, http_server.pwd, \
-                                                                  http_server.port, filename, filecontents)
+            log = self.env["botc.executedcommand"].sftp_write_to_file(http_server.ip, http_server.username, http_server.pwd,
+                                                                      http_server.port, filename, filecontents)
 
-        move_command = "sudo mv /tmp/%s.conf %s" % (self.domain, self.httpserver_id.config_path)
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd, \
-                                                                  http_server.port, move_command)
+            move_command = "sudo mv /tmp/%s.conf %s" % (self.domain, self.httpserver_id.config_path)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd,
+                                                                      http_server.port, move_command)
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd, \
-                                                                  http_server.port, self.httpserver_id.reload_command)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd,
+                                                                      http_server.port, self.httpserver_id.reload_command)
+        except:
+            return self.create_action(log)
 
         return self.create_action(log)
 
     @api.multi
     def unconfigure_http_server(self):
-        http_server = self.httpserver_id
+        try:
+            http_server = self.httpserver_id
 
-        move_command = "sudo rm %s/%s.conf " % (self.httpserver_id.config_path, self.domain)
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd, \
-                                                                  http_server.port, move_command)
+            move_command = "sudo rm %s/%s.conf " % (self.httpserver_id.config_path, self.domain)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username,
+                                                                                       http_server.pwd,
+                                                                                       http_server.port, move_command)
 
-        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd, \
-                                                                  http_server.port, self.httpserver_id.reload_command)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username,
+                                                                                       http_server.pwd,
+                                                                                       http_server.port,
+                                                                                       self.httpserver_id.reload_command)
+        except:
+            return self.create_action(log)
+
+        return self.create_action(log)
+
+    @api.multi
+    def deploy_filestore(self):
+        try:
+            docker_server = self.docker_server_id
+
+            filestore_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"][0])
+            mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port, mkdirbase_command)
+
+
+
+
+            if self.market_type_id.template_id:
+                local_filestore = self.market_type_id.template_id.template_filestore_location
+                zip_file = local_filestore.split("/")[::-1][0]
+                log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,local_filestore, "/tmp/%s" % zip_file)
+
+                unzip_command = "sudo unzip /tmp/%s -d %s/%s/filestore" % (zip_file, filestore_path, self.domain)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                           docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,
+                                                                                           unzip_command)
+
+            chmod_command = "sudo chmod -R 777 %s" % (filestore_path)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,
+                                                                                       chmod_command)
+
+
+        except Exception as e:
+
+            return self.create_action(log)
 
         return self.create_action(log)
 
@@ -318,18 +368,44 @@ class ExecutedCommand(models.Model):
         return stdout_string, stderr_string, log
 
     def sftp_write_to_file(self, ip, username, pwd, port, filename, filecontents):
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.load_system_host_keys()
-        client.connect(ip, username=username, password=pwd, port=port)
-        sftp = client.open_sftp()
-        f = sftp.open(filename, "w")
-        f.write(filecontents)
-        f.close()
-        file_info = sftp.stat(filename)
-        client.close()
+        try:
+            file_info = ""
+            error = ""
 
-        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s" % filename, "standard_output":file_info, "standard_error":"" }
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.load_system_host_keys()
+            client.connect(ip, username=username, password=pwd, port=port)
+            sftp = client.open_sftp()
+            f = sftp.open(filename, "w")
+            f.write(filecontents)
+            f.close()
+            file_info = sftp.stat(filename)
+            client.close()
+        except Exception as e:
+            error = e
+        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s" % filename, "standard_output":file_info, "standard_error":e }
 
         log = super(ExecutedCommand, self).create(vals)
+        return log
+
+    def sftp_put_file(self, ip, username, pwd, port, local_file, remote_path):
+
+        try:
+            file_info = ""
+            error = ""
+
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.load_system_host_keys()
+            client.connect(ip, username=username, password=pwd, port=port)
+            sftp = client.open_sftp()
+            file_info = sftp.put(local_file, remote_path)
+            client.close()
+        except Exception as e:
+            error = e
+
+        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s to %s" % (local_file, remote_path), "standard_output":file_info, "standard_error":error }
+        log = super(ExecutedCommand, self).create(vals)
+
         return log

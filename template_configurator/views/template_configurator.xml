@@ -442,6 +442,7 @@
                         <button type="object" name="inspect_docker_container" string="Inspect Docker Container"/>
                         <button type="object" name="configure_http_server" string="Configure Http Server"/>
                         <button type="object" name="unconfigure_http_server" string="Unconfigure Http Server"/>
+                        <button type="object" name="deploy_filestore" string="Deploy Filestore"/>
                     </header>
 
                     <sheet>
