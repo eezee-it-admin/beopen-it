@@ -103,13 +103,11 @@
                         <group>
                             <field name="name"/>
                             <field name="code"/>
-                            <field name="template_database"/>
-                            <field name="template_username"/>
-                            <field name="template_password" password="True"/>
                             <field name="price"/>
                             <field name="currency_id"/>
                             <field name="market_id"/>
                             <field name="goal_id"/>
+                            <field name="template_id"/>
                             <field name="available_module_ids" mode="tree">
                                 <tree editable="bottom">
                                     <field name="module_id"/>
@@ -229,7 +227,7 @@
             </field>
         </record>
 
-                        <!-- Tree view for Dbserver -->
+        <!-- Tree view for Dbserver -->
         <record model="ir.ui.view" id="botc_dbserver_tree_view">
             <field name="name">botc_dbserver.tree</field>
             <field name="model">botc.dbserver</field>
@@ -271,6 +269,51 @@
             </field>
         </record>
 
+        <!-- Tree view for Httpserver -->
+        <record model="ir.ui.view" id="botc_httpserver_tree_view">
+            <field name="name">botc_httpserver.tree</field>
+            <field name="model">botc.httpserver</field>
+            <field name="arch" type="xml">
+                <tree string="Http Server Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Httpserver -->
+        <record model="ir.ui.view" id="botc_httpserver_form_view">
+            <field name="name">botc_httpserver.form</field>
+            <field name="model">botc.httpserver</field>
+            <field name="arch" type="xml">
+                <form string="Http Server Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="ip"/>
+                            <field name="port"/>
+                            <field name="username"/>
+                            <field name="pwd" password="True"/>
+                            <field name="config_path"/>
+                            <field name="config_template"/>
+                            <field name="reload_command"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Httpserver -->
+        <record model="ir.actions.act_window" id="botc_httpserver_list_action">
+            <field name="name">HTTP Servers</field>
+            <field name="res_model">botc.httpserver</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Http Servers
+                </p>
+            </field>
+        </record>
+
          <!-- Tree view for Dockerserver -->
         <record model="ir.ui.view" id="botc_dockerserver_tree_view">
             <field name="name">botc_dockerserver.tree</field>
@@ -292,6 +335,12 @@
                         <group>
                             <field name="name"/>
                             <field name="ip"/>
+                            <field name="port"/>
+                            <field name="username"/>
+                            <field name="pwd" password="True"/>
+                            <field name="data_path"/>
+                            <field name="min_port"/>
+                            <field name="max_port"/>
                         </group>
                     </sheet>
                 </form>
@@ -337,7 +386,7 @@
                             <page string="Volumes">
                                 <field name="volume_ids" mode="tree">
                                     <tree editable="bottom">
-                                        <field name="name"/>
+                                        <field name="type"/>
                                         <field name="path"/>
                                     </tree>
                                 </field>
@@ -345,6 +394,7 @@
                             <page string="Ports">
                                 <field name="port_ids" mode="tree">
                                     <tree editable="bottom">
+                                        <field name="type"/>
                                         <field name="portnumber"/>
                                     </tree>
                                 </field>
@@ -368,7 +418,7 @@
         </record>
 
          <!-- Tree view for ContainerInstance -->
-                <record model="ir.ui.view" id="botc_containerinstance_tree_view">
+        <record model="ir.ui.view" id="botc_containerinstance_tree_view">
             <field name="name">botc_containerinstance.tree</field>
             <field name="model">botc.containerinstance</field>
             <field name="arch" type="xml">
@@ -384,6 +434,16 @@
             <field name="model">botc.containerinstance</field>
             <field name="arch" type="xml">
                 <form string="Container Instance Form">
+                    <header>
+                        <button type="object" name="create_docker_container" string="Create Docker Container"/>
+                        <button type="object" name="delete_docker_container" string="Delete Docker Container"/>
+                        <button type="object" name="stop_docker_container" string="Stop Docker Container"/>
+                        <button type="object" name="start_docker_container" string="Start Docker Container"/>
+                        <button type="object" name="inspect_docker_container" string="Inspect Docker Container"/>
+                        <button type="object" name="configure_http_server" string="Configure Http Server"/>
+                        <button type="object" name="unconfigure_http_server" string="Unconfigure Http Server"/>
+                    </header>
+
                     <sheet>
                         <group>
                             <group >
@@ -393,6 +453,7 @@
                             <group >
                                 <field name="dbserver_id"/>
                                 <field name="docker_server_id"/>
+                                <field name="httpserver_id"/>
                                 <field name="docker_image_id"/>
                                 <field name="flavor"/>
                             </group>
@@ -442,6 +503,91 @@
         </record>
 
 
+        <!-- Tree view for ExecuteCommand -->
+        <record model="ir.ui.view" id="botc_executedcommand_tree_view">
+            <field name="name">botc_executedcommand.tree</field>
+            <field name="model">botc.executedcommand</field>
+            <field name="arch" type="xml">
+                <tree string="Execution Log Tree">
+                    <field name="datetime_executed"/>
+                    <field name="command"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for ExecuteCommand -->
+        <record model="ir.ui.view" id="botc_executedcommand_form_view">
+            <field name="name">botc_executedcommand.form</field>
+            <field name="model">botc.executedcommand</field>
+            <field name="arch" type="xml">
+                <form string="Execution Log Form">
+                    <sheet>
+                        <group>
+                            <field name="datetime_executed"/>
+                            <field name="command"/>
+                            <field name="standard_output"/>
+                            <field name="standard_error"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for ExecuteCommand -->
+        <record model="ir.actions.act_window" id="botc_executedcommand_list_action">
+            <field name="name">Execution Logs</field>
+            <field name="res_model">botc.executedcommand</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">View Execution Logs
+                </p>
+            </field>
+        </record>
+
+        <!-- Tree view for Template -->
+        <record model="ir.ui.view" id="botc_template_tree_view">
+            <field name="name">botc_template.tree</field>
+            <field name="model">botc.template</field>
+            <field name="arch" type="xml">
+                <tree string="Template Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Template -->
+        <record model="ir.ui.view" id="botc_template_form_view">
+            <field name="name">botc_template.form</field>
+            <field name="model">botc.template</field>
+            <field name="arch" type="xml">
+                <form string="Execution Log Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="template_database"/>
+                            <field name="template_username"/>
+                            <field name="template_password" password="True"/>
+                            <field name="template_apps_location"/>
+                            <field name="template_filestore_location"/>
+                            <field name="dbserver_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Template -->
+        <record model="ir.actions.act_window" id="botc_template_list_action">
+            <field name="name">Templates</field>
+            <field name="res_model">botc.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">View Templates
+                </p>
+            </field>
+        </record>
 
         <menuitem id="main_template_configurator_menu" name="Configurator"/>
         <menuitem id="configurator_template_configurator_menu" name="Configurator"
@@ -450,6 +596,8 @@
                   action="botc_markettype_list_action"/>
         <menuitem id="containerinstances_menu" name="Container Instances" parent="configurator_template_configurator_menu"
                   action="botc_containerinstance_list_action"/>
+        <menuitem id="executioncommand_menu" name="Execution Log" parent="configurator_template_configurator_menu"
+                  action="botc_executedcommand_list_action"/>
 
         <menuitem id="configuration_template_configurator_menu" name="Configuration"
                   parent="main_template_configurator_menu"/>
@@ -463,9 +611,13 @@
                   action="botc_module_list_action"/>
         <menuitem id="dbservers_menu" name="Db Servers" parent="configuration_template_configurator_menu"
                   action="botc_dbserver_list_action"/>
+        <menuitem id="httpservers_menu" name="Http Servers" parent="configuration_template_configurator_menu"
+                  action="botc_httpserver_list_action"/>
         <menuitem id="dockerservers_menu" name="Docker Servers" parent="configuration_template_configurator_menu"
                   action="botc_dockerserver_list_action"/>
         <menuitem id="dockerimages_menu" name="Docker Images" parent="configuration_template_configurator_menu"
                   action="botc_dockerimage_list_action"/>
+        <menuitem id="templates_menu" name="Templates" parent="configuration_template_configurator_menu"
+                  action="botc_template_list_action"/>
     </data>
 </openerp>

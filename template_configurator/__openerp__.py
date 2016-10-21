@@ -32,6 +32,7 @@
  #       'views/session_board.xml',
  #       'reports.xml',
     ],
+    'installable': True,
     # only loaded in demonstration mode
 #    'demo': [
 #        'demo.xml',
