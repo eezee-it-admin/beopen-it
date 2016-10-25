@@ -1,6 +1,8 @@
 from openerp import models, fields, api, tools
 import paramiko
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class Market(models.Model):
     _name="botc.market"
@@ -53,6 +55,7 @@ class DockerServer(models.Model):
     data_path=fields.Char(string="Data Path", required=True)
     min_port=fields.Integer(string="Minimum port", required=True)
     max_port=fields.Integer(string="Maximum port", required=True)
+    containerinstance_ids=fields.One2many("botc.containerinstance", "docker_server_id", "Container Instances")
 
 class MarketType(models.Model):
     _name="botc.markettype"
@@ -166,6 +169,54 @@ class ContainerInstance(models.Model):
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
 
     @api.multi
+    def create_instance(self, domain, markettype, module_ids_to_install):
+
+        module_ids = [(0,0, {"module_id":module_id.id, "installed_on":fields.Datetime.now()}) for module_id in module_ids_to_install]
+        dbserver = self.env["botc.dbserver"].search([], limit = 1)
+        httpserver = self.env["botc.httpserver"].search([], limit = 1)
+        dockerimage = self.env["botc.dockerimage"].search([], limit = 1)
+        dockerserver = self.env["botc.dockerserver"].search([], limit = 1)
+
+        max_port = 0;
+        for container_instance in dockerserver.containerinstance_ids:
+            for port_mapping in container_instance.port_mapping_ids:
+                if port_mapping.port_map > max_port:
+                    max_port = port_mapping.port_map
+
+        if max_port < dockerserver.min_port:
+            max_port = dockerserver.min_port
+
+        port_xmlrpc = [port for port in dockerimage.port_ids if port.type == "xmlrpc"][0]
+        port_longpolling = [port for port in dockerimage.port_ids if port.type == "longpolling"][0]
+
+        port_mapping_ids = [(0, 0, {"port_id": port_xmlrpc.id, "port_map":max_port + 1})]
+        port_mapping_ids += [(0, 0, {"port_id": port_longpolling.id, "port_map":max_port + 2})]
+
+        volume_addons = [volume for volume in dockerimage.volume_ids if volume.type == "addons"][0]
+        volume_filestore = [volume for volume in dockerimage.volume_ids if volume.type == "filestore"][0]
+
+        volume_mapping_ids = [(0, 0, {"volume_id":volume_addons.id, "volume_map":"%s/%s/addons" % (dockerserver.data_path, domain)})]
+        volume_mapping_ids += [(0, 0, {"volume_id":volume_filestore.id, "volume_map":"%s/%s/filestore" % (dockerserver.data_path, domain)})]
+
+        container_instance_vals = {"domain": domain,
+                              "market_type_id": markettype.id,
+                              "module_ids": module_ids,
+                              "dbserver_id": dbserver.id ,
+                              "httpserver_id": httpserver.id,
+                              "docker_image_id":dockerimage.id,
+                              "docker_server_id":dockerserver.id,
+                              "port_mapping_ids":port_mapping_ids,
+                              "volume_mapping_ids":volume_mapping_ids
+                              }
+
+        container_instance = self.create(container_instance_vals)
+        container_instance.deploy_addons()
+        container_instance.deploy_filestore()
+        container_instance.configure_http_server()
+        container_instance.create_docker_container()
+        container_instance.start_docker_container()
+
+    @api.multi
     def create_docker_container(self):
 
         command = "docker create --name %s" % self.domain
@@ -241,12 +292,14 @@ class ContainerInstance(models.Model):
                                                                       http_server.port, filename, filecontents)
 
             move_command = "sudo mv /tmp/%s.conf %s" % (self.domain, self.httpserver_id.config_path)
+
             stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd,
                                                                       http_server.port, move_command)
 
             stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(http_server.ip, http_server.username, http_server.pwd,
                                                                       http_server.port, self.httpserver_id.reload_command)
-        except:
+        except Exception as e:
+            _logger.info("Exception %s", e)
             return self.create_action(log)
 
         return self.create_action(log)
@@ -273,10 +326,12 @@ class ContainerInstance(models.Model):
     @api.multi
     def deploy_filestore(self):
         try:
+            log = ""
             docker_server = self.docker_server_id
 
             filestore_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"][0])
             mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
+
             stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
                                                                                        docker_server.pwd,
                                                                                        docker_server.port, mkdirbase_command)
@@ -306,10 +361,54 @@ class ContainerInstance(models.Model):
 
 
         except Exception as e:
+            _logger.info("Exception %s", e)
+            return self.create_action(log)
+
+        return self.create_action(log)
+
+    @api.multi
+    def deploy_addons(self):
+        try:
+            log = ""
+            docker_server = self.docker_server_id
+
+            addons_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "addons"][0])
+            mkdirbase_command = "sudo mkdir -p %s" % (addons_path)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port, mkdirbase_command)
+
+
+
+
+            if self.market_type_id.template_id:
+                local_filestore = self.market_type_id.template_id.template_apps_location
+                zip_file = local_filestore.split("/")[::-1][0]
+                log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,local_filestore, "/tmp/%s" % zip_file)
+
+                unzip_command = "sudo unzip /tmp/%s -d %s" % (zip_file, addons_path)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                           docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,
+                                                                                           unzip_command)
+
+            chmod_command = "sudo chmod -R 777 %s" % (addons_path)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,
+                                                                                       chmod_command)
+
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
 
             return self.create_action(log)
 
         return self.create_action(log)
+
 
     def create_action(self, log):
         action = {
@@ -353,6 +452,7 @@ class ExecutedCommand(models.Model):
     standard_error=fields.Text(string="Standard Error", readonly=True)
 
     def execute_ssh_command(self, ip, username, pwd, port, command):
+        _logger.info("Executing %s on %s:%s with user %s", command, ip, port, username)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.load_system_host_keys()
@@ -368,6 +468,7 @@ class ExecutedCommand(models.Model):
         return stdout_string, stderr_string, log
 
     def sftp_write_to_file(self, ip, username, pwd, port, filename, filecontents):
+        _logger.info("Writing contents to %s in %s:%s with user %s", filename, ip, port, username )
         try:
             file_info = ""
             error = ""
@@ -384,12 +485,14 @@ class ExecutedCommand(models.Model):
             client.close()
         except Exception as e:
             error = e
-        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s" % filename, "standard_output":file_info, "standard_error":e }
+
+        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s" % filename, "standard_output":file_info, "standard_error":error }
 
         log = super(ExecutedCommand, self).create(vals)
         return log
 
-    def sftp_put_file(self, ip, username, pwd, port, local_file, remote_path):
+    def sftp_put_file(self, ip, username, pwd, port, local_file, remote_file):
+        _logger.info("Put file %s to %s in %s:%s with user %s", local_file, remote_file, ip, port, username )
 
         try:
             file_info = ""
@@ -400,12 +503,12 @@ class ExecutedCommand(models.Model):
             client.load_system_host_keys()
             client.connect(ip, username=username, password=pwd, port=port)
             sftp = client.open_sftp()
-            file_info = sftp.put(local_file, remote_path)
+            file_info = sftp.put(local_file, remote_file)
             client.close()
         except Exception as e:
             error = e
 
-        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s to %s" % (local_file, remote_path), "standard_output":file_info, "standard_error":error }
+        vals={"datetime_executed": fields.Datetime.now(), "command":"sftp %s to %s" % (local_file, remote_file), "standard_output":file_info, "standard_error":error }
         log = super(ExecutedCommand, self).create(vals)
 
         return log
