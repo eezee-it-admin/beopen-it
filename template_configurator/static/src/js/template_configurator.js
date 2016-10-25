@@ -187,6 +187,10 @@ odoo.define('template_configurator.configurate', function(require) {
                     var domain = $("[name='domain']").val();
                     var email = $("[name='email']").val();
                     var price = $(".openerp_website_pricing_price_monthly").text();
+                    var flavor_id = $("[name='flavor']:checked").val();
+                    if (flavor_id == undefined) {
+                        flavor_id = $("[name='flavor']").val();
+                    }
 
 
 
@@ -217,7 +221,7 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
 
                     ajax.jsonRpc('/configurator/createinstance', 'call', {
-                        'domain': domain, 'email': email, 'market_type':market_type, 'apps': apps, 'price': price
+                        'domain': domain, 'email': email, 'market_type':market_type, 'apps': apps, 'price': price, 'flavor_id': flavor_id
                     }).then(function(result) {
                         if (result.type == "ok") {
                         }
