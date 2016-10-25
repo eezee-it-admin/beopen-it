@@ -1,5 +1,5 @@
 import json
-from openerp import http
+from openerp import http, api
 from openerp.http import request
 from openerp.service import db
 import xmlrpclib
@@ -90,18 +90,18 @@ class Configurator(http.Controller):
     @http.route("/configurator/prices", auth="public", website=True)
     def module_prices(self, *kw, **kwargs):
 
-        modules = http.request.env["botc.module"].search([("active", "=", True)]).sorted(key=lambda r: r.name)
+        modules = http.request.env["botc.module"].sudo().search([("active", "=", True)]).sorted(key=lambda r: r.name)
 
         return http.request.render("template_configurator.module_prices", {
             "modules" : modules
         })
 
     def get_markettype(self, code):
-        markettype = http.request.env["botc.markettype"].search([("code", "=", code)])
-        default_modules = http.request.env["botc.availablemodules"]. \
+        markettype = http.request.env["botc.markettype"].sudo().search([("code", "=", code)])
+        default_modules = http.request.env["botc.availablemodules"].sudo(). \
             search([("markettype_id", "=", markettype.id), ("included", "=", True)]). \
             sorted(key=lambda r: (r.order, r.module_id.name))
-        optional_modules = http.request.env["botc.availablemodules"]. \
+        optional_modules = http.request.env["botc.availablemodules"].sudo(). \
             search([("markettype_id", "=", markettype.id), ("included", "=", False)]). \
             sorted(key=lambda r: (r.order, r.module_id.name))
         return default_modules, markettype, optional_modules
@@ -120,6 +120,11 @@ class Configurator(http.Controller):
         _logger.info("Creating instance for %s", domain)
 
         default_modules, markettype, optional_modules = self.get_markettype(market_type)
+
+        module_ids_to_install = [module.module_id for module in default_modules]
+        module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name, module.module_id) for module in optional_modules] if o in apps]
+
+        http.request.env["botc.containerinstance"].create_instance(domain, markettype, module_ids_to_install)
 
         modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
         modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
@@ -140,18 +145,20 @@ class Configurator(http.Controller):
             "email_from": email
         }
 
-        lead_id = pool["crm.lead"].create(cr, SUPERUSER_ID, values_lead, context=context)
+        lead = http.request.env["crm.lead"].sudo().create(values_lead)
 
-        template_id = pool['ir.model.data'].xmlid_to_res_id(cr, SUPERUSER_ID, 'template_configurator.mail_template_configurator')
+        template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
         if template_id:
             _logger.info("Send mail for %s to %s", domain, email)
-            pool['mail.template'].send_mail(cr, SUPERUSER_ID, template_id, lead_id, force_send=True, context=context)
+            template = http.request.env['mail.template'].sudo().browse(template_id)
+            template.send_mail(lead.id, True)
         else:
             _logger.warning("No email template found for sending email to the configurator user")
 
-        template_user = markettype.template_username
-        template_passwd = markettype.template_password
-        template_database = markettype.template_database
+
+        template_user = markettype.template_id.template_username
+        template_passwd = markettype.template_id.template_password
+        template_database = markettype.template_id.template_database
 
         _logger.info("Fork process for creating %s", domain)
         p1 = os.fork()
@@ -182,7 +189,6 @@ class Configurator(http.Controller):
 
         db = openerp.sql_db.db_connect('postgres')
         with closing(db.cursor()) as cr:
-            chosen_template = openerp.tools.config['db_template']
             cr.execute("SELECT datname FROM pg_database WHERE datname = %s",
                        (domain,))
             if cr.fetchall():
@@ -200,49 +206,48 @@ class Configurator(http.Controller):
         try:
             _logger.info("Forked process for %s", domain)
             self._write_log(domain, "Creating instance {0}".format(domain))
-
             # Create database
-            #db.exp_create_database(domain, False, language, password, user, country_code)
-            master_pwd = openerp.tools.config['admin_passwd']
-            _logger.info("Duplicate database %s to %s", template_database, domain)
-            request.session.proxy("db").duplicate_database(master_pwd, template_database, domain)
-
-
-            #authenticate to new created database
-            url = "http://localhost:8069"
-
-            _logger.info("Authenticate on instance %s", domain)
-            common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
-
-            uid = common.authenticate(domain, template_user, template_passwd, {})
-            models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
-
-
-            _logger.info("Receiving ID's for modules on instance %s", domain)
-            #Install modules
-            IDList = []
-            for module_to_install in modules_to_install:
-                module_record = models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'search',
-                                                  [[['name', '=', module_to_install[0]]]])
-                IDList.append((module_record[0], module_to_install[1]))
-
-            _logger.info("ID's for modules on instance %s are %s", domain, IDList)
-            if len(IDList) > 0:
-                for (id, name) in IDList:
-                    self._write_log(domain, "Installing module {0}".format(name.encode('utf-8')))
-
-                    _logger.info("Installing module %s in instance %s", name.encode('utf-8'), domain)
-
-                    models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
-                                      [[id],
-                                       {'lang': language, 'tz': 'false', 'uid': uid, 'search_default_app': '1',
-                                        'params': {'action': '36'}}])
-
-            _logger.info("Resetting password instance %s", domain)
-            models.execute_kw(domain, uid, template_passwd, 'res.users', 'write',[[1], {
-                        'login': user, 'password': password
-                    }])
-            _logger.info("Instance %s ready", domain)
+            ##db.exp_create_database(domain, False, language, password, user, country_code)
+            # master_pwd = openerp.tools.config['admin_passwd']
+            # _logger.info("Duplicate database %s to %s", template_database, domain)
+            # request.session.proxy("db").duplicate_database(master_pwd, template_database, domain)
+            #
+            #
+            # #authenticate to new created database
+            # url = "http://localhost:8069"
+            #
+            # _logger.info("Authenticate on instance %s", domain)
+            # common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
+            #
+            # uid = common.authenticate(domain, template_user, template_passwd, {})
+            # models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+            #
+            #
+            # _logger.info("Receiving ID's for modules on instance %s", domain)
+            # #Install modules
+            # IDList = []
+            # for module_to_install in modules_to_install:
+            #     module_record = models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'search',
+            #                                       [[['name', '=', module_to_install[0]]]])
+            #     IDList.append((module_record[0], module_to_install[1]))
+            #
+            # _logger.info("ID's for modules on instance %s are %s", domain, IDList)
+            # if len(IDList) > 0:
+            #     for (id, name) in IDList:
+            #         self._write_log(domain, "Installing module {0}".format(name.encode('utf-8')))
+            #
+            #         _logger.info("Installing module %s in instance %s", name.encode('utf-8'), domain)
+            #
+            #         models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
+            #                           [[id],
+            #                            {'lang': language, 'tz': 'false', 'uid': uid, 'search_default_app': '1',
+            #                             'params': {'action': '36'}}])
+            #
+            # _logger.info("Resetting password instance %s", domain)
+            # models.execute_kw(domain, uid, template_passwd, 'res.users', 'write',[[1], {
+            #             'login': user, 'password': password
+            #         }])
+            # _logger.info("Instance %s ready", domain)
             self._write_log(domain, "Done")
 
             sys.exit(0)
