@@ -76,7 +76,8 @@ class MarketType(models.Model):
 
     goal_id=fields.Many2one("botc.goal", string="Goal")
     market_id=fields.Many2one("botc.market", string="Market", required=True)
-    template_id=fields.Many2one("botc.template", string="Template")
+    template_ids=fields.Many2many("botc.template", string="Templates")
+    preferred_flavor_id=fields.Many2one("botc.flavor", string="Preferred Flavor", required=True)
 
     available_module_ids = fields.One2many("botc.availablemodules", "markettype_id", string="Available Modules")
 
@@ -90,6 +91,8 @@ class Template(models.Model):
     template_apps_location = fields.Char("Template Apps Location (zip)", required=True)
     template_filestore_location = fields.Char("Template Filestore Location (zip)", required=True)
     dbserver_id = fields.Many2one("botc.dbserver", string="DB Server", required=True)
+    docker_image_id = fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
+    markettype_ids=fields.Many2many("botc.markettype", string="Types")
 
 class Module(models.Model):
     _name="botc.module"
@@ -169,13 +172,19 @@ class ContainerInstance(models.Model):
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
 
     @api.multi
-    def create_instance(self, domain, markettype, module_ids_to_install):
+    def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
 
         module_ids = [(0,0, {"module_id":module_id.id, "installed_on":fields.Datetime.now()}) for module_id in module_ids_to_install]
-        dbserver = self.env["botc.dbserver"].search([], limit = 1)
-        httpserver = self.env["botc.httpserver"].search([], limit = 1)
-        dockerimage = self.env["botc.dockerimage"].search([], limit = 1)
+        template =  next((template for template in markettype.template_ids if template.docker_image_id.flavor_id.id == int(flavor_id)), None)
+        if not template:
+            raise ValueError("No template found")
+
+        dbserver = template.dbserver_id
+        dockerimage = template.docker_image_id
+
+        #TODO load balance logic
         dockerserver = self.env["botc.dockerserver"].search([], limit = 1)
+        httpserver = self.env["botc.httpserver"].search([], limit = 1)
 
         max_port = 0;
         for container_instance in dockerserver.containerinstance_ids:
@@ -186,14 +195,20 @@ class ContainerInstance(models.Model):
         if max_port < dockerserver.min_port:
             max_port = dockerserver.min_port
 
-        port_xmlrpc = [port for port in dockerimage.port_ids if port.type == "xmlrpc"][0]
-        port_longpolling = [port for port in dockerimage.port_ids if port.type == "longpolling"][0]
+        port_xmlrpc = next((port for port in dockerimage.port_ids if port.type == "xmlrpc"), None)
+        port_longpolling = next((port for port in dockerimage.port_ids if port.type == "longpolling"), None)
+        if not port_xmlrpc or not port_longpolling:
+            raise ValueError("Ports definition error")
 
-        port_mapping_ids = [(0, 0, {"port_id": port_xmlrpc.id, "port_map":max_port + 1})]
-        port_mapping_ids += [(0, 0, {"port_id": port_longpolling.id, "port_map":max_port + 2})]
+        xmlrpc_port = max_port + 1
+        longpolling_port = max_port + 2
+        port_mapping_ids = [(0, 0, {"port_id": port_xmlrpc.id, "port_map":xmlrpc_port})]
+        port_mapping_ids += [(0, 0, {"port_id": port_longpolling.id, "port_map":longpolling_port})]
 
-        volume_addons = [volume for volume in dockerimage.volume_ids if volume.type == "addons"][0]
-        volume_filestore = [volume for volume in dockerimage.volume_ids if volume.type == "filestore"][0]
+        volume_addons = next((volume for volume in dockerimage.volume_ids if volume.type == "addons"), None)
+        volume_filestore = next((volume for volume in dockerimage.volume_ids if volume.type == "filestore"), None)
+        if not volume_addons or not volume_filestore:
+            raise ValueError("Volume definition error")
 
         volume_mapping_ids = [(0, 0, {"volume_id":volume_addons.id, "volume_map":"%s/%s/addons" % (dockerserver.data_path, domain)})]
         volume_mapping_ids += [(0, 0, {"volume_id":volume_filestore.id, "volume_map":"%s/%s/filestore" % (dockerserver.data_path, domain)})]
@@ -210,11 +225,13 @@ class ContainerInstance(models.Model):
                               }
 
         container_instance = self.create(container_instance_vals)
-        container_instance.deploy_addons()
-        container_instance.deploy_filestore()
-        container_instance.configure_http_server()
-        container_instance.create_docker_container()
-        container_instance.start_docker_container()
+        # container_instance.deploy_addons()
+        # container_instance.deploy_filestore()
+        # container_instance.configure_http_server()
+        # container_instance.create_docker_container()
+        # container_instance.start_docker_container()
+
+        return template, dockerserver.ip, xmlrpc_port
 
     @api.multi
     def create_docker_container(self):

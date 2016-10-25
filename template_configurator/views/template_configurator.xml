@@ -107,7 +107,8 @@
                             <field name="currency_id"/>
                             <field name="market_id"/>
                             <field name="goal_id"/>
-                            <field name="template_id"/>
+                            <field name="template_ids" widget="many2many_tags"/>
+                            <field name="preferred_flavor_id"/>
                             <field name="available_module_ids" mode="tree">
                                 <tree editable="bottom">
                                     <field name="module_id"/>
@@ -573,6 +574,8 @@
                             <field name="template_apps_location"/>
                             <field name="template_filestore_location"/>
                             <field name="dbserver_id"/>
+                            <field name="docker_image_id"/>
+                            <field name="markettype_ids" widget="many2many_tags"/>
                         </group>
                     </sheet>
                 </form>
