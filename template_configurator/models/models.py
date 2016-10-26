@@ -134,7 +134,7 @@ class Volume(models.Model):
     _name = "botc.volume"
     _rec_name = "type"
 
-    type = fields.Selection([("filestore","File Store"),("addons", "Addons")], required=True)
+    type = fields.Selection([("filestore","File Store"),("addons", "Addons"),("logging", "Logging")], required=True)
     path = fields.Char(string="Path", required=True)
     docker_image_id = fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
 
@@ -169,6 +169,7 @@ class ContainerInstance(models.Model):
     volume_mapping_ids = fields.One2many("botc.volumemapping", "container_instance_id")
     docker_image_id=fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
     docker_server_id=fields.Many2one("botc.dockerserver", string="Docker Server", required=True)
+    template_id=fields.Many2one("botc.template", string="Template")
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
 
     @api.multi
@@ -207,11 +208,13 @@ class ContainerInstance(models.Model):
 
         volume_addons = next((volume for volume in dockerimage.volume_ids if volume.type == "addons"), None)
         volume_filestore = next((volume for volume in dockerimage.volume_ids if volume.type == "filestore"), None)
-        if not volume_addons or not volume_filestore:
+        volume_logging = next((volume for volume in dockerimage.volume_ids if volume.type == "logging"), None)
+        if not volume_addons or not volume_filestore or not volume_logging:
             raise ValueError("Volume definition error")
 
         volume_mapping_ids = [(0, 0, {"volume_id":volume_addons.id, "volume_map":"%s/%s/addons" % (dockerserver.data_path, domain)})]
         volume_mapping_ids += [(0, 0, {"volume_id":volume_filestore.id, "volume_map":"%s/%s/filestore" % (dockerserver.data_path, domain)})]
+        volume_mapping_ids += [(0, 0, {"volume_id":volume_logging.id, "volume_map":"%s/%s/logging" % (dockerserver.data_path, domain)})]
 
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
@@ -220,16 +223,18 @@ class ContainerInstance(models.Model):
                               "httpserver_id": httpserver.id,
                               "docker_image_id":dockerimage.id,
                               "docker_server_id":dockerserver.id,
+                              "template_id":template.id,
                               "port_mapping_ids":port_mapping_ids,
                               "volume_mapping_ids":volume_mapping_ids
                               }
 
         container_instance = self.create(container_instance_vals)
-        # container_instance.deploy_addons()
-        # container_instance.deploy_filestore()
-        # container_instance.configure_http_server()
-        # container_instance.create_docker_container()
-        # container_instance.start_docker_container()
+        container_instance.deploy_addons()
+        container_instance.deploy_filestore()
+        container_instance.deploy_logging()
+        container_instance.configure_http_server()
+        container_instance.create_docker_container()
+        container_instance.start_docker_container()
 
         return template, dockerserver.ip, xmlrpc_port
 
@@ -353,11 +358,8 @@ class ContainerInstance(models.Model):
                                                                                        docker_server.pwd,
                                                                                        docker_server.port, mkdirbase_command)
 
-
-
-
-            if self.market_type_id.template_id:
-                local_filestore = self.market_type_id.template_id.template_filestore_location
+            if self.template_id:
+                local_filestore = self.template_id.template_filestore_location
                 zip_file = local_filestore.split("/")[::-1][0]
                 log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
                                                                                        docker_server.pwd,
@@ -384,6 +386,35 @@ class ContainerInstance(models.Model):
         return self.create_action(log)
 
     @api.multi
+    def deploy_logging(self):
+        try:
+            log = ""
+            docker_server = self.docker_server_id
+
+            logging_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if
+                                mapping.volume_id.type == "logging"][0])
+            mkdirbase_command = "sudo mkdir -p %s" % (logging_path)
+
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                       docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,
+                                                                                       mkdirbase_command)
+
+            chmod_command = "sudo chmod -R 777 %s" % (logging_path)
+            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                       docker_server.pwd,
+                                                                                       docker_server.port,
+                                                                                       chmod_command)
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
+            return self.create_action(log)
+
+
+        return self.create_action(log)
+
+    @api.multi
     def deploy_addons(self):
         try:
             log = ""
@@ -398,8 +429,8 @@ class ContainerInstance(models.Model):
 
 
 
-            if self.market_type_id.template_id:
-                local_filestore = self.market_type_id.template_id.template_apps_location
+            if self.template_id:
+                local_filestore = self.template_id.template_apps_location
                 zip_file = local_filestore.split("/")[::-1][0]
                 log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
                                                                                        docker_server.pwd,

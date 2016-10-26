@@ -445,6 +445,7 @@
                         <button type="object" name="unconfigure_http_server" string="Unconfigure Http Server"/>
                         <button type="object" name="deploy_filestore" string="Deploy Filestore"/>
                         <button type="object" name="deploy_addons" string="Deploy Addons"/>
+                        <button type="object" name="deploy_logging" string="Deploy Logging"/>
                     </header>
 
                     <sheet>
@@ -458,6 +459,7 @@
                                 <field name="docker_server_id"/>
                                 <field name="httpserver_id"/>
                                 <field name="docker_image_id"/>
+                                <field name="template_id"/>
                                 <field name="flavor"/>
                             </group>
                         </group>

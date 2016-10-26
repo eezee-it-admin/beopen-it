@@ -215,6 +215,7 @@ class Configurator(http.Controller):
                 # _logger.info("Create database %s to %s", template_database, domain)
                 # db.exp_create_database(domain, False, language, password, user, country_code)
 
+            #TODO Retry when connection refused (setup is to quick)
             #authenticate to new created database
             url = "http://%s:%s" % (ip, port)
 
