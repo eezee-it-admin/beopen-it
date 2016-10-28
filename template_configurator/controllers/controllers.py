@@ -162,8 +162,7 @@ class Configurator(http.Controller):
         _logger.info("Fork process for creating %s", domain)
         p1 = os.fork()
         if p1 != 0:
-            #os.waitpid(p1, 0)
-            a = 1 # Do nothing
+            os.waitpid(p1, 0)
         else:
             p2 = os.fork()
             if p2 != 0:
