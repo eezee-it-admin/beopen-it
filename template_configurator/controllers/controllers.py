@@ -162,15 +162,19 @@ class Configurator(http.Controller):
         _logger.info("Fork process for creating %s", domain)
         p1 = os.fork()
         if p1 != 0:
+            _logger.info("Waiting for p1")
             os.waitpid(p1, 0)
+            _logger.info("Stopped waiting for p1")
         else:
             p2 = os.fork()
             if p2 != 0:
+                _logger.info("Exiting p2")
                 os._exit(0)
             else:
                 self._create_database(country_code, domain, language, markettype, modules_to_install, password, user,
                                       template_user, template_passwd, template_database, ip, port)
 
+            _logger.info("Exiting p1")
             os._exit(0)
         _logger.info("Process forked for %s", domain)
 
