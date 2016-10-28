@@ -194,7 +194,7 @@ odoo.define('template_configurator.configurate', function(require) {
 
 
 
-                    $.blockUI({ message: '<h3><span id="progress">Please wait...</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
+                    $.blockUI({ message: '<h3><span id="progress">One moment please ...</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
 
                     var tid = setInterval(progress, 5000);
 
@@ -214,6 +214,16 @@ odoo.define('template_configurator.configurate', function(require) {
                                     $("#dialog-message").html("Your BeOpen exprience is ready at <a target='_blank' href='http://" +
                                         domain +".beopen.be'>http://" +
                                         domain + ".beopen.be.</a> <br/>You can login with your credentials that have been send to " + email);
+                                    $("#dialog" ).dialog( "open" );
+                                    $(".ui-dialog-titlebar").hide();
+                                }
+                                if (result.message.startsWith("ERROR")) {
+                                    $.unblockUI();
+                                    abortTimer();
+                                    $("[name='domain']").val("");
+                                    $("[name='email']").val("");
+                                    $("#dialog-message").html("Oops..., an unexpected error occured.<br/>Please <a href='https://beopen.be/page/contactus'>" +
+                                        "contact us</a> to set up your environment manually.");
                                     $("#dialog" ).dialog( "open" );
                                     $(".ui-dialog-titlebar").hide();
                                 }
