@@ -54,7 +54,7 @@ class Configurator(http.Controller):
                 text = file.readline()
                 file.close()
         except (Exception) as e:
-             return "Please wait..."
+             return "One moment please ..."
 
         return text
 
@@ -162,7 +162,8 @@ class Configurator(http.Controller):
         _logger.info("Fork process for creating %s", domain)
         p1 = os.fork()
         if p1 != 0:
-            os.waitpid(p1, 0)
+            #os.waitpid(p1, 0)
+            a = 1 # Do nothing
         else:
             p2 = os.fork()
             if p2 != 0:
@@ -215,16 +216,25 @@ class Configurator(http.Controller):
                 # _logger.info("Create database %s to %s", template_database, domain)
                 # db.exp_create_database(domain, False, language, password, user, country_code)
 
-            #TODO Retry when connection refused (setup is to quick)
             #authenticate to new created database
             url = "http://%s:%s" % (ip, port)
+            success = False
+            counter = 0
+            common = ""
 
-            _logger.info("Authenticate on instance %s", domain)
-            common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
-
-            uid = common.authenticate(domain, template_user, template_passwd, {})
-            models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
-
+            while not success:
+                try:
+                    _logger.info("Authenticate on instance %s on %s:%s", domain, ip, port)
+                    common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
+                    uid = common.authenticate(domain, template_user, template_passwd, {})
+                    models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+                    success = True
+                except Exception as e:
+                    _logger.info("Error on authenticate %s", str(e))
+                    counter += 1
+                    if counter > 5:
+                        raise Exception("Aborted after 5 tries...")
+                    time.sleep(5)
 
             _logger.info("Receiving ID's for modules on instance %s", domain)
             #Install modules
@@ -256,11 +266,11 @@ class Configurator(http.Controller):
             sys.exit(0)
 
         except (db.DatabaseExists) as e:
-            self._write_log(domain, "ERROR : {0}".format(e))
+            self._write_log(domain, "ERROR : Unexpected by creating instance %s".format(domain))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
         except (Exception) as e :
-            self._write_log(domain, "ERROR : {0}".format(e))
+            self._write_log(domain, "ERROR : Unexpected by creating instance %s".format(domain))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
 

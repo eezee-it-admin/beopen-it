@@ -332,6 +332,11 @@
             <field name="model">botc.dockerserver</field>
             <field name="arch" type="xml">
                 <form string="Docker Server Form">
+                    <header>
+                        <button type="object" name="docker_info" string="Docker Info"/>
+                        <button type="object" name="docker_images" string="Docker Images"/>
+                        <button type="object" name="list_containers" string="List Containers"/>
+                    </header>
                     <sheet>
                         <group>
                             <field name="name"/>
@@ -400,6 +405,9 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page string="Configuration">
+                                <field name="odoo_config"/>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -446,6 +454,12 @@
                         <button type="object" name="deploy_filestore" string="Deploy Filestore"/>
                         <button type="object" name="deploy_addons" string="Deploy Addons"/>
                         <button type="object" name="deploy_logging" string="Deploy Logging"/>
+                        <button type="object" name="deploy_config" string="Deploy Odoo Configuration"/>
+                        <button type="object" name="image_history" string="Image History"/>
+                        <button type="object" name="container_top" string="Container Top"/>
+                        <button type="object" name="docker_info" string="Docker Info"/>
+                        <button type="object" name="docker_images" string="Docker Images"/>
+                        <button type="object" name="list_containers" string="List Containers"/>
                     </header>
 
                     <sheet>
@@ -460,6 +474,7 @@
                                 <field name="httpserver_id"/>
                                 <field name="docker_image_id"/>
                                 <field name="template_id"/>
+                                <field name="restart_policy"/>
                                 <field name="flavor"/>
                             </group>
                         </group>
@@ -488,6 +503,12 @@
                                         <field name="volume_map"/>
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="Http Config">
+                                <field name="http_config"/>
+                            </page>
+                            <page string="Odoo Config">
+                                <field name="odoo_config"/>
                             </page>
                         </notebook>
                     </sheet>

@@ -4,6 +4,23 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+def create_action(log):
+    if not log:
+        return {}
+
+    action = {
+        "type": "ir.actions.act_window",
+        "name": "Execution Log",
+        "res_model": "botc.executedcommand",
+        "domain": [("id", "=", log.id)],
+        "view_type": "form",
+        "view_mode": "form,tree",
+        'view_id': False,
+        "target": "new",
+        'res_id': log.id
+    }
+    return action
+
 class Market(models.Model):
     _name="botc.market"
 
@@ -56,6 +73,36 @@ class DockerServer(models.Model):
     min_port=fields.Integer(string="Minimum port", required=True)
     max_port=fields.Integer(string="Maximum port", required=True)
     containerinstance_ids=fields.One2many("botc.containerinstance", "docker_server_id", "Container Instances")
+
+    @api.multi
+    def list_containers(self):
+        command = "docker ps"
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.ip, self.username,
+                                                             self.pwd, self.port,
+                                                             command)
+
+        return create_action(log)
+
+    @api.multi
+    def docker_info(self):
+        command = "docker info"
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.ip, self.username,
+                                                             self.pwd, self.port,
+                                                             command)
+
+        return create_action(log)
+
+    @api.multi
+    def docker_images(self):
+        command = "docker images"
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.ip, self.username,
+                                                             self.pwd, self.port,
+                                                             command)
+
+        return create_action(log)
 
 class MarketType(models.Model):
     _name="botc.markettype"
@@ -124,17 +171,18 @@ class DockerImage(models.Model):
     _name="botc.dockerimage"
 
     name=fields.Char(string="Name", required=True)
-    image_name=fields.Char(String="Image Name", required=True)
+    image_name=fields.Char(string="Image Name", required=True)
     flavor_id=fields.Many2one("botc.flavor", string="Flavor")
     volume_ids=fields.One2many("botc.volume", "docker_image_id", "Volumes")
     port_ids = fields.One2many("botc.port", "docker_image_id", "Ports")
+    odoo_config=fields.Text(string="Odoo Configuration")
 
 
 class Volume(models.Model):
     _name = "botc.volume"
     _rec_name = "type"
 
-    type = fields.Selection([("filestore","File Store"),("addons", "Addons"),("logging", "Logging")], required=True)
+    type = fields.Selection([("filestore","File Store"),("addons", "Addons"),("logging", "Logging"), ("config","Configuration")], required=True)
     path = fields.Char(string="Path", required=True)
     docker_image_id = fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
 
@@ -170,7 +218,11 @@ class ContainerInstance(models.Model):
     docker_image_id=fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
     docker_server_id=fields.Many2one("botc.dockerserver", string="Docker Server", required=True)
     template_id=fields.Many2one("botc.template", string="Template")
+    restart_policy=fields.Selection([("no","No"),("on-failure", "On Failure"),("always", "Always"),("unless-stopped","Unless Stopped")],
+                                    required=True, default="unless-stopped")
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
+    http_config=fields.Text(string="Http Config")
+    odoo_config=fields.Text(string="Odoo Config")
 
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
@@ -216,6 +268,18 @@ class ContainerInstance(models.Model):
         volume_mapping_ids += [(0, 0, {"volume_id":volume_filestore.id, "volume_map":"%s/%s/filestore" % (dockerserver.data_path, domain)})]
         volume_mapping_ids += [(0, 0, {"volume_id":volume_logging.id, "volume_map":"%s/%s/logging" % (dockerserver.data_path, domain)})]
 
+        volume_config = next((volume for volume in dockerimage.volume_ids if volume.type == "config"), None)
+        if volume_config:
+            volume_mapping_ids += [(0, 0, {"volume_id": volume_config.id, "volume_map": "%s/%s/config" % (dockerserver.data_path, domain)})]
+
+        http_config = httpserver.config_template
+        http_config = http_config.replace("%domain%", domain)
+        http_config = http_config.replace("%docker_server%", dockerserver.ip)
+        http_config = http_config.replace("%longpolling_port%", str(longpolling_port))
+        http_config = http_config.replace("%xmlrpc_port%", str(xmlrpc_port))
+
+        odoo_config = dockerimage.odoo_config
+
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
                               "module_ids": module_ids,
@@ -224,6 +288,8 @@ class ContainerInstance(models.Model):
                               "docker_image_id":dockerimage.id,
                               "docker_server_id":dockerserver.id,
                               "template_id":template.id,
+                              "http_config":http_config,
+                              "odoo_config":odoo_config,
                               "port_mapping_ids":port_mapping_ids,
                               "volume_mapping_ids":volume_mapping_ids
                               }
@@ -232,6 +298,7 @@ class ContainerInstance(models.Model):
         container_instance.deploy_addons()
         container_instance.deploy_filestore()
         container_instance.deploy_logging()
+        container_instance.deploy_config()
         container_instance.configure_http_server()
         container_instance.create_docker_container()
         container_instance.start_docker_container()
@@ -252,6 +319,9 @@ class ContainerInstance(models.Model):
         command += " -e DB_ENV_POSTGRES_PASSWORD=%s" % self.dbserver_id.pwd
         command += " -e DBFILTER=%s" % self.domain
 
+        if self.restart_policy:
+            command += " --restart %s" % self.restart_policy
+
         for volume_mapping in self.volume_mapping_ids:
             command += " -v %s:%s" % (volume_mapping.volume_map, volume_mapping.volume_id.path)
 
@@ -260,7 +330,7 @@ class ContainerInstance(models.Model):
         stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def delete_docker_container(self):
@@ -270,7 +340,7 @@ class ContainerInstance(models.Model):
                                                              self.docker_server_id.pwd, self.docker_server_id.port,
                                                              command)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def stop_docker_container(self):
@@ -278,7 +348,7 @@ class ContainerInstance(models.Model):
 
         stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def start_docker_container(self):
@@ -287,7 +357,7 @@ class ContainerInstance(models.Model):
         stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def inspect_docker_container(self):
@@ -297,18 +367,14 @@ class ContainerInstance(models.Model):
                                                              self.docker_server_id.pwd, self.docker_server_id.port, command)
 
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def configure_http_server(self):
         try:
             http_server = self.httpserver_id
             filename = "/tmp/%s.conf" %self.domain
-            filecontents = http_server.config_template
-            filecontents = filecontents.replace("%domain%",self.domain)
-            filecontents = filecontents.replace("%docker_server%",self.docker_server_id.ip)
-            filecontents = filecontents.replace("%longpolling_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "longpolling"][0]))
-            filecontents = filecontents.replace("%xmlrpc_port%",str([mapping.port_map for mapping in self.port_mapping_ids if mapping.port_id.type == "xmlrpc"][0]))
+            filecontents = self.http_config
 
             log = self.env["botc.executedcommand"].sftp_write_to_file(http_server.ip, http_server.username, http_server.pwd,
                                                                       http_server.port, filename, filecontents)
@@ -322,9 +388,9 @@ class ContainerInstance(models.Model):
                                                                       http_server.port, self.httpserver_id.reload_command)
         except Exception as e:
             _logger.info("Exception %s", e)
-            return self.create_action(log)
+            return create_action(log)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def unconfigure_http_server(self):
@@ -341,136 +407,198 @@ class ContainerInstance(models.Model):
                                                                                        http_server.port,
                                                                                        self.httpserver_id.reload_command)
         except:
-            return self.create_action(log)
+            return create_action(log)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def deploy_filestore(self):
         try:
-            log = ""
+            log = None
             docker_server = self.docker_server_id
 
-            filestore_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"][0])
-            mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
+            filestore_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"), None)
+            if filestore_path:
+                mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
 
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port, mkdirbase_command)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port, mkdirbase_command)
 
-            if self.template_id:
-                local_filestore = self.template_id.template_filestore_location
-                zip_file = local_filestore.split("/")[::-1][0]
-                log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,local_filestore, "/tmp/%s" % zip_file)
+                if self.template_id:
+                    local_filestore = self.template_id.template_filestore_location
+                    zip_file = local_filestore.split("/")[::-1][0]
+                    log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,local_filestore, "/tmp/%s" % zip_file)
 
-                unzip_command = "sudo unzip /tmp/%s -d %s/%s/filestore" % (zip_file, filestore_path, self.domain)
-                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
-                                                                                           docker_server.username,
+                    unzip_command = "sudo unzip /tmp/%s -d %s/%s/filestore" % (zip_file, filestore_path, self.domain)
+                    stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                               docker_server.username,
+                                                                                               docker_server.pwd,
+                                                                                               docker_server.port,
+                                                                                               unzip_command)
+
+                chmod_command = "sudo chmod -R 777 %s" % (filestore_path)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
                                                                                            docker_server.pwd,
                                                                                            docker_server.port,
-                                                                                           unzip_command)
-
-            chmod_command = "sudo chmod -R 777 %s" % (filestore_path)
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,
-                                                                                       chmod_command)
+                                                                                           chmod_command)
 
 
         except Exception as e:
             _logger.info("Exception %s", e)
-            return self.create_action(log)
+            return create_action(log)
 
-        return self.create_action(log)
+        return create_action(log)
 
     @api.multi
     def deploy_logging(self):
         try:
-            log = ""
+            log = None
             docker_server = self.docker_server_id
 
-            logging_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if
-                                mapping.volume_id.type == "logging"][0])
-            mkdirbase_command = "sudo mkdir -p %s" % (logging_path)
+            logging_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if
+                                mapping.volume_id.type == "logging"), None)
+            if logging_path:
+                mkdirbase_command = "sudo mkdir -p %s" % (logging_path)
 
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
-                                                                                       docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,
-                                                                                       mkdirbase_command)
-
-            chmod_command = "sudo chmod -R 777 %s" % (logging_path)
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,
-                                                                                       chmod_command)
-
-        except Exception as e:
-            _logger.info("Exception %s", e)
-            return self.create_action(log)
-
-
-        return self.create_action(log)
-
-    @api.multi
-    def deploy_addons(self):
-        try:
-            log = ""
-            docker_server = self.docker_server_id
-
-            addons_path = str([mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "addons"][0])
-            mkdirbase_command = "sudo mkdir -p %s" % (addons_path)
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port, mkdirbase_command)
-
-
-
-
-            if self.template_id:
-                local_filestore = self.template_id.template_apps_location
-                zip_file = local_filestore.split("/")[::-1][0]
-                log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,local_filestore, "/tmp/%s" % zip_file)
-
-                unzip_command = "sudo unzip /tmp/%s -d %s" % (zip_file, addons_path)
                 stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
                                                                                            docker_server.username,
                                                                                            docker_server.pwd,
                                                                                            docker_server.port,
-                                                                                           unzip_command)
+                                                                                           mkdirbase_command)
 
-            chmod_command = "sudo chmod -R 777 %s" % (addons_path)
-            stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                       docker_server.pwd,
-                                                                                       docker_server.port,
-                                                                                       chmod_command)
+                chmod_command = "sudo chmod -R 777 %s" % (logging_path)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,
+                                                                                           chmod_command)
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
+            return create_action(log)
+
+
+        return create_action(log)
+
+    @api.multi
+    def deploy_config(self):
+        try:
+            log = None
+            docker_server = self.docker_server_id
+
+            config_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if
+                                mapping.volume_id.type == "config"), None)
+            if config_path:
+                if config_path and self.odoo_config:
+                    mkdirbase_command = "sudo mkdir -p %s" % (config_path)
+
+                    stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                               docker_server.username,
+                                                                                               docker_server.pwd,
+                                                                                               docker_server.port,
+                                                                                               mkdirbase_command)
+
+                    chmod_command = "sudo chmod -R 777 %s" % (config_path)
+                    stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                               docker_server.pwd,
+                                                                                               docker_server.port,
+                                                                                               chmod_command)
+
+                    filecontents = self.odoo_config
+
+                    log = self.env["botc.executedcommand"].sftp_write_to_file(docker_server.ip, docker_server.username,
+                                                                              docker_server.pwd,
+                                                                              docker_server.port, config_path + "/openerp-server.conf", filecontents)
+
+
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
+            return create_action(log)
+
+
+        return create_action(log)
+
+    @api.multi
+    def deploy_addons(self):
+        try:
+            log = None
+            docker_server = self.docker_server_id
+
+            addons_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "addons"), None)
+            if addons_path:
+                mkdirbase_command = "sudo mkdir -p %s" % (addons_path)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port, mkdirbase_command)
+
+
+
+
+                if self.template_id:
+                    local_filestore = self.template_id.template_apps_location
+                    zip_file = local_filestore.split("/")[::-1][0]
+                    log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,local_filestore, "/tmp/%s" % zip_file)
+
+                    unzip_command = "sudo unzip /tmp/%s -d %s" % (zip_file, addons_path)
+                    stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
+                                                                                               docker_server.username,
+                                                                                               docker_server.pwd,
+                                                                                               docker_server.port,
+                                                                                               unzip_command)
+
+                chmod_command = "sudo chmod -R 777 %s" % (addons_path)
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port,
+                                                                                           chmod_command)
 
 
         except Exception as e:
             _logger.info("Exception %s", e)
 
-            return self.create_action(log)
+            return create_action(log)
 
-        return self.create_action(log)
+        return create_action(log)
 
+    @api.multi
+    def image_history(self):
+        command = "docker history %s" % self.docker_image_id.image_name
 
-    def create_action(self, log):
-        action = {
-            "type": "ir.actions.act_window",
-            "name": "Execution Log",
-            "res_model": "botc.executedcommand",
-            "domain": [("id", "=", log.id)],
-            "view_type": "form",
-            "view_mode": "form,tree",
-            'view_id': False,
-            "target": "new",
-            'res_id': log.id
-        }
-        return action
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
+                                                             self.docker_server_id.pwd, self.docker_server_id.port,
+                                                             command)
+
+        return create_action(log)
+
+    @api.multi
+    def container_top(self):
+        command = "docker top %s" % self.domain
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.docker_server_id.ip, self.docker_server_id.username,
+                                                             self.docker_server_id.pwd, self.docker_server_id.port,
+                                                             command)
+
+        return create_action(log)
+
+    @api.multi
+    def list_containers(self):
+
+        return self.docker_server_id.list_containers()
+
+    @api.multi
+    def docker_info(self):
+
+        return self.docker_server_id.docker_info()
+
+    @api.multi
+    def docker_images(self):
+
+        return self.docker_server_id.docker_images()
 
 
 class PortMapping(models.Model):
