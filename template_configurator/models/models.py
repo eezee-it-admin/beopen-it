@@ -419,7 +419,7 @@ class ContainerInstance(models.Model):
 
             filestore_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"), None)
             if filestore_path:
-                mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
+                mkdirbase_command = "sudo mkdir -p %s/filestore/%s" % (filestore_path, self.domain)
 
                 stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
                                                                                            docker_server.pwd,
@@ -432,7 +432,7 @@ class ContainerInstance(models.Model):
                                                                                            docker_server.pwd,
                                                                                            docker_server.port,local_filestore, "/tmp/%s" % zip_file)
 
-                    unzip_command = "sudo unzip /tmp/%s -d %s/%s/filestore" % (zip_file, filestore_path, self.domain)
+                    unzip_command = "sudo unzip /tmp/%s -d %s/filestore/%s" % (zip_file, filestore_path, self.domain)
                     stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
                                                                                                docker_server.username,
                                                                                                docker_server.pwd,
