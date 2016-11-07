@@ -14,7 +14,7 @@ from openerp import SUPERUSER_ID
 import os
 import sys
 from random import choice
-
+import requests
 _logger = logging.getLogger(__name__)
 
 
@@ -123,7 +123,7 @@ class Configurator(http.Controller):
         module_ids_to_install = [module.module_id for module in default_modules]
         module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name, module.module_id) for module in optional_modules] if o in apps]
 
-        template, ip, port = http.request.env["botc.containerinstance"].sudo().create_instance(domain, markettype, module_ids_to_install, flavor_id)
+        admin_pwd, template, ip, port = http.request.env["botc.containerinstance"].sudo().create_instance(domain, markettype, module_ids_to_install, flavor_id)
 
         modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
         modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
@@ -157,7 +157,7 @@ class Configurator(http.Controller):
 
         template_user = template.template_username
         template_passwd = template.template_password
-        template_database = template.template_database
+        template_backup = template.template_backup_location
 
         _logger.info("Fork process for creating %s", domain)
         p1 = os.fork()
@@ -172,7 +172,7 @@ class Configurator(http.Controller):
                 os._exit(0)
             else:
                 self._create_database(country_code, domain, language, markettype, modules_to_install, password, user,
-                                      template_user, template_passwd, template_database, ip, port)
+                                      template_user, template_passwd, ip, port, template_backup, admin_pwd)
 
             _logger.info("Exiting p1")
             os._exit(0)
@@ -205,39 +205,59 @@ class Configurator(http.Controller):
         text = self._read_log(domain)
         return {"message": text}
 
-    def _create_database(self, country_code, domain, language, markettype, modules_to_install, password, user, template_user, template_passwd, template_database, ip, port):
+    def _create_database(self, country_code, domain, language, markettype, modules_to_install, password, user, template_user,
+                         template_passwd, ip, port, template_backup, admin_pwd):
         try:
             _logger.info("Forked process for %s", domain)
             self._write_log(domain, "Creating instance {0}".format(domain))
             # Create database
-            if template_database:
-                master_pwd = openerp.tools.config['admin_passwd']
-                _logger.info("Duplicate database %s to %s", template_database, domain)
-                request.session.proxy("db").duplicate_database(master_pwd, template_database, domain)
-            else:
-                raise ValueError("No database template defined")
-                # _logger.info("Create database %s to %s", template_database, domain)
-                # db.exp_create_database(domain, False, language, password, user, country_code)
-
-            #authenticate to new created database
             url = "http://%s:%s" % (ip, port)
+
             success = False
             counter = 0
             common = ""
 
             while not success:
                 try:
-                    _logger.info("Authenticate on instance %s on %s:%s", domain, ip, port)
-                    common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
-                    uid = common.authenticate(domain, template_user, template_passwd, {})
-                    models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+                    _logger.info("Check Database Manager on %s:%s", ip, port)
+                    restore_url = "%s/web/database/manager" % url
+                    response = requests.get(restore_url)
+                    if response.status_code != 200:
+                        raise Exception("Response not 200")
                     success = True
                 except Exception as e:
-                    _logger.info("Error on authenticate %s", str(e))
+                    _logger.info("Error on Check Database Manager %s", str(e))
                     counter += 1
                     if counter > 5:
                         raise Exception("Aborted after 5 tries...")
                     time.sleep(5)
+
+            if template_backup:
+                # master_pwd = openerp.tools.config['admin_passwd']
+                _logger.info("Restore database to %s", url)
+                restore_url = "%s/web/database/restore" % url
+                file = open(template_backup,'r').read()
+                files = {'backup_file': ('backup_file', file)}
+                response = requests.post(restore_url, data={"name":domain,
+                                                            "copy":True,
+                                                            "master_pwd":admin_pwd
+                                                            }, files=files)
+
+                _logger.info("Response = %s", response)
+
+
+            else:
+                raise ValueError("No database template defined")
+                # _logger.info("Create database %s to %s", template_database, domain)
+                # db.exp_create_database(domain, False, language, password, user, country_code)
+
+            #authenticate to new created database
+            _logger.info("Authenticate on instance %s on %s:%s", domain, ip, port)
+            common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
+            uid = common.authenticate(domain, template_user, template_passwd, {})
+            models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+            success = True
+
 
             _logger.info("Receiving ID's for modules on instance %s", domain)
             #Install modules
