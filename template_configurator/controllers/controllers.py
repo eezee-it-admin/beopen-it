@@ -190,12 +190,10 @@ class Configurator(http.Controller):
         if not domain is None and len(domain) < 5:
             return {"type": "error", "message": "Must be minimum 5 characters."}
 
-        db = openerp.sql_db.db_connect('postgres')
-        with closing(db.cursor()) as cr:
-            cr.execute("SELECT datname FROM pg_database WHERE datname = %s",
-                       (domain,))
-            if cr.fetchall():
-                return {"type": "error", "message": "Database already exists."}
+        domains = http.request.env["botc.containerinstance"].sudo().search([("domain", "=", domain)])
+
+        if domains and len(domains) > 0:
+            return {"type": "error", "message": "Database already exists."}
 
         return {"type": "ok"}
 

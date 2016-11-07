@@ -226,6 +226,11 @@ class ContainerInstance(models.Model):
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
 
+        domains = self.env["botc.containerinstance"].sudo().search([("domain", "=", domain)])
+
+        if domains and len(domains) > 0:
+            raise Exception("Database %s already exists" % domain)
+
         module_ids = [(0,0, {"module_id":module_id.id, "installed_on":fields.Datetime.now()}) for module_id in module_ids_to_install]
         template =  next((template for template in markettype.template_ids if template.docker_image_id.flavor_id.id == int(flavor_id)), None)
         if not template:
