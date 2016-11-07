@@ -591,12 +591,10 @@
                     <sheet>
                         <group>
                             <field name="name"/>
-                            <field name="template_database"/>
                             <field name="template_username"/>
                             <field name="template_password" password="True"/>
                             <field name="template_apps_location"/>
-                            <field name="template_filestore_location"/>
-                            <field name="dbserver_id"/>
+                            <field name="template_backup_location"/>
                             <field name="docker_image_id"/>
                             <field name="markettype_ids" widget="many2many_tags"/>
                         </group>
