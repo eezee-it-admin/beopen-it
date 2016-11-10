@@ -294,6 +294,7 @@ class ContainerInstance(models.Model):
         http_config = http_config.replace("%xmlrpc_port%", str(xmlrpc_port))
 
         odoo_config = dockerimage.odoo_config
+        odoo_config = odoo_config.replace("%domain%", domain)
 
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
