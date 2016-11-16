@@ -36,3 +36,5 @@ access_botc_portmapping_user,access.botc_portmapping.user,model_botc_portmapping
 access_botc_volumemapping_user,access.botc_volumemapping.user,model_botc_volumemapping,group_configurator_user,1,0,0,0
 access_botc_executedcommand_user,access.botc_executedcommand.user,model_botc_executedcommand,group_configurator_user,0,0,0,0
 access_botc_dockerimage_user,access.botc_dockerimage.user,model_botc_dockerimage,group_configurator_user,0,0,0,0
+
+access_botc_module_public,access.botc_module.public,model_botc_module,,1,0,0,0
