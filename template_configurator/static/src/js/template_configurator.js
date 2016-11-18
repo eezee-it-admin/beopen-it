@@ -43,8 +43,15 @@ odoo.define('template_configurator.configurate', function(require) {
             var price_by_changed = function(e) {
                 $($(e.target).closest("[data-toggle='tab']").attr('href') + '_by').prop('checked', true).change();
             }
-            var colorize = function(oo) {
+            var colorize_checkbox = function(oo) {
                 oo = !oo ? $(".openerp_website_pricing_app_checkbox") : $(oo.target);
+                oo.each(function(i, o) {
+                    var closest = $($(o).closest(".openerp_website_pricing_app"));
+                    closest.toggleClass("selected", $(o).prop('checked'));
+                });
+            }
+            var colorize_radio = function(oo) {
+                oo = !oo ? $(".openerp_website_pricing_app_radio") : $(oo.target);
                 oo.each(function(i, o) {
                     var closest = $($(o).closest(".openerp_website_pricing_app"));
                     closest.toggleClass("selected", $(o).prop('checked'));
@@ -90,16 +97,36 @@ odoo.define('template_configurator.configurate', function(require) {
                     $(".openerp_website_pricing_" + k).text(v.toLocaleString(r.localeLang[r.currency]));
                 })
 
-            }
-            ;
+            };
+
+            var show_hode_modules = function() {
+                var flavor_id = $("[name='flavor']:checked").val();
+                if (flavor_id == undefined) {
+                    flavor_id = $("[name='flavor']").val();
+                }
+
+                $(".col-md-4").each(function(i, o) {
+                    div_flavor_id = $(o).data("flavor");
+                    if (div_flavor_id != undefined && div_flavor_id != -1 && div_flavor_id != flavor_id) {
+                        $(o).find(".openerp_website_pricing_app_checkbox:checked").prop("checked",false).change();
+                        $(o).prop("hidden", true);
+                    } else {
+                        $(o).prop("hidden", false);
+                    }
+                });
+            };
 
             $(".openerp_website_pricing").on("change", "input", update_price);
             $(".openerp_website_pricing").on("change", "input[type='checkbox']", function(o) {
                 ensure_constraints(o),
-                colorize(o)
+                colorize_checkbox(o)
+            });
+            $(".openerp_website_pricing").on("change", "input[type='radio']", function(o) {
+                show_hode_modules(),
+                colorize_radio()
             });
             $(".openerp_website_pricing_app").on('click', function(o) {
-                if (o.toElement.type != "checkbox") {
+                if (o.toElement != undefined && o.toElement.type != "checkbox") {
                     $(o.currentTarget).find("input").trigger("click");
                 }
 
@@ -127,7 +154,9 @@ odoo.define('template_configurator.configurate', function(require) {
             })
             $('.odoo_pricing_board a[data-toggle="tab"][href="#' + $("input[name='price_by']:checked").val() + '"]').click();
             $($(".openerp_website_pricing input[type='checkbox']")[0]).change();
-            colorize();
+            colorize_checkbox();
+            colorize_radio();
+            show_hode_modules();
             $.each($('.amount_to_localize'), function(i, j) {
                 $(j).text(parseInt($(j).text()).toLocaleString(r.localeLang[r.currency]));
             });

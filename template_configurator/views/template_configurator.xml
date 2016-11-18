@@ -117,6 +117,13 @@
                                     <field name="order"/>
                                 </tree>
                             </field>
+                            <field name="available_service_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="service_id"/>
+                                    <field name="flavor_id"/>
+                                    <field name="order"/>
+                                </tree>
+                            </field>
                         </group>
                     </sheet>
                 </form>
@@ -188,7 +195,59 @@
             </field>
         </record>
 
-                <!-- Tree view for Flavor -->
+        <!-- Tree view for Service -->
+        <record model="ir.ui.view" id="botc_service_tree_view">
+            <field name="name">botc_service.tree</field>
+            <field name="model">botc.service</field>
+            <field name="arch" type="xml">
+                <tree string="Module Tree">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="price"/>
+                    <field name="currency_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Service -->
+        <record model="ir.ui.view" id="botc_module_form_view">
+            <field name="name">botc_service.form</field>
+            <field name="model">botc.service</field>
+            <field name="arch" type="xml">
+                <form string="Module Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="price"/>
+                            <field name="currency_id"/>
+                            <field name="unit"/>
+                            <field name="active"/>
+                            <field name="image"/>
+                            <field name="fixed_price"/>
+                            <field name="minimum_amount"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Service -->
+        <record model="ir.actions.act_window" id="botc_service_list_action">
+            <field name="name">Services</field>
+            <field name="res_model">botc.service</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create Services
+                </p>
+            </field>
+        </record>
+
+
+
+        <!-- Tree view for Flavor -->
         <record model="ir.ui.view" id="botc_flavor_tree_view">
             <field name="name">botc_flavor.tree</field>
             <field name="model">botc.flavor</field>
@@ -635,6 +694,8 @@
                   action="botc_flavor_list_action" groups="template_configurator.group_configurator_administrator"/>
         <menuitem id="modules_menu" name="Modules" parent="configuration_template_configurator_menu"
                   action="botc_module_list_action"/>
+        <menuitem id="services_menu" name="Services" parent="configuration_template_configurator_menu"
+                  action="botc_service_list_action"/>
         <menuitem id="dbservers_menu" name="Db Servers" parent="configuration_template_configurator_menu"
                   action="botc_dbserver_list_action" groups="template_configurator.group_configurator_administrator"/>
         <menuitem id="httpservers_menu" name="Http Servers" parent="configuration_template_configurator_menu"

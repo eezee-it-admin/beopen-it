@@ -69,7 +69,8 @@ class Configurator(http.Controller):
 
         apps_data = {}
         for optional_module in optional_modules:
-            apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.price}
+            apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.price,
+                                                                     "flavor" : optional_module.flavor_id.id if optional_module.flavor_id else -1}
 
         module_data = {"currency": markettype.currency_id.name,
                 "localeLang": {"USD": "en", "EUR": "fr"},
