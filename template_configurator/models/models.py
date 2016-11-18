@@ -129,6 +129,8 @@ class MarketType(models.Model):
     preferred_flavor_id=fields.Many2one("botc.flavor", string="Preferred Flavor", required=True)
 
     available_module_ids = fields.One2many("botc.availablemodules", "markettype_id", string="Available Modules")
+    available_service_ids = fields.One2many("botc.availableservices", "markettype_id", string="Available Services")
+
 
 class DockerImage(models.Model):
     _name="botc.dockerimage"
@@ -167,6 +169,19 @@ class Module(models.Model):
     standard=fields.Boolean(string="Standard", default=True)
     package_file_location=fields.Char(string="Package File Location")
 
+class Service(models.Model):
+    _name="botc.service"
+
+    name=fields.Char(string="Name", required=True, translate = True)
+    description=fields.Text(string="Description", translate = True)
+    price = fields.Monetary(string="Price", required=True)
+    currency_id = fields.Many2one('res.currency', string='Currency')
+    active = fields.Boolean(string="Active", default=True)
+    image = fields.Binary(string="Image Icon")
+    unit = fields.Char(string="Units", translate = True, required = True)
+    fixed_price=fields.Boolean(string="Fixed price", default=True)
+    minimum_amount=fields.Integer(string="Minimum amount")
+
 class AvailableModules(models.Model):
     _name="botc.availablemodules"
     _rec_name = "module_id"
@@ -174,6 +189,15 @@ class AvailableModules(models.Model):
     module_id=fields.Many2one("botc.module", string="Module", required=True)
     markettype_id = fields.Many2one("botc.markettype", string="Market Type", required=True)
     included = fields.Boolean(string="Included in package", default=False)
+    flavor_id=fields.Many2one("botc.flavor", string="Flavor")
+    order = fields.Integer(string="Sort Order")
+
+class AvailableServices(models.Model):
+    _name="botc.availableservices"
+    _rec_name = "service_id"
+
+    service_id=fields.Many2one("botc.service", string="Service", required=True)
+    markettype_id = fields.Many2one("botc.markettype", string="Market Type", required=True)
     flavor_id=fields.Many2one("botc.flavor", string="Flavor")
     order = fields.Integer(string="Sort Order")
 

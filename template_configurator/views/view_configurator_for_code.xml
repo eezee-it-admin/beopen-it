@@ -25,6 +25,53 @@
                                 <div class="row">
                                     <div class="col-md-9 col-xs-12">
                                         <div class="openerp_website_pricing_step">
+                                            <t t-if="len(markettype.template_ids) > 1">
+
+                                                <div class="openerp_website_pricing_step_head">
+                                                    <h3 class="mt16 mb16 text-violet-dark">
+                                                        <b>Edition</b>
+                                                    </h3>
+                                                </div>
+                                                <div class="openerp_website_pricing_step_body mb16">
+                                                    <div class="row">
+                                                        <t t-foreach="markettype.template_ids" t-as="template">
+                                                            <div class="col-md-4">
+                                                                <div class="row openerp_website_pricing_app">
+                                                                    <label>
+                                                                        <div class="col-md-7 col-xs-7 openerp_website_pricing_app_name">
+                                                                            <div class="openerp_website_pricing_app_real_name">
+                                                                                <span>
+                                                                                    <t t-esc="template.docker_image_id.flavor_id.name"/>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </label>
+                                                                    <div class="col-md-2 col-xs-1">
+                                                                        <t t-if="markettype.preferred_flavor_id.id == template.docker_image_id.flavor_id.id">
+                                                                            <input type="radio" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
+                                                                                   name="flavor" t-att-value="template.docker_image_id.flavor_id.id"
+                                                                                   class="openerp_website_pricing_app_radio" checked="checked">
+                                                                            </input>
+                                                                        </t>
+                                                                        <t t-if="markettype.preferred_flavor_id.id != template.docker_image_id.flavor_id.id">
+                                                                            <input type="radio" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
+                                                                                   name="flavor" t-att-value="template.docker_image_id.flavor_id.id"
+                                                                                   class="openerp_website_pricing_app_radio">
+                                                                            </input>
+                                                                        </t>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                             </t>
+                                            <t t-if="len(markettype.template_ids) == 1">
+                                                <t t-foreach="markettype.template_ids" t-as="template">
+                                                    <input type="hidden" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
+                                                           name="flavor" t-att-value="template.docker_image_id.flavor_id.id" checked="checked"/>
+                                                </t>
+                                            </t>
                                             <div class="openerp_website_pricing_step_head">
                                                 <h3 class="mt16 mb16 text-violet-dark">Default <b>Apps</b> in this
                                                     package (
@@ -80,7 +127,7 @@
 
                                                     <t t-foreach="optional_modules" t-as="module">
 
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4" t-att-data-flavor="module.flavor_id.id if module.flavor_id else -1">
                                                             <t t-set="dependenciesastext" t-value="module.module_id.description+' '"/>
                                                             <t t-set="dependenciesasname" t-value="''"/>
                                                             <t t-if="module.module_id.module_ids">
@@ -206,32 +253,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12 mt16">
-                                        <t t-if="len(markettype.template_ids) > 1">
-                                            <b>Based on</b><br/>
-                                            <t t-foreach="markettype.template_ids" t-as="template">
-                                                <t t-if="markettype.preferred_flavor_id.id == template.docker_image_id.flavor_id.id">
-                                                    <input type="radio" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
-                                                           name="flavor" t-att-value="template.docker_image_id.flavor_id.id" checked="checked">
-                                                        <t t-esc="template.docker_image_id.flavor_id.name"/>
-                                                    </input>
-                                                </t>
-                                                <t t-if="markettype.preferred_flavor_id.id != template.docker_image_id.flavor_id.id">
-                                                    <input type="radio" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
-                                                           name="flavor" t-att-value="template.docker_image_id.flavor_id.id">
-                                                        <t t-esc="template.docker_image_id.flavor_id.name"/>
-                                                    </input>
-                                                </t>
-                                                <br/>
-                                            </t>
-                                        </t>
-                                        <t t-if="len(markettype.template_ids) == 1">
-                                            <t t-foreach="markettype.template_ids" t-as="template">
-                                                <input type="hidden" t-att-id="'flavor_%s' % template.docker_image_id.flavor_id.id"
-                                                       name="flavor" t-att-value="template.docker_image_id.flavor_id.id" checked="checked"/>
-                                            </t>
-                                        </t>
                                     </div>
                                 </div>
                             </form>
