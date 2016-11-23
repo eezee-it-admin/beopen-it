@@ -29,7 +29,7 @@
 
                                                 <div class="openerp_website_pricing_step_head">
                                                     <h3 class="mt16 mb16 text-violet-dark">
-                                                        <b>Edition</b>
+                                                        Select your <b>Edition</b>
                                                     </h3>
                                                 </div>
                                                 <div class="openerp_website_pricing_step_body mb16">
@@ -73,8 +73,7 @@
                                                 </t>
                                             </t>
                                             <div class="openerp_website_pricing_step_head">
-                                                <h3 class="mt16 mb16 text-violet-dark">Default <b>Apps</b> in this
-                                                    package (
+                                                <h3 class="mt16 mb16 text-violet-dark">Default <b>Apps</b> (
                                                     <b>
                                                         <t t-esc="markettype.price"/>
                                                         <span class="openerp_website_pricing_currency">
@@ -118,8 +117,7 @@
                                             </div>
                                             <div class="openerp_website_pricing_step_head">
                                                 <h3 class="mt16 mb16 text-violet-dark">
-                                                    <b>Optional Apps</b>
-                                                    for this package
+                                                    Select your <b>Optional Apps</b>
                                                 </h3>
                                             </div>
                                             <div class="openerp_website_pricing_step_body mb16">
@@ -128,7 +126,7 @@
                                                     <t t-foreach="optional_modules" t-as="module">
 
                                                         <div class="col-md-4" t-att-data-flavor="module.flavor_id.id if module.flavor_id else -1">
-                                                            <t t-set="dependenciesastext" t-value="module.module_id.description+' '"/>
+                                                            <t t-set="dependenciesastext" t-value="module.module_id.description if module.module_id.description else '' + ' '"/>
                                                             <t t-set="dependenciesasname" t-value="''"/>
                                                             <t t-if="module.module_id.module_ids">
                                                                 <t t-set="dependenciesastext" t-value="dependenciesastext+' '+'Requires : '"/>
@@ -182,6 +180,79 @@
                                                     </t>
                                                 </div>
                                             </div>
+
+
+
+
+                                            <div class="openerp_website_pricing_step_head">
+                                                <h3 class="mt16 mb16 text-violet-dark">
+                                                    Select your <b>Services</b>
+                                                </h3>
+                                            </div>
+                                            <div class="openerp_website_pricing_step_body mb16">
+                                                <div class="row">
+
+                                                    <t t-foreach="optional_services" t-as="service">
+
+                                                        <div class="col-md-4" t-att-data-flavor="service.flavor_id.id if service.flavor_id else -1">
+                                                            <t t-set="dependenciesastext" t-value="service.service_id.description if service.service_id.description else '' + ' '"/>
+
+                                                            <div class="row openerp_website_pricing_service" data-toggle="tooltip" animation="true" html="true"
+                                                                 t-att-title="dependenciesastext">
+                                                                <label>
+                                                                    <div class="col-md-3 col-xs-3 openerp_website_pricing_service_icon">
+                                                                        <span t-field="service.service_id.image"
+                                                                              t-field-options='{"widget": "image", "style": "width: 36px; height: 36px;"}'
+                                                                              class="img-responsive icon_radius"/>
+                                                                    </div>
+                                                                    <div class="col-md-7 col-xs-7 openerp_website_pricing_service_name">
+                                                                        <div class="openerp_website_pricing_service_real_name">
+                                                                            <span>
+                                                                                <t t-esc="service.service_id.name"/>
+                                                                            </span>
+
+                                                                        </div>
+                                                                        <div class="openerp_website_pricing_service_price">
+                                                                            <b>
+                                                                                <t t-esc="service.service_id.price"/>
+                                                                                <span class="openerp_website_pricing_currency">
+                                                                                    <t t-esc="service.service_id.currency_id.name"/>
+                                                                                </span>
+                                                                            </b>
+                                                                            /
+                                                                            <span class="openerp_website_pricing_currency">
+                                                                                    <t t-esc="service.service_id.unit"/>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </label>
+                                                                <div class="col-md-2 col-xs-1">
+                                                                    <t t-if="service.service_id.fixed_price">
+                                                                        <input type="checkbox" t-att-name="service.service_id.name.replace(' ','_')"
+                                                                               t-att-id="'service_' + str(service.service_id.id)"
+                                                                               class="openerp_website_pricing_service_checkbox"
+                                                                               t-att-data-service-name="service.service_id.name"
+                                                                               />
+                                                                    </t>
+                                                                   <t t-if="not service.service_id.fixed_price">
+                                                                        <input class="openerp_website_pricing_service_amount form-control text-right"
+                                                                               t-att-id="'service_' + str(service.service_id.id)"
+                                                                               t-att-name="service.service_id.name.replace(' ','_')"
+                                                                               t-att-data-minimum="service.service_id.minimum_amount"
+                                                                               type="number"
+                                                                               t-att-value="service.service_id.minimum_amount"/>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+
+
+
+
+
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-xs-12 mt16">
@@ -233,6 +304,25 @@
                                                                     <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
                                                                 </td>
                                                             </tr>
+
+                                                            <t t-foreach="optional_services" t-as="service">
+                                                                <t t-if="not service.service_id.fixed_price">
+                                                                    <tr t-att-id="'openerp_website_pricing_optional_tr_service_' + str(service.service_id.id)">
+                                                                        <td>
+                                                                            <b>
+                                                                                <span class="openerp_website_pricing_optional_service_num"><t t-esc="service.service_id.minimum_amount"/></span>
+                                                                            </b>
+                                                                            <t t-esc="service.service_id.name"/>
+                                                                        </td>
+                                                                        <td class="text-right">
+                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="service.service_id.minimum_amount * service.service_id.price"/></span>
+                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.currency_id.name"/></span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </t>
+
+
                                                             <tr class="active">
                                                                 <td>
                                                                     <b>Total</b>
@@ -246,12 +336,50 @@
                                                                 </td>
                                                             </tr>
                                                         </tbody>
+
+
                                                     </table>
                                                 </div>
                                                 <div class="tab-pane tab-pane-yearly" id="yearly">
 
                                                 </div>
                                             </div>
+
+
+                                            <div class="tab-content" style="">
+                                                <div class="tab-pane tab-pane-oneshot active in" >
+                                                    <table class="table openerp_website_pricing_table_oneshot">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th class="text-violet-dark" colspan="2">Extra One-Time Services
+                                                                </th>
+                                                            </tr>
+
+                                                            <t t-foreach="optional_services" t-as="service">
+                                                                <t t-if="service.service_id.fixed_price">
+                                                                    <tr t-att-id="'openerp_website_pricing_optional_tr_service_' + str(service.service_id.id)">
+                                                                        <td>
+                                                                            <t t-esc="service.service_id.name"/>
+                                                                        </td>
+                                                                        <td class="text-right">
+                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="service.service_id.price"/></span>
+                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.currency_id.name"/></span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </t>
+                                                            </t>
+
+
+                                                        </tbody>
+
+
+                                                    </table>
+                                                </div>
+
+                                            </div>
+
+
+
                                         </div>
                                     </div>
                                 </div>

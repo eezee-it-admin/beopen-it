@@ -106,6 +106,16 @@ class DockerServer(models.Model):
 
         return create_action(log)
 
+    @api.multi
+    def docker_stats(self):
+        command = "docker stats --no-stream"
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.ip, self.username,
+                                                             self.pwd, self.port,
+                                                             command)
+
+        return create_action(log)
+
 class MarketType(models.Model):
     _name="botc.markettype"
 
@@ -137,6 +147,7 @@ class DockerImage(models.Model):
 
     name=fields.Char(string="Name", required=True)
     image_name=fields.Char(string="Image Name", required=True)
+    extra_parameters=fields.Char(string="Extra Parameters")
     flavor_id=fields.Many2one("botc.flavor", string="Flavor")
     volume_ids=fields.One2many("botc.volume", "docker_image_id", "Volumes")
     port_ids = fields.One2many("botc.port", "docker_image_id", "Ports")
@@ -243,6 +254,7 @@ class ContainerInstance(models.Model):
     template_id=fields.Many2one("botc.template", string="Template")
     restart_policy=fields.Selection([("no","No"),("on-failure", "On Failure"),("always", "Always"),("unless-stopped","Unless Stopped")],
                                     required=True, default="unless-stopped")
+    extra_parameters=fields.Char(string="Extra Parameters")
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
     http_config=fields.Text(string="Http Config")
     odoo_config=fields.Text(string="Odoo Config")
@@ -331,7 +343,8 @@ class ContainerInstance(models.Model):
                               "http_config":http_config,
                               "odoo_config":odoo_config,
                               "port_mapping_ids":port_mapping_ids,
-                              "volume_mapping_ids":volume_mapping_ids
+                              "volume_mapping_ids":volume_mapping_ids,
+                              "extra_parameters":dockerimage.extra_parameters
                               }
 
         container_instance = self.create(container_instance_vals)
@@ -361,6 +374,9 @@ class ContainerInstance(models.Model):
 
         if self.restart_policy:
             command += " --restart %s" % self.restart_policy
+
+        if self.extra_parameters:
+            command += " %s" % self.extra_parameters
 
         for volume_mapping in self.volume_mapping_ids:
             command += " -v %s:%s" % (volume_mapping.volume_map, volume_mapping.volume_id.path)

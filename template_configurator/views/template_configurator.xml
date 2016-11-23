@@ -394,6 +394,7 @@
                     <header>
                         <button type="object" name="docker_info" string="Docker Info"/>
                         <button type="object" name="docker_images" string="Docker Images"/>
+                        <button type="object" name="docker_stats" string="Docker Stats"/>
                         <button type="object" name="list_containers" string="List Containers"/>
                     </header>
                     <sheet>
@@ -445,6 +446,7 @@
                         <group>
                             <field name="name"/>
                             <field name="image_name"/>
+                            <field name="extra_parameters"/>
                             <field name="flavor_id"/>
                         </group>
                         <notebook>
@@ -532,6 +534,7 @@
                                 <field name="docker_server_id"/>
                                 <field name="httpserver_id"/>
                                 <field name="docker_image_id"/>
+                                <field name="extra_parameters"/>
                                 <field name="template_id"/>
                                 <field name="restart_policy"/>
                                 <field name="flavor"/>
