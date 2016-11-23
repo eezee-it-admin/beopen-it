@@ -67,15 +67,28 @@ class Configurator(http.Controller):
         if not markettype:
             return self.module_prices(kw, kwargs)
 
+        optional_services = http.request.env["botc.availableservices"].sudo(). \
+            search([("markettype_id", "=", markettype.id)]). \
+            sorted(key=lambda r: (r.order, r.service_id.name))
+
         apps_data = {}
         for optional_module in optional_modules:
             apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.price,
                                                                      "flavor" : optional_module.flavor_id.id if optional_module.flavor_id else -1}
 
+        services_data = {}
+        for optional_service in optional_services:
+            services_data["service_" + str(optional_service.service_id.id)] = {"price" : optional_service.service_id.price,
+                                                                               "flavor" : optional_service.flavor_id.id if optional_service.flavor_id else -1,
+                                                                               "minimum_amount" : optional_service.service_id.minimum_amount,
+                                                                               "fixed_price" : optional_service.service_id.fixed_price,
+                                                                               "name" : optional_service.service_id.name}
+
         module_data = {"currency": markettype.currency_id.name,
                 "localeLang": {"USD": "en", "EUR": "fr"},
                 "current_country": "BE",
-                "apps": apps_data
+                "apps": apps_data,
+                "services": services_data
                 }
 
         module_data_json = "'" + json.dumps(module_data) + "'"
@@ -84,6 +97,7 @@ class Configurator(http.Controller):
             "markettype": markettype,
             "default_modules" : default_modules,
             "optional_modules" : optional_modules,
+            "optional_services" : optional_services,
             "module_data" : module_data_json,
             "error" : error
         })
@@ -108,7 +122,7 @@ class Configurator(http.Controller):
         return default_modules, markettype, optional_modules
 
     @http.route("/configurator/createinstance", type="json", auth="public", website=True)
-    def createinstance(self, domain, email, market_type, apps, price, flavor_id):
+    def createinstance(self, domain, email, market_type, apps, services, price, flavor_id):
 
         domain = domain.lower()
 
@@ -134,6 +148,7 @@ class Configurator(http.Controller):
         description += "Password : " + password + "\n\n"
         description += "Package  : " + markettype.name + "\n"
         description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
+        description += "Requested services : " + ', '.join([s for s in services]) + "\n"
         description += "Price after trial : " + price + " " + markettype.currency_id.name
 
         _logger.info("Create lead for %s", domain)
