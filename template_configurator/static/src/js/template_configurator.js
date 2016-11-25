@@ -136,9 +136,11 @@ odoo.define('template_configurator.configurate', function(require) {
 
                 });
                 var has_service_selected = false;
+                var one_shot_total = 0
                 $(".openerp_website_pricing_service_checkbox").each(function(i,o) {
                     if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.checked) {
                         $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", false);
+                        one_shot_total += r.services[o.id].price;
                         has_service_selected = true;
                     } else {
                         $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", true);
@@ -147,6 +149,7 @@ odoo.define('template_configurator.configurate', function(require) {
 
                 if (has_service_selected) {
                     $(".openerp_website_pricing_table_oneshot").prop("hidden", false);
+                    $(".openerp_website_pricing_price_oneshot").text(one_shot_total)
                 } else {
                     $(".openerp_website_pricing_table_oneshot").prop("hidden", true);
                 }

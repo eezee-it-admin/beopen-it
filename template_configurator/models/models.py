@@ -332,6 +332,9 @@ class ContainerInstance(models.Model):
         odoo_config = dockerimage.odoo_config
         odoo_config = odoo_config.replace("%domain%", domain)
 
+        extra_parameters = dockerimage.extra_parameters
+        extra_parameters = extra_parameters.replace("%domain%", domain)
+
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
                               "module_ids": module_ids,
@@ -344,7 +347,7 @@ class ContainerInstance(models.Model):
                               "odoo_config":odoo_config,
                               "port_mapping_ids":port_mapping_ids,
                               "volume_mapping_ids":volume_mapping_ids,
-                              "extra_parameters":dockerimage.extra_parameters
+                              "extra_parameters":extra_parameters
                               }
 
         container_instance = self.create(container_instance_vals)
