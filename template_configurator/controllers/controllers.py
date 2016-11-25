@@ -279,7 +279,8 @@ class Configurator(http.Controller):
             for module_to_install in modules_to_install:
                 module_record = models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'search',
                                                   [[['name', '=', module_to_install[0]]]])
-                IDList.append((module_record[0], module_to_install[1]))
+                if module_record:
+                    IDList.append((module_record[0], module_to_install[1]))
 
             _logger.info("ID's for modules on instance %s are %s", domain, IDList)
             if len(IDList) > 0:

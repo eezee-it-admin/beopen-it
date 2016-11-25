@@ -16,9 +16,7 @@
                 <div class="oe_structure">
                     <div class="container">
                         <div itemprop="description" t-field="markettype.description" class="oe_structure mt16" id="markettype_full_description"/>
-
                         <section class="container openerp_website_pricing bg-white">
-
                             <form class="openerp_website_pricing_form form-inline" name="configurator">
                                 <input type="hidden" name="market_type" t-att-value="markettype.code"/>
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -85,9 +83,7 @@
                                             </div>
                                             <div class="openerp_website_pricing_step_body mb24">
                                                 <div class="row">
-
                                                     <t t-foreach="default_modules" t-as="module">
-
                                                         <div class="col-md-4">
                                                             <div class="row openerp_website_pricing_app selected" data-toggle="tooltip" animation="true" html="true"
                                                                  t-att-title="module.module_id.description">
@@ -102,17 +98,12 @@
                                                                             <span>
                                                                                 <t t-esc="module.module_id.name"/>
                                                                             </span>
-
-
                                                                         </div>
                                                                     </div>
                                                                 </label>
                                                             </div>
                                                         </div>
-
                                                     </t>
-
-
                                                 </div>
                                             </div>
                                             <div class="openerp_website_pricing_step_head">
@@ -122,9 +113,7 @@
                                             </div>
                                             <div class="openerp_website_pricing_step_body mb16">
                                                 <div class="row">
-
                                                     <t t-foreach="optional_modules" t-as="module">
-
                                                         <div class="col-md-4" t-att-data-flavor="module.flavor_id.id if module.flavor_id else -1">
                                                             <t t-set="dependenciesastext" t-value="module.module_id.description if module.module_id.description else '' + ' '"/>
                                                             <t t-set="dependenciesasname" t-value="''"/>
@@ -180,10 +169,6 @@
                                                     </t>
                                                 </div>
                                             </div>
-
-
-
-
                                             <div class="openerp_website_pricing_step_head">
                                                 <h3 class="mt16 mb16 text-violet-dark">
                                                     Select your <b>Services</b>
@@ -210,7 +195,6 @@
                                                                             <span>
                                                                                 <t t-esc="service.service_id.name"/>
                                                                             </span>
-
                                                                         </div>
                                                                         <div class="openerp_website_pricing_service_price">
                                                                             <b>
@@ -248,11 +232,6 @@
                                                     </t>
                                                 </div>
                                             </div>
-
-
-
-
-
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-xs-12 mt16">
@@ -304,7 +283,6 @@
                                                                     <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
                                                                 </td>
                                                             </tr>
-
                                                             <t t-foreach="optional_services" t-as="service">
                                                                 <t t-if="not service.service_id.fixed_price">
                                                                     <tr t-att-id="'openerp_website_pricing_optional_tr_service_' + str(service.service_id.id)">
@@ -321,8 +299,6 @@
                                                                     </tr>
                                                                 </t>
                                                             </t>
-
-
                                                             <tr class="active">
                                                                 <td>
                                                                     <b>Total</b>
@@ -336,16 +312,11 @@
                                                                 </td>
                                                             </tr>
                                                         </tbody>
-
-
                                                     </table>
                                                 </div>
                                                 <div class="tab-pane tab-pane-yearly" id="yearly">
-
                                                 </div>
                                             </div>
-
-
                                             <div class="tab-content" style="">
                                                 <div class="tab-pane tab-pane-oneshot active in" >
                                                     <table class="table openerp_website_pricing_table_oneshot">
@@ -362,24 +333,27 @@
                                                                             <t t-esc="service.service_id.name"/>
                                                                         </td>
                                                                         <td class="text-right">
-                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="service.service_id.price"/></span>
+                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="'{:.0f}'.format(service.service_id.price)"/></span>
                                                                             <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.currency_id.name"/></span>
                                                                         </td>
                                                                     </tr>
                                                                 </t>
                                                             </t>
-
-
+                                                            <tr class="active">
+                                                                <td>
+                                                                    <b>Total</b>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <b>
+                                                                        <span class="openerp_website_pricing_price_oneshot">0</span>
+                                                                        <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
+                                                                    </b>
+                                                                </td>
+                                                            </tr>
                                                         </tbody>
-
-
                                                     </table>
                                                 </div>
-
                                             </div>
-
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -412,7 +386,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <t t-raw="'&lt;script>$(function () {'"/>
                           <t t-raw="'pricing_init(JSON.parse('"/><t t-raw="module_data"/><t t-raw="'));'"/>
                         <t t-raw="'});&lt;/script>'"/>
