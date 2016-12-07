@@ -4,6 +4,8 @@ access_botc_market_administrator,access.botc_market.administrator,model_botc_mar
 access_botc_goal_administrator,access.botc_goal.administrator,model_botc_goal,group_configurator_administrator,1,1,1,1
 access_botc_module_administrator,access.botc_module.administrator,model_botc_module,group_configurator_administrator,1,1,1,1
 access_botc_availablemodules_administrator,access.botc_availablemodules.administrator,model_botc_availablemodules,group_configurator_administrator,1,1,1,1
+access_botc_service_administrator,access.botc_service.administrator,model_botc_service,group_configurator_administrator,1,1,1,1
+access_botc_availableservices_administrator,access.botc_availableservices.administrator,model_botc_availableservices,group_configurator_administrator,1,1,1,1
 access_botc_template_administrator,access.botc_template.administrator,model_botc_template,group_configurator_administrator,1,1,1,1
 access_botc_httpserver_administrator,access.botc_httpserver.administrator,model_botc_httpserver,group_configurator_administrator,1,1,1,1
 access_botc_flavor_administrator,access.botc_flavor.administrator,model_botc_flavor,group_configurator_administrator,1,1,1,1
@@ -23,6 +25,8 @@ access_botc_market_user,access.botc_market.user,model_botc_market,group_configur
 access_botc_goal_user,access.botc_goal.user,model_botc_goal,group_configurator_user,1,1,1,1
 access_botc_module_user,access.botc_module.user,model_botc_module,group_configurator_user,1,1,1,1
 access_botc_availablemodules_user,access.botc_availablemodules.user,model_botc_availablemodules,group_configurator_user,1,1,1,1
+access_botc_service_user,access.botc_service.user,model_botc_service,group_configurator_user,1,1,1,1
+access_botc_availableservices_user,access.botc_availableservices.user,model_botc_availableservices,group_configurator_user,1,1,1,1
 access_botc_template_user,access.botc_template.user,model_botc_template,group_configurator_user,1,0,0,0
 access_botc_httpserver_user,access.botc_httpserver.user,model_botc_httpserver,group_configurator_user,0,0,0,0
 access_botc_flavor_user,access.botc_flavor.user,model_botc_flavor,group_configurator_user,1,0,0,0
@@ -36,3 +40,6 @@ access_botc_portmapping_user,access.botc_portmapping.user,model_botc_portmapping
 access_botc_volumemapping_user,access.botc_volumemapping.user,model_botc_volumemapping,group_configurator_user,1,0,0,0
 access_botc_executedcommand_user,access.botc_executedcommand.user,model_botc_executedcommand,group_configurator_user,0,0,0,0
 access_botc_dockerimage_user,access.botc_dockerimage.user,model_botc_dockerimage,group_configurator_user,0,0,0,0
+
+access_botc_module_public,access.botc_module.public,model_botc_module,,1,0,0,0
+access_botc_service_public,access.botc_service.public,model_botc_service,,1,0,0,0

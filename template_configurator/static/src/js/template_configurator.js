@@ -29,6 +29,13 @@ odoo.define('template_configurator.configurate', function(require) {
                 return localeString(this, s, c, 3, 2);
             }
             )
+            function selectedFlavor() {
+                var flavor_id = $("[name='flavor']:checked").val();
+                if (flavor_id == undefined) {
+                    flavor_id = $("[name='flavor']").val();
+                }
+                return flavor_id;
+            }
             var get_depends = function(o) {
                 return (o.data('app-depends') || '').split(',').filter(function(n) {
                     return n != ""
@@ -43,8 +50,34 @@ odoo.define('template_configurator.configurate', function(require) {
             var price_by_changed = function(e) {
                 $($(e.target).closest("[data-toggle='tab']").attr('href') + '_by').prop('checked', true).change();
             }
-            var colorize = function(oo) {
+            var colorize_checkbox_app = function(oo) {
                 oo = !oo ? $(".openerp_website_pricing_app_checkbox") : $(oo.target);
+                oo.each(function(i, o) {
+                    var closest = $($(o).closest(".openerp_website_pricing_app"));
+                    closest.toggleClass("selected", $(o).prop('checked'));
+                });
+            }
+            var colorize_checkbox_service = function(oo) {
+                oo = !oo ? $(".openerp_website_pricing_service_checkbox") : $(oo.target);
+                oo.each(function(i, o) {
+                    var closest = $($(o).closest(".openerp_website_pricing_service"));
+                    closest.toggleClass("selected", $(o).prop('checked'));
+                });
+            }
+            var colorize_amount = function(oo) {
+                oo = !oo ? $(".openerp_website_pricing_service_amount") : $(oo.target);
+                oo.each(function(i, o) {
+                    num_val = parseInt(o.value);
+                    if (isNaN(num_val)) {
+                        num_val = 0;
+                        $(o).val(num_val);
+                    }
+                    var closest = $($(o).closest(".openerp_website_pricing_service"));
+                    closest.toggleClass("selected", num_val != 0);
+                });
+            }
+            var colorize_radio = function(oo) {
+                oo = !oo ? $(".openerp_website_pricing_app_radio") : $(oo.target);
                 oo.each(function(i, o) {
                     var closest = $($(o).closest(".openerp_website_pricing_app"));
                     closest.toggleClass("selected", $(o).prop('checked'));
@@ -66,6 +99,17 @@ odoo.define('template_configurator.configurate', function(require) {
                     });
                 }
             }
+            var ensure_amount = function(e) {
+                var number = parseInt($(e.target).val());
+                var minimum = parseInt($(e.target).data('minimum'));
+                if (isNaN(minimum)) {
+                    minimum = 0;
+                }
+                if (isNaN(number) || number < minimum ) {
+                    $(e.target).val(minimum);
+                }
+                update_price();
+            }
             var update_price = function() {
                 window.location.hash = $(".openerp_website_pricing > form.openerp_website_pricing_form").serialize();
                 var p = {
@@ -75,6 +119,41 @@ odoo.define('template_configurator.configurate', function(require) {
                     "optional_modules_price_monthly": 0,
                     "price_monthly": 0,
                 };
+
+                var flavor_id = parseInt(selectedFlavor());
+                $(".openerp_website_pricing_service_amount").each(function(i, o) {
+                    if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.value > 0) {
+                        $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", false);
+                        $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_service_num").text(o.value);
+
+                        total_for_service = parseInt(o.value) * r.services[o.id].price;
+                        $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_services_price_monthly").text(total_for_service);
+                        p.price_monthly += total_for_service;
+
+                    } else {
+                        $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", true);
+                    }
+
+                });
+                var has_service_selected = false;
+                var one_shot_total = 0
+                $(".openerp_website_pricing_service_checkbox").each(function(i,o) {
+                    if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.checked) {
+                        $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", false);
+                        one_shot_total += r.services[o.id].price;
+                        has_service_selected = true;
+                    } else {
+                        $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", true);
+                    }
+                });
+
+                if (has_service_selected) {
+                    $(".openerp_website_pricing_table_oneshot").prop("hidden", false);
+                    $(".openerp_website_pricing_price_oneshot").text(one_shot_total)
+                } else {
+                    $(".openerp_website_pricing_table_oneshot").prop("hidden", true);
+                }
+
                 p.default_modules_num = $(".openerp_website_pricing_default_modules_num").text().trim();
                 p.default_modules_price_monthly = parseFloat($(".openerp_website_pricing_default_modules_price_monthly").text().trim());
 
@@ -83,23 +162,51 @@ odoo.define('template_configurator.configurate', function(require) {
                     p.optional_modules_price_monthly += parseFloat(r.apps[$(o).data("app-name")]['price']);
                 });
 
-                p.price_monthly = parseFloat(p.default_modules_price_monthly) + parseFloat(p.optional_modules_price_monthly);
+                p.price_monthly += parseFloat(p.default_modules_price_monthly) + parseFloat(p.optional_modules_price_monthly);
 
 
                 $.each(p, function(k, v) {
                     $(".openerp_website_pricing_" + k).text(v.toLocaleString(r.localeLang[r.currency]));
                 })
 
-            }
-            ;
+            };
+
+            var show_hide_modules = function() {
+                var flavor_id = selectedFlavor();
+
+                $(".col-md-4").each(function(i, o) {
+                    div_flavor_id = $(o).data("flavor");
+                    if (div_flavor_id != undefined && div_flavor_id != -1 && div_flavor_id != flavor_id) {
+                        $(o).find(".openerp_website_pricing_app_checkbox:checked").prop("checked",false).change();
+                        $(o).prop("hidden", true);
+                    } else {
+                        $(o).prop("hidden", false);
+                    }
+                });
+            };
 
             $(".openerp_website_pricing").on("change", "input", update_price);
             $(".openerp_website_pricing").on("change", "input[type='checkbox']", function(o) {
                 ensure_constraints(o),
-                colorize(o)
+                colorize_checkbox_app(o)
+                colorize_checkbox_service(o)
+            });
+            $(".openerp_website_pricing").on("change", "input[type='radio']", function(o) {
+                show_hide_modules(),
+                colorize_radio()
+            });
+            $(".openerp_website_pricing").on("change", "input[type='number']", function(o) {
+                ensure_amount(o),
+                colorize_amount()
             });
             $(".openerp_website_pricing_app").on('click', function(o) {
-                if (o.toElement.type != "checkbox") {
+                if (o.toElement != undefined && o.toElement.type != "checkbox") {
+                    $(o.currentTarget).find("input").trigger("click");
+                }
+
+            });
+            $(".openerp_website_pricing_service").on('click', function(o) {
+                if (o.toElement != undefined && o.toElement.type != "checkbox") {
                     $(o.currentTarget).find("input").trigger("click");
                 }
 
@@ -127,7 +234,11 @@ odoo.define('template_configurator.configurate', function(require) {
             })
             $('.odoo_pricing_board a[data-toggle="tab"][href="#' + $("input[name='price_by']:checked").val() + '"]').click();
             $($(".openerp_website_pricing input[type='checkbox']")[0]).change();
-            colorize();
+            colorize_checkbox_app();
+            colorize_checkbox_service();
+            colorize_amount();
+            colorize_radio();
+            show_hide_modules();
             $.each($('.amount_to_localize'), function(i, j) {
                 $(j).text(parseInt($(j).text()).toLocaleString(r.localeLang[r.currency]));
             });
@@ -173,26 +284,35 @@ odoo.define('template_configurator.configurate', function(require) {
             });
 
             var create_instance = function(e) {
-                debugger;
                 e.preventDefault();
 
                 if ($("#email_warning").length == 0 && $("#domain_warning").length == 0 &&
                     $("[name='domain']").val() != "" && $("[name='email']").val() != "") {
+                    var flavor_id = selectedFlavor();
 
                     var apps = [];
                     $(".openerp_website_pricing_app_checkbox:checked").each(function(i, o) {
                         apps.push($(o).data('app-name'))
                     });
+
+                    debugger;
+                    var services = []
+                    $(".openerp_website_pricing_service_amount").each(function(i, o) {
+                        if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && parseInt(o.value) > 0) {
+                            services.push(r.services[o.id].name + "(" + o.value + ") " );
+                        }
+
+                    });
+                    $(".openerp_website_pricing_service_checkbox").each(function(i,o) {
+                        if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.checked) {
+                            services.push(r.services[o.id].name);
+                        }
+                    });
+
                     var market_type = $("[name='market_type']").val();
                     var domain = $("[name='domain']").val();
                     var email = $("[name='email']").val();
                     var price = $(".openerp_website_pricing_price_monthly").text();
-                    var flavor_id = $("[name='flavor']:checked").val();
-                    if (flavor_id == undefined) {
-                        flavor_id = $("[name='flavor']").val();
-                    }
-
-
 
                     $.blockUI({ message: '<h3><span id="progress">One moment please ...</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
 
@@ -231,7 +351,7 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
 
                     ajax.jsonRpc('/configurator/createinstance', 'call', {
-                        'domain': domain, 'email': email, 'market_type':market_type, 'apps': apps, 'price': price, 'flavor_id': flavor_id
+                        'domain': domain, 'email': email, 'market_type':market_type, 'apps': apps, 'services': services, 'price': price, 'flavor_id': flavor_id
                     }).then(function(result) {
                         if (result.type == "ok") {
                         }

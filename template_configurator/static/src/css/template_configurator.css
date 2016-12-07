@@ -40,13 +40,17 @@
     padding: 5px;
 }
 
-.openerp_website_pricing_users, .openerp_website_pricing_custom {
+.openerp_website_pricing_service {
+    padding: 5px;
+}
+
+.openerp_website_pricing_service_amount, .openerp_website_pricing_custom {
     padding: 0;
     display: inline-block;
 }
 
-.openerp_website_pricing input.form-control[type='number'] {
-    width: 100px;
+.openerp_website_pricing_service input.form-control[type='number'] {
+    width: 40px;
     text-align: center;
 }
 
@@ -54,11 +58,23 @@
     padding-right: 0;
 }
 
+.openerp_website_pricing_service_name {
+    padding-right: 0;
+}
+
 .openerp_website_pricing_app_name .fa-link {
     color: #21b799;
 }
 
+.openerp_website_pricing_service_name .fa-link {
+    color: #21b799;
+}
+
 .openerp_website_pricing_app_icon {
+    padding-right: 0;
+}
+
+.openerp_website_pricing_service_icon {
     padding-right: 0;
 }
 
@@ -67,8 +83,21 @@
     padding-left: 5px;
 }
 
+.openerp_website_pricing_service_real_name {
+    background-color: #F2F2F2;
+    padding-left: 5px;
+}
+
 .openerp_website_pricing_app_real_name > span {
     font-size: 12px;
+}
+
+.openerp_website_pricing_service_real_name > span {
+    font-size: 12px;
+}
+
+.openerp_website_pricing_step_head {
+    background-color: #F0F0F0;
 }
 
 .openerp_website_pricing_step_body input {
@@ -84,6 +113,11 @@
 }
 
 .openerp_website_pricing_app_price {
+    font-size: 14px;
+    padding: 2px 5px 10px 5px;
+}
+
+.openerp_website_pricing_service_price {
     font-size: 14px;
     padding: 2px 5px 10px 5px;
 }
@@ -327,7 +361,16 @@
     color: white;
 }
 
+.openerp_website_pricing_service.selected div.openerp_website_pricing_service_real_name {
+    background-color: #00bcd4;
+    color: white;
+}
+
 .openerp_website_pricing_app.selected div.openerp_website_pricing_app_real_name .fa {
+    color: #DDD;
+}
+
+.openerp_website_pricing_service.selected div.openerp_website_pricing_service_real_name .fa {
     color: #DDD;
 }
 
@@ -335,6 +378,14 @@
     cursor: pointer;
 }
 
+.openerp_website_pricing_service :hover {
+    cursor: pointer;
+}
+
 .openerp_website_pricing_app label {
+    display: inline;
+}
+
+.openerp_website_pricing_service label {
     display: inline;
 }

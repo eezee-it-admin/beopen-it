@@ -1,6 +1,8 @@
 from openerp import models, fields, api, tools
 import paramiko
 import logging
+import ConfigParser
+import io
 
 _logger = logging.getLogger(__name__)
 
@@ -104,6 +106,16 @@ class DockerServer(models.Model):
 
         return create_action(log)
 
+    @api.multi
+    def docker_stats(self):
+        command = "docker stats --no-stream"
+
+        stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(self.ip, self.username,
+                                                             self.pwd, self.port,
+                                                             command)
+
+        return create_action(log)
+
 class MarketType(models.Model):
     _name="botc.markettype"
 
@@ -127,17 +139,28 @@ class MarketType(models.Model):
     preferred_flavor_id=fields.Many2one("botc.flavor", string="Preferred Flavor", required=True)
 
     available_module_ids = fields.One2many("botc.availablemodules", "markettype_id", string="Available Modules")
+    available_service_ids = fields.One2many("botc.availableservices", "markettype_id", string="Available Services")
+
+
+class DockerImage(models.Model):
+    _name="botc.dockerimage"
+
+    name=fields.Char(string="Name", required=True)
+    image_name=fields.Char(string="Image Name", required=True)
+    extra_parameters=fields.Char(string="Extra Parameters")
+    flavor_id=fields.Many2one("botc.flavor", string="Flavor")
+    volume_ids=fields.One2many("botc.volume", "docker_image_id", "Volumes")
+    port_ids = fields.One2many("botc.port", "docker_image_id", "Ports")
+    odoo_config=fields.Text(string="Odoo Configuration")
 
 class Template(models.Model):
     _name="botc.template"
 
     name = fields.Char(string="Name", required=True, translate=True)
-    template_database = fields.Char("Template database", required=True)
     template_username = fields.Char("Template username", required=True)
     template_password = fields.Char("Template password", required=True)
     template_apps_location = fields.Char("Template Apps Location (zip)", required=True)
-    template_filestore_location = fields.Char("Template Filestore Location (zip)", required=True)
-    dbserver_id = fields.Many2one("botc.dbserver", string="DB Server", required=True)
+    template_backup_location = fields.Char("Template Backup Location (zip)", required=True)
     docker_image_id = fields.Many2one("botc.dockerimage", string="Docker Image", required=True)
     markettype_ids=fields.Many2many("botc.markettype", string="Types")
 
@@ -157,6 +180,19 @@ class Module(models.Model):
     standard=fields.Boolean(string="Standard", default=True)
     package_file_location=fields.Char(string="Package File Location")
 
+class Service(models.Model):
+    _name="botc.service"
+
+    name=fields.Char(string="Name", required=True, translate = True)
+    description=fields.Text(string="Description", translate = True)
+    price = fields.Monetary(string="Price", required=True)
+    currency_id = fields.Many2one('res.currency', string='Currency')
+    active = fields.Boolean(string="Active", default=True)
+    image = fields.Binary(string="Image Icon")
+    unit = fields.Char(string="Units", translate = True, required = True)
+    fixed_price=fields.Boolean(string="Fixed price", default=True)
+    minimum_amount=fields.Integer(string="Minimum amount")
+
 class AvailableModules(models.Model):
     _name="botc.availablemodules"
     _rec_name = "module_id"
@@ -167,16 +203,14 @@ class AvailableModules(models.Model):
     flavor_id=fields.Many2one("botc.flavor", string="Flavor")
     order = fields.Integer(string="Sort Order")
 
-class DockerImage(models.Model):
-    _name="botc.dockerimage"
+class AvailableServices(models.Model):
+    _name="botc.availableservices"
+    _rec_name = "service_id"
 
-    name=fields.Char(string="Name", required=True)
-    image_name=fields.Char(string="Image Name", required=True)
+    service_id=fields.Many2one("botc.service", string="Service", required=True)
+    markettype_id = fields.Many2one("botc.markettype", string="Market Type", required=True)
     flavor_id=fields.Many2one("botc.flavor", string="Flavor")
-    volume_ids=fields.One2many("botc.volume", "docker_image_id", "Volumes")
-    port_ids = fields.One2many("botc.port", "docker_image_id", "Ports")
-    odoo_config=fields.Text(string="Odoo Configuration")
-
+    order = fields.Integer(string="Sort Order")
 
 class Volume(models.Model):
     _name = "botc.volume"
@@ -220,6 +254,7 @@ class ContainerInstance(models.Model):
     template_id=fields.Many2one("botc.template", string="Template")
     restart_policy=fields.Selection([("no","No"),("on-failure", "On Failure"),("always", "Always"),("unless-stopped","Unless Stopped")],
                                     required=True, default="unless-stopped")
+    extra_parameters=fields.Char(string="Extra Parameters")
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
     http_config=fields.Text(string="Http Config")
     odoo_config=fields.Text(string="Odoo Config")
@@ -227,15 +262,31 @@ class ContainerInstance(models.Model):
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
 
+        domains = self.env["botc.containerinstance"].sudo().search([("domain", "=", domain)])
+
+        if domains and len(domains) > 0:
+            raise Exception("Database %s already exists" % domain)
+
         module_ids = [(0,0, {"module_id":module_id.id, "installed_on":fields.Datetime.now()}) for module_id in module_ids_to_install]
         template =  next((template for template in markettype.template_ids if template.docker_image_id.flavor_id.id == int(flavor_id)), None)
         if not template:
             raise ValueError("No template found")
 
-        dbserver = template.dbserver_id
         dockerimage = template.docker_image_id
 
+        admin_pwd = ""
+        if dockerimage.odoo_config:
+            config = ConfigParser.ConfigParser(allow_no_value=True)
+            config_io = io.StringIO(dockerimage.odoo_config)
+            config.readfp(config_io)
+
+            try:
+                admin_pwd = config.get("options", "admin_passwd")
+            except ConfigParser.NoOptionError:
+                pass
+
         #TODO load balance logic
+        dbserver = self.env["botc.dbserver"].search([], limit = 1)
         dockerserver = self.env["botc.dockerserver"].search([], limit = 1)
         httpserver = self.env["botc.httpserver"].search([], limit = 1)
 
@@ -279,6 +330,10 @@ class ContainerInstance(models.Model):
         http_config = http_config.replace("%xmlrpc_port%", str(xmlrpc_port))
 
         odoo_config = dockerimage.odoo_config
+        odoo_config = odoo_config.replace("%domain%", domain)
+
+        extra_parameters = dockerimage.extra_parameters
+        extra_parameters = extra_parameters.replace("%domain%", domain)
 
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
@@ -291,7 +346,8 @@ class ContainerInstance(models.Model):
                               "http_config":http_config,
                               "odoo_config":odoo_config,
                               "port_mapping_ids":port_mapping_ids,
-                              "volume_mapping_ids":volume_mapping_ids
+                              "volume_mapping_ids":volume_mapping_ids,
+                              "extra_parameters":extra_parameters
                               }
 
         container_instance = self.create(container_instance_vals)
@@ -303,7 +359,7 @@ class ContainerInstance(models.Model):
         container_instance.create_docker_container()
         container_instance.start_docker_container()
 
-        return template, dockerserver.ip, xmlrpc_port
+        return admin_pwd, template, dockerserver.ip, xmlrpc_port
 
     @api.multi
     def create_docker_container(self):
@@ -317,10 +373,13 @@ class ContainerInstance(models.Model):
         command += " -e DB_PORT_5432_TCP_PORT=%s" % self.dbserver_id.port
         command += " -e DB_ENV_POSTGRES_USER=%s" % self.dbserver_id.username
         command += " -e DB_ENV_POSTGRES_PASSWORD=%s" % self.dbserver_id.pwd
-        command += " -e DBFILTER=%s" % self.domain
+        command += " -e DBFILTER=^%s$" % self.domain
 
         if self.restart_policy:
             command += " --restart %s" % self.restart_policy
+
+        if self.extra_parameters:
+            command += " %s" % self.extra_parameters
 
         for volume_mapping in self.volume_mapping_ids:
             command += " -v %s:%s" % (volume_mapping.volume_map, volume_mapping.volume_id.path)
@@ -419,25 +478,11 @@ class ContainerInstance(models.Model):
 
             filestore_path = next((mapping.volume_map for mapping in self.volume_mapping_ids if mapping.volume_id.type == "filestore"), None)
             if filestore_path:
-                mkdirbase_command = "sudo mkdir -p %s/%s/filestore" % (filestore_path, self.domain)
+                mkdirbase_command = "sudo mkdir -p %s" % (filestore_path)
 
                 stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
                                                                                            docker_server.pwd,
                                                                                            docker_server.port, mkdirbase_command)
-
-                if self.template_id:
-                    local_filestore = self.template_id.template_filestore_location
-                    zip_file = local_filestore.split("/")[::-1][0]
-                    log = self.env["botc.executedcommand"].sftp_put_file(docker_server.ip, docker_server.username,
-                                                                                           docker_server.pwd,
-                                                                                           docker_server.port,local_filestore, "/tmp/%s" % zip_file)
-
-                    unzip_command = "sudo unzip /tmp/%s -d %s/%s/filestore" % (zip_file, filestore_path, self.domain)
-                    stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip,
-                                                                                               docker_server.username,
-                                                                                               docker_server.pwd,
-                                                                                               docker_server.port,
-                                                                                               unzip_command)
 
                 chmod_command = "sudo chmod -R 777 %s" % (filestore_path)
                 stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
