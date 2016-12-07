@@ -7,6 +7,8 @@
                 <link rel='stylesheet' href='/template_configurator/static/src/css/template_configurator.css'/>
                 <script type="text/javascript"
                         src="/template_configurator/static/src/js/template_configurator.js"></script>
+                <script type="text/javascript"
+                        src="/template_configurator/static/src/js/jquery_ui_dialog.js"></script>
             </xpath>
         </template>
 
