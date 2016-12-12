@@ -5,6 +5,7 @@
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Configurator">
             <xpath expr="." position="inside">
                 <link rel='stylesheet' href='/template_configurator/static/src/css/template_configurator.css'/>
+                <link rel='stylesheet' href='/template_configurator/static/src/css/jquery_ui_dialog.css'/>
                 <script type="text/javascript"
                         src="/template_configurator/static/src/js/template_configurator.js"></script>
                 <script type="text/javascript"
