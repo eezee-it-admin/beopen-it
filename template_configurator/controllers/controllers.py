@@ -84,7 +84,8 @@ class Configurator(http.Controller):
                                                                                "fixed_price" : optional_service.service_id.fixed_price,
                                                                                "name" : optional_service.service_id.name}
 
-        module_data = {"currency": markettype.currency_id.name,
+        module_data = {"price": markettype.price,
+                "currency": markettype.currency_id.name,
                 "localeLang": {"USD": "en", "EUR": "fr"},
                 "current_country": "BE",
                 "apps": apps_data,

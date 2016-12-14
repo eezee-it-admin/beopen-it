@@ -23,7 +23,7 @@ odoo.define('template_configurator.configurate', function(require) {
                 var s = ' '
                   , c = ',';
                 if (!lang || lang.toLowerCase() == 'en') {
-                    s = ',';
+                    s = ' ';
                     c = '.';
                 }
                 return localeString(this, s, c, 3, 2);
@@ -127,7 +127,7 @@ odoo.define('template_configurator.configurate', function(require) {
                         $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_service_num").text(o.value);
 
                         total_for_service = parseInt(o.value) * r.services[o.id].price;
-                        $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_services_price_monthly").text(total_for_service);
+                        $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_services_price_monthly").text(total_for_service.toLocaleString(r.localeLang[r.currency]));
                         p.price_monthly += total_for_service;
 
                     } else {
@@ -149,13 +149,13 @@ odoo.define('template_configurator.configurate', function(require) {
 
                 if (has_service_selected) {
                     $(".openerp_website_pricing_table_oneshot").prop("hidden", false);
-                    $(".openerp_website_pricing_price_oneshot").text(one_shot_total)
+                    $(".openerp_website_pricing_price_oneshot").text(one_shot_total.toLocaleString(r.localeLang[r.currency]))
                 } else {
                     $(".openerp_website_pricing_table_oneshot").prop("hidden", true);
                 }
 
-                p.default_modules_num = $(".openerp_website_pricing_default_modules_num").text().trim();
-                p.default_modules_price_monthly = parseFloat($(".openerp_website_pricing_default_modules_price_monthly").text().trim());
+                p.default_modules_num = $(".openerp_website_pricing_default_modules_num").text().replace(/\s/g,'');
+                p.default_modules_price_monthly = parseFloat(r['price']);
 
                 $(".openerp_website_pricing_app_checkbox:checked").each(function(i, o) {
                     p.optional_modules_num++;
@@ -239,6 +239,7 @@ odoo.define('template_configurator.configurate', function(require) {
             colorize_amount();
             colorize_radio();
             show_hide_modules();
+            update_price();
             $.each($('.amount_to_localize'), function(i, j) {
                 $(j).text(parseInt($(j).text()).toLocaleString(r.localeLang[r.currency]));
             });
@@ -295,7 +296,6 @@ odoo.define('template_configurator.configurate', function(require) {
                         apps.push($(o).data('app-name'))
                     });
 
-                    debugger;
                     var services = []
                     $(".openerp_website_pricing_service_amount").each(function(i, o) {
                         if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && parseInt(o.value) > 0) {
