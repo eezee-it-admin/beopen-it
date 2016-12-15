@@ -171,6 +171,33 @@ odoo.define('template_configurator.configurate', function(require) {
 
             };
 
+            var calculate_monthly_price = function() {
+                var price_monthly = 0;
+
+                var flavor_id = parseInt(selectedFlavor());
+                $(".openerp_website_pricing_service_amount").each(function(i, o) {
+                    if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.value > 0) {
+                        total_for_service = parseInt(o.value) * r.services[o.id].price;
+                        price_monthly += total_for_service;
+
+                    }
+
+                });
+
+                var default_modules_price_monthly = parseFloat(r['price']);
+                var optional_modules_price_monthly = 0;
+
+                $(".openerp_website_pricing_app_checkbox:checked").each(function(i, o) {
+                    optional_modules_price_monthly += parseFloat(r.apps[$(o).data("app-name")]['price']);
+                });
+
+                price_monthly += parseFloat(default_modules_price_monthly) + parseFloat(optional_modules_price_monthly);
+
+
+                return price_monthly;
+
+            };
+
             var show_hide_modules = function() {
                 var flavor_id = selectedFlavor();
 
@@ -312,7 +339,7 @@ odoo.define('template_configurator.configurate', function(require) {
                     var market_type = $("[name='market_type']").val();
                     var domain = $("[name='domain']").val();
                     var email = $("[name='email']").val();
-                    var price = $(".openerp_website_pricing_price_monthly").text();
+                    var price = calculate_monthly_price();
 
                     $.blockUI({ message: '<h3><span id="progress">One moment please ...</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
 

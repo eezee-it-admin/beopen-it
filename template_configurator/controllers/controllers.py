@@ -150,7 +150,7 @@ class Configurator(http.Controller):
         description += "Package  : " + markettype.name + "\n"
         description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
         description += "Requested services : " + ', '.join([s for s in services]) + "\n"
-        description += "Price after trial : " + price + " " + markettype.currency_id.name
+        description += "Price after trial : " + str(price) + " " + markettype.currency_id.name
 
         _logger.info("Create lead for %s", domain)
 
