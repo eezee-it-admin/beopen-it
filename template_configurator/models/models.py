@@ -1,8 +1,12 @@
-from openerp import models, fields, api, tools
+from odoo import models, fields, api, tools
+import odoo
+from contextlib import closing
 import paramiko
 import logging
 import ConfigParser
 import io
+import tempfile
+
 
 _logger = logging.getLogger(__name__)
 
@@ -27,7 +31,6 @@ class Market(models.Model):
     _name="botc.market"
 
     name=fields.Char(string="Market", required=True)
-
 
 class Goal(models.Model):
     _name="botc.goal"
@@ -362,6 +365,32 @@ class ContainerInstance(models.Model):
         return admin_pwd, template, dockerserver.ip, xmlrpc_port
 
     @api.multi
+    def delete_instance(self):
+
+        self.unconfigure_http_server();
+        self.stop_docker_container();
+        self.delete_docker_container();
+        self.remove_docker_data();
+
+        db = odoo.sql_db.db_connect('postgres')
+        with closing(db.cursor()) as cr:
+            cr.autocommit(True)  # avoid transaction block
+            cr.execute("""DROP DATABASE "%s" """ % self.domain)
+
+        for volume_mapping in self.volume_mapping_ids:
+            volume_mapping.unlink()
+
+        for port_mapping in self.port_mapping_ids:
+            port_mapping.unlink()
+
+        for module in self.module_ids:
+            module.unlink()
+
+        self.unlink();
+
+
+
+    @api.multi
     def create_docker_container(self):
 
         command = "docker create --name %s" % self.domain
@@ -466,6 +495,34 @@ class ContainerInstance(models.Model):
                                                                                        http_server.port,
                                                                                        self.httpserver_id.reload_command)
         except:
+            return create_action(log)
+
+        return create_action(log)
+
+    @api.multi
+    def remove_docker_data(self):
+        try:
+            log = None
+            docker_server = self.docker_server_id
+
+            if docker_server.data_path:
+                tempdir = tempfile.gettempdir();
+
+                rmlogfile_command = "sudo rm %s/%s.txt" % (tempdir, self.domain)
+
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port, rmlogfile_command)
+
+
+                rmdirbase_command = "sudo rm -fr %s/%s" % (docker_server.data_path, self.domain)
+
+                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
+                                                                                           docker_server.pwd,
+                                                                                           docker_server.port, rmdirbase_command)
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
             return create_action(log)
 
         return create_action(log)
