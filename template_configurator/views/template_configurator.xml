@@ -521,6 +521,9 @@
                         <button type="object" name="docker_info" string="Docker Info" groups="template_configurator.group_configurator_administrator"/>
                         <button type="object" name="docker_images" string="Docker Images" groups="template_configurator.group_configurator_administrator"/>
                         <button type="object" name="list_containers" string="List Containers" groups="template_configurator.group_configurator_administrator"/>
+                        <separator/>
+                        <button type="object" name="delete_instance" string="Delete Container Instance" groups="template_configurator.group_configurator_administrator"
+                            confirm="Are you sure you want to do this? This will delete the Container Instance including the database!"/>
                     </header>
 
                     <sheet>
