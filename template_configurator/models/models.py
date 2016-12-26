@@ -1,5 +1,5 @@
-from odoo import models, fields, api, tools
-import odoo
+from openerp import models, fields, api, tools
+import openerp
 from contextlib import closing
 import paramiko
 import logging
@@ -328,16 +328,13 @@ class ContainerInstance(models.Model):
             volume_mapping_ids += [(0, 0, {"volume_id": volume_config.id, "volume_map": "%s/%s/config" % (dockerserver.data_path, domain)})]
 
         http_config = httpserver.config_template
-        http_config = http_config.replace("%domain%", domain)
-        http_config = http_config.replace("%docker_server%", dockerserver.ip)
-        http_config = http_config.replace("%longpolling_port%", str(longpolling_port))
-        http_config = http_config.replace("%xmlrpc_port%", str(xmlrpc_port))
+        http_config = self.replace_values(http_config, domain, dockerserver, longpolling_port, xmlrpc_port)
 
         odoo_config = dockerimage.odoo_config
-        odoo_config = odoo_config.replace("%domain%", domain)
+        odoo_config = self.replace_values(odoo_config, domain, dockerserver, longpolling_port, xmlrpc_port)
 
         extra_parameters = dockerimage.extra_parameters
-        extra_parameters = extra_parameters.replace("%domain%", domain)
+        extra_parameters = self.replace_values(extra_parameters, domain, dockerserver, longpolling_port, xmlrpc_port)
 
         container_instance_vals = {"domain": domain,
                               "market_type_id": markettype.id,
@@ -365,6 +362,14 @@ class ContainerInstance(models.Model):
 
         return admin_pwd, template, dockerserver.ip, xmlrpc_port
 
+    def replace_values(self, text, domain, dockerserver, longpolling_port, xmlrpc_port):
+        if text:
+            text = text.replace("%domain%", domain)
+            text = text.replace("%docker_server%", dockerserver.ip)
+            text = text.replace("%longpolling_port%", str(longpolling_port))
+            text = text.replace("%xmlrpc_port%", str(xmlrpc_port))
+        return text
+
     @api.multi
     def delete_instance(self):
 
@@ -373,10 +378,15 @@ class ContainerInstance(models.Model):
         self.delete_docker_container();
         self.remove_docker_data();
 
-        db = odoo.sql_db.db_connect('postgres')
+        db = openerp.sql_db.db_connect('postgres')
         with closing(db.cursor()) as cr:
-            cr.autocommit(True)  # avoid transaction block
-            cr.execute("""DROP DATABASE "%s" """ % self.domain)
+            try:
+                _logger.info("Drop database %s", self.domain)
+                cr.autocommit(True)  # avoid transaction block
+                cr.execute("""DROP DATABASE "%s" """ % self.domain)
+            except Exception as e:
+                _logger.info("Exception %s", e)
+                pass
 
         for volume_mapping in self.volume_mapping_ids:
             volume_mapping.unlink()

@@ -387,6 +387,7 @@ odoo.define('template_configurator.configurate', function(require) {
             };
 
             $(".openerp_website_button_create_instance").on('click', create_instance);
+            window.scrollTo(0,0);
 
         };
 
