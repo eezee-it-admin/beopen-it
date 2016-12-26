@@ -1,5 +1,5 @@
-from openerp import models, fields, api, tools
-import openerp
+from odoo  import models, fields, api, tools
+import odoo
 from contextlib import closing
 import paramiko
 import logging
@@ -378,7 +378,7 @@ class ContainerInstance(models.Model):
         self.delete_docker_container();
         self.remove_docker_data();
 
-        db = openerp.sql_db.db_connect('postgres')
+        db = odoo.sql_db.db_connect('postgres')
         with closing(db.cursor()) as cr:
             try:
                 _logger.info("Drop database %s", self.domain)
