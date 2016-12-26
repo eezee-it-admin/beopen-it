@@ -6,6 +6,7 @@ import logging
 import ConfigParser
 import io
 import tempfile
+import os
 
 
 _logger = logging.getLogger(__name__)
@@ -508,12 +509,10 @@ class ContainerInstance(models.Model):
             if docker_server.data_path:
                 tempdir = tempfile.gettempdir();
 
-                rmlogfile_command = "sudo rm %s/%s.txt" % (tempdir, self.domain)
-
-                stdout, stderr, log = self.env["botc.executedcommand"].execute_ssh_command(docker_server.ip, docker_server.username,
-                                                                                           docker_server.pwd,
-                                                                                           docker_server.port, rmlogfile_command)
-
+                try:
+                    os.remove("%s/%s.txt" % (tempdir, self.domain))
+                except OSError:
+                    pass
 
                 rmdirbase_command = "sudo rm -fr %s/%s" % (docker_server.data_path, self.domain)
 
