@@ -125,77 +125,80 @@ class Configurator(http.Controller):
     @http.route("/configurator/createinstance", type="json", auth="public", website=True)
     def createinstance(self, domain, email, market_type, apps, services, price, flavor_id):
 
-        domain = domain.lower()
+        try:
+            domain = domain.lower()
 
-        user = email
-        password = self.mkpassword(10)
-        language = "en"
-        country_code = "nl_BE"
+            user = email
+            password = self.mkpassword(10)
+            language = "en"
+            country_code = "nl_BE"
 
-        _logger.info("Creating instance for %s", domain)
+            _logger.info("Creating instance for %s", domain)
 
-        default_modules, markettype, optional_modules = self.get_markettype(market_type)
+            default_modules, markettype, optional_modules = self.get_markettype(market_type)
 
-        module_ids_to_install = [module.module_id for module in default_modules]
-        module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name, module.module_id) for module in optional_modules] if o in apps]
+            module_ids_to_install = [module.module_id for module in default_modules]
+            module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name, module.module_id) for module in optional_modules] if o in apps]
 
-        admin_pwd, template, ip, port = http.request.env["botc.containerinstance"].sudo().create_instance(domain, markettype, module_ids_to_install, flavor_id)
+            admin_pwd, template, ip, port = http.request.env["botc.containerinstance"].sudo().create_instance(domain, markettype, module_ids_to_install, flavor_id)
 
-        modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
-        modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
+            modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
+            modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
 
-        description = "URL : http://" + domain + ".beopen.be\n"
-        description += "Username : " + user + "\n"
-        description += "Password : " + password + "\n\n"
-        description += "Package  : " + markettype.name + "\n"
-        description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
-        description += "Requested services : " + ', '.join([s for s in services]) + "\n"
-        description += "Price after trial : " + str(price) + " " + markettype.currency_id.name
+            description = "URL : http://" + domain + ".beopen.be\n"
+            description += "Username : " + user + "\n"
+            description += "Password : " + password + "\n\n"
+            description += "Package  : " + markettype.name + "\n"
+            description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
+            description += "Requested services : " + ', '.join([s for s in services]) + "\n"
+            description += "Price after trial : " + str(price) + " " + markettype.currency_id.name
 
-        _logger.info("Create lead for %s", domain)
+            _logger.info("Create lead for %s", domain)
 
-        values_lead = {
-            "name": "new database " + domain,
-            "description": description,
-            "planned_revenue": price,
-            "email_from": email
-        }
+            values_lead = {
+                "name": "new database " + domain,
+                "description": description,
+                "planned_revenue": price,
+                "email_from": email
+            }
 
-        lead = http.request.env["crm.lead"].sudo().create(values_lead)
+            lead = http.request.env["crm.lead"].sudo().create(values_lead)
 
-        mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
-        if mail_template_id:
-            _logger.info("Send mail for %s to %s", domain, email)
-            mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
-            mail_template.send_mail(lead.id, True)
-        else:
-            _logger.warning("No email template found for sending email to the configurator user")
-
-
-        template_user = template.template_username
-        template_passwd = template.template_password
-        template_backup = template.template_backup_location
-
-        _logger.info("Fork process for creating %s", domain)
-        p1 = os.fork()
-        if p1 != 0:
-            _logger.info("Waiting for p1")
-            os.waitpid(p1, 0)
-            _logger.info("Stopped waiting for p1")
-        else:
-            p2 = os.fork()
-            if p2 != 0:
-                _logger.info("Exiting p2")
-                os._exit(0)
+            mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
+            if mail_template_id:
+                _logger.info("Send mail for %s to %s", domain, email)
+                mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
+                mail_template.send_mail(lead.id, True)
             else:
-                self._create_database(country_code, domain, language, markettype, modules_to_install, password, user,
-                                      template_user, template_passwd, ip, port, template_backup, admin_pwd)
+                _logger.warning("No email template found for sending email to the configurator user")
 
-            _logger.info("Exiting p1")
-            os._exit(0)
-        _logger.info("Process forked for %s", domain)
+            template_user = template.template_username
+            template_passwd = template.template_password
+            template_backup = template.template_backup_location
 
-        return {"type": "ok"}
+            _logger.info("Fork process for creating %s", domain)
+            p1 = os.fork()
+            if p1 != 0:
+                _logger.info("Waiting for p1")
+                os.waitpid(p1, 0)
+                _logger.info("Stopped waiting for p1")
+            else:
+                p2 = os.fork()
+                if p2 != 0:
+                    _logger.info("Exiting p2")
+                    os._exit(0)
+                else:
+                    self._create_database(country_code, domain, language, markettype, modules_to_install, password, user,
+                                          template_user, template_passwd, ip, port, template_backup, admin_pwd)
+
+                _logger.info("Exiting p1")
+                os._exit(0)
+            _logger.info("Process forked for %s", domain)
+
+            return {"type": "ok"}
+        except Exception as e:
+            self._write_log(domain, "ERROR : Unexpected by creating instance %s".format(domain))
+            _logger.info("Error by creating instance %s : %s", domain, str(e))
 
     @http.route("/configurator/checkdbname", type="json", auth="public", website=True)
     def checkdbname(self, domain):
@@ -213,7 +216,6 @@ class Configurator(http.Controller):
             return {"type": "error", "message": "Database already exists."}
 
         return {"type": "ok"}
-
 
     @http.route("/configurator/progress", type="json", auth="public", website=True)
     def progress(self, domain):

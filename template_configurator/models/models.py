@@ -265,6 +265,13 @@ class ContainerInstance(models.Model):
 
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
+        domain = domain.lower()
+
+        if not domain.isalnum():
+            raise Exception("Only alfanumeric characters are allowed.")
+
+        if not domain is None and len(domain) < 5:
+            raise Exception("Domain must be minimum 5 characters.")
 
         domains = self.env["botc.containerinstance"].sudo().search([("domain", "=", domain)])
 
