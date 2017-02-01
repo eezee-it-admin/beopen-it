@@ -364,13 +364,13 @@ class ContainerInstance(models.Model):
                                    }
 
         container_instance = self.create(container_instance_vals)
-        # container_instance.deploy_addons()
-        # container_instance.deploy_filestore()
-        # container_instance.deploy_logging()
-        # container_instance.deploy_config()
-        # container_instance.configure_http_server()
-        # container_instance.create_docker_container()
-        # container_instance.start_docker_container()
+        container_instance.deploy_addons()
+        container_instance.deploy_filestore()
+        container_instance.deploy_logging()
+        container_instance.deploy_config()
+        container_instance.configure_http_server()
+        container_instance.create_docker_container()
+        container_instance.start_docker_container()
 
         return admin_pwd, template, dockerserver.ip, xmlrpc_port
 

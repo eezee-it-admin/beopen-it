@@ -156,13 +156,13 @@ class Configurator(http.Controller):
             modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
             modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
 
-            description = _("URL : http://%s.%s\n").format(subdomain, domain)
-            description += _("Username : %s\n").format(user)
-            description += _("Password : %s\n\n").format(password)
-            description += _("Package  : %s\n").format(markettype.name)
-            description += _("Installed modules : %s\n").format(', '.join([m for (o,m) in modules_to_install]))
-            description += _("Requested services : %s\n").format(', '.join([s for s in services]))
-            description += _("Price after trial : %s %s").format(str(price) ,markettype.currency_id.name)
+            description = _("URL : http://{}.{}\n").format(subdomain, domain)
+            description += _("Username : {}\n").format(user)
+            description += _("Password : {}\n\n").format(password)
+            description += _("Package  : {}\n").format(markettype.name)
+            description += _("Installed modules : {}\n").format(', '.join([m for (o,m) in modules_to_install]))
+            description += _("Requested services : {}\n").format(', '.join([s for s in services]))
+            description += _("Price after trial : {} {}").format(str(price) ,markettype.currency_id.name)
 
             _logger.info("Create lead for %s", subdomain)
 
@@ -179,7 +179,7 @@ class Configurator(http.Controller):
             if mail_template_id:
                 _logger.info("Send mail for %s to %s", subdomain, email)
                 mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
-                # mail_template.send_mail(lead.id, True)
+                mail_template.send_mail(lead.id, True)
             else:
                 _logger.warning("No email template found for sending email to the configurator user")
 
@@ -208,7 +208,7 @@ class Configurator(http.Controller):
 
             return {"type": "ok"}
         except Exception as e:
-            self._write_log(subdomain, "ERROR : " + _("Unexpected by creating instance %s").format(subdomain))
+            self._write_log(subdomain, "ERROR : " + _("Unexpected error by creating instance {}").format(subdomain))
             _logger.info("Error by creating instance %s : %s", subdomain, str(e))
 
     @http.route("/configurator/checkdbname", type="json", auth="public", website=True)
@@ -238,89 +238,89 @@ class Configurator(http.Controller):
         try:
             _logger.info("Forked process for %s", subdomain)
             self._write_log(subdomain, _("Creating instance {0}").format(subdomain))
-            # # Create database
-            # url = "http://%s:%s" % (ip, port)
-            #
-            # success = False
-            # counter = 0
-            # common = ""
-            #
-            # while not success:
-            #     try:
-            #         _logger.info("Check Database Manager on %s:%s", ip, port)
-            #         restore_url = "%s/web/database/manager" % url
-            #         response = requests.get(restore_url)
-            #         if response.status_code != 200:
-            #             raise Exception("Response not 200")
-            #         success = True
-            #     except Exception as e:
-            #         _logger.info("Error on Check Database Manager %s", str(e))
-            #         counter += 1
-            #         if counter > 5:
-            #             raise Exception("Aborted after 5 tries...")
-            #         time.sleep(5)
-            #
-            # if template_backup:
-            #     # master_pwd = openerp.tools.config['admin_passwd']
-            #     _logger.info("Restore database to %s", url)
-            #     restore_url = "%s/web/database/restore" % url
-            #     file = open(template_backup,'r').read()
-            #     files = {'backup_file': ('backup_file', file)}
-            #     response = requests.post(restore_url, data={"name":subdomain,
-            #                                                 "copy":True,
-            #                                                 "master_pwd":admin_pwd
-            #                                                 }, files=files)
-            #
-            #     _logger.info("Response = %s", response)
-            #
-            #
-            # else:
-            #     raise ValueError("No database template defined")
-            #
-            # #authenticate to new created database
-            # _logger.info("Authenticate on instance %s on %s:%s", subdomain, ip, port)
-            # common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
-            # uid = common.authenticate(subdomain, template_user, template_passwd, {})
-            # models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
-            # success = True
-            #
-            #
-            # _logger.info("Receiving ID's for modules on instance %s", subdomain)
-            # #Install modules
-            # IDList = []
-            # for module_to_install in modules_to_install:
-            #     module_record = models.execute_kw(subdomain, uid, template_passwd, 'ir.module.module', 'search',
-            #                                       [[['name', '=', module_to_install[0]]]])
-            #     if module_record:
-            #         IDList.append((module_record[0], module_to_install[1]))
-            #
-            # _logger.info("ID's for modules on instance %s are %s", subdomain, IDList)
-            # if len(IDList) > 0:
-            #     for (id, name) in IDList:
-            #         self._write_log(subdomain, _("Installing module {0}").format(name.encode('utf-8')))
-            #
-            #         _logger.info("Installing module %s in instance %s", name.encode('utf-8'), subdomain)
-            #
-            #         models.execute_kw(subdomain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
-            #                           [[id],
-            #                            {'lang': language, 'tz': 'false', 'uid': uid, 'search_default_app': '1',
-            #                             'params': {'action': '36'}}])
-            #
-            # _logger.info("Resetting password instance %s", subdomain)
-            # models.execute_kw(subdomain, uid, template_passwd, 'res.users', 'write', [[1], {
-            #             'login': user, 'password': password
-            #         }])
+            # Create database
+            url = "http://%s:%s" % (ip, port)
+
+            success = False
+            counter = 0
+            common = ""
+
+            while not success:
+                try:
+                    _logger.info("Check Database Manager on %s:%s", ip, port)
+                    restore_url = "%s/web/database/manager" % url
+                    response = requests.get(restore_url)
+                    if response.status_code != 200:
+                        raise Exception("Response not 200")
+                    success = True
+                except Exception as e:
+                    _logger.info("Error on Check Database Manager %s", str(e))
+                    counter += 1
+                    if counter > 5:
+                        raise Exception("Aborted after 5 tries...")
+                    time.sleep(5)
+
+            if template_backup:
+                # master_pwd = openerp.tools.config['admin_passwd']
+                _logger.info("Restore database to %s", url)
+                restore_url = "%s/web/database/restore" % url
+                file = open(template_backup,'r').read()
+                files = {'backup_file': ('backup_file', file)}
+                response = requests.post(restore_url, data={"name":subdomain,
+                                                            "copy":True,
+                                                            "master_pwd":admin_pwd
+                                                            }, files=files)
+
+                _logger.info("Response = %s", response)
+
+
+            else:
+                raise ValueError("No database template defined")
+
+            #authenticate to new created database
+            _logger.info("Authenticate on instance %s on %s:%s", subdomain, ip, port)
+            common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
+            uid = common.authenticate(subdomain, template_user, template_passwd, {})
+            models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+            success = True
+
+
+            _logger.info("Receiving ID's for modules on instance %s", subdomain)
+            #Install modules
+            IDList = []
+            for module_to_install in modules_to_install:
+                module_record = models.execute_kw(subdomain, uid, template_passwd, 'ir.module.module', 'search',
+                                                  [[['name', '=', module_to_install[0]]]])
+                if module_record:
+                    IDList.append((module_record[0], module_to_install[1]))
+
+            _logger.info("ID's for modules on instance %s are %s", subdomain, IDList)
+            if len(IDList) > 0:
+                for (id, name) in IDList:
+                    self._write_log(subdomain, _("Installing module {0}").format(name.encode('utf-8')))
+
+                    _logger.info("Installing module %s in instance %s", name.encode('utf-8'), subdomain)
+
+                    models.execute_kw(subdomain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
+                                      [[id],
+                                       {'lang': language, 'tz': 'false', 'uid': uid, 'search_default_app': '1',
+                                        'params': {'action': '36'}}])
+
+            _logger.info("Resetting password instance %s", subdomain)
+            models.execute_kw(subdomain, uid, template_passwd, 'res.users', 'write', [[1], {
+                        'login': user, 'password': password
+                    }])
             _logger.info("Instance %s ready", subdomain)
             self._write_log(subdomain, "Done")
 
             sys.exit(0)
 
         except (db.DatabaseExists) as e:
-            self._write_log(subdomain, "ERROR : " + _("Unexpected by creating instance %s").format(subdomain))
+            self._write_log(subdomain, "ERROR : " + _("Unexpected error by creating instance {}").format(subdomain))
             _logger.info("Error by creating instance %s : %s", subdomain, str(e))
             sys.exit(0)
         except (Exception) as e :
-            self._write_log(subdomain, "ERROR : " + _("Unexpected by creating instance %s").format(subdomain))
+            self._write_log(subdomain, "ERROR : " + _("Unexpected error by creating instance {}").format(subdomain))
             _logger.info("Error by creating instance %s : %s", subdomain, str(e))
             sys.exit(0)
 
