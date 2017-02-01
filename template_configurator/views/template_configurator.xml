@@ -707,14 +707,15 @@
 
         <!-- Action for Settings -->
         <record id="action_config_settings" model="ir.actions.act_window">
-            <field name="name">General Settings</field>
+            <field name="name">Configurator Settings</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">botc.config.settings</field>
             <field name="view_mode">form</field>
             <field name="target">inline</field>
         </record>
 
-        <menuitem id="main_template_configurator_menu" name="Configurator"/>
+        <menuitem id="main_template_configurator_menu" name="Configurator" web_icon="template_configurator,static/description/icon.png"
+                  groups="template_configurator.group_configurator_administrator,template_configurator.group_configurator_user"/>
         <menuitem id="configurator_template_configurator_menu" name="Configurator"
                   parent="main_template_configurator_menu" sequence="1"/>
         <menuitem id="markettypes_menu" name="Types" parent="configurator_template_configurator_menu"
@@ -746,8 +747,8 @@
                   action="botc_dockerimage_list_action" groups="template_configurator.group_configurator_administrator" sequence="9"/>
         <menuitem id="templates_menu" name="Templates" parent="configuration_template_configurator_menu"
                   action="botc_template_list_action" groups="template_configurator.group_configurator_administrator" sequence="10"/>
-        <menuitem id="general_settings_menu" name="General Settings" parent="configuration_template_configurator_menu"
-                  action="action_config_settings" groups="template_configurator.group_configurator_administrator" sequence="11"/>
+        <menuitem id="general_settings_menu" name="Settings" parent="configuration_template_configurator_menu"
+                  action="action_config_settings" groups="base.group_system" sequence="11"/>
 
 
          <!-- Cron that process the container instance expiry -->
