@@ -1,7 +1,12 @@
 odoo.define('template_configurator.configurate', function(require) {
+    "use strict";
     var ajax = require('web.ajax');
+    var core = require("web.core");
+
     (function() {
         window.pricing_init = function(r) {
+            var _t = core._t;
+
             function localeString(x, sep, dec, grp, round) {
                 var sx = ('' + x).split('.'), s = '', i, j;
                 sep || (sep = ' ');
@@ -67,7 +72,7 @@ odoo.define('template_configurator.configurate', function(require) {
             var colorize_amount = function(oo) {
                 oo = !oo ? $(".openerp_website_pricing_service_amount") : $(oo.target);
                 oo.each(function(i, o) {
-                    num_val = parseInt(o.value);
+                    var num_val = parseInt(o.value);
                     if (isNaN(num_val)) {
                         num_val = 0;
                         $(o).val(num_val);
@@ -126,7 +131,7 @@ odoo.define('template_configurator.configurate', function(require) {
                         $("#openerp_website_pricing_optional_tr_" + o.id).prop("hidden", false);
                         $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_service_num").text(o.value);
 
-                        total_for_service = parseInt(o.value) * r.services[o.id].price;
+                        var total_for_service = parseInt(o.value) * r.services[o.id].price;
                         $("#openerp_website_pricing_optional_tr_" + o.id).find(".openerp_website_pricing_optional_services_price_monthly").text(total_for_service.toLocaleString(r.localeLang[r.currency]));
                         p.price_monthly += total_for_service;
 
@@ -177,7 +182,7 @@ odoo.define('template_configurator.configurate', function(require) {
                 var flavor_id = parseInt(selectedFlavor());
                 $(".openerp_website_pricing_service_amount").each(function(i, o) {
                     if ((r.services[o.id].flavor == -1 || r.services[o.id].flavor == flavor_id) && o.value > 0) {
-                        total_for_service = parseInt(o.value) * r.services[o.id].price;
+                        var total_for_service = parseInt(o.value) * r.services[o.id].price;
                         price_monthly += total_for_service;
 
                     }
@@ -202,7 +207,7 @@ odoo.define('template_configurator.configurate', function(require) {
                 var flavor_id = selectedFlavor();
 
                 $(".col-md-4").each(function(i, o) {
-                    div_flavor_id = $(o).data("flavor");
+                    var div_flavor_id = $(o).data("flavor");
                     if (div_flavor_id != undefined && div_flavor_id != -1 && div_flavor_id != flavor_id) {
                         $(o).find(".openerp_website_pricing_app_checkbox:checked").prop("checked",false).change();
                         $(o).prop("hidden", true);
@@ -242,7 +247,7 @@ odoo.define('template_configurator.configurate', function(require) {
             $('.odoo_pricing_board a[data-toggle="tab"]').on('click', price_by_changed);
             $.each($.deparam(window.location.hash.substring(1)), function(k, v) {
                 if (k == 'goto') {
-                    $elem = $('#' + v);
+                    var $elem = $('#' + v);
                     if ($elem.hasClass('collapse')) {
                         $elem.collapse();
                     }
@@ -281,22 +286,23 @@ odoo.define('template_configurator.configurate', function(require) {
                 var email = $(this).val();
                 if (!validateEmail(email)) {
                    $("#email_warning").remove();
-                   $("[name='email']").after('<div class="alert alert-danger alert-dismissable" role="alert" id="email_warning">Invalid email address</div>');
+                   var invalid_email = _t("Invalid email address");
+                   $("[name='email']").after('<div class="alert alert-danger alert-dismissable" role="alert" id="email_warning">' + invalid_email + '</div>');
                 } else {
                    $("#email_warning").remove();
                 }
             });
 
-            $("[name='domain']").on("keyup", function(e) {
-                var domain = $(this).val();
+            $("[name='subdomain']").on("keyup", function(e) {
+                var subdomain = $(this).val();
                 ajax.jsonRpc('/configurator/checkdbname', 'call', {
-                    'domain': domain
+                    'subdomain': subdomain
                 }).then(function(result) {
                     if (result.type == "error") {
-                        $("#domain_warning").remove();
-                        $("[name='domain']").after('<div class="alert alert-danger alert-dismissable" role="alert" id="domain_warning">'+ result.message + '</div>');
+                        $("#subdomain_warning").remove();
+                        $("[name='subdomain']").after('<div class="alert alert-danger alert-dismissable" role="alert" id="subdomain_warning">'+ result.message + '</div>');
                     } else {
-                        $("#domain_warning").remove();
+                        $("#subdomain_warning").remove();
                     }
                 })
             });
@@ -314,8 +320,8 @@ odoo.define('template_configurator.configurate', function(require) {
             var create_instance = function(e) {
                 e.preventDefault();
 
-                if ($("#email_warning").length == 0 && $("#domain_warning").length == 0 &&
-                    $("[name='domain']").val() != "" && $("[name='email']").val() != "") {
+                if ($("#email_warning").length == 0 && $("#subdomain_warning").length == 0 &&
+                    $("[name='subdomain']").val() != "" && $("[name='email']").val() != "") {
                     var flavor_id = selectedFlavor();
 
                     var apps = [];
@@ -337,11 +343,12 @@ odoo.define('template_configurator.configurate', function(require) {
                     });
 
                     var market_type = $("[name='market_type']").val();
-                    var domain = $("[name='domain']").val();
+                    var subdomain = $("[name='subdomain']").val();
                     var email = $("[name='email']").val();
                     var price = calculate_monthly_price();
 
-                    $.blockUI({ message: '<h3><span id="progress">One moment please ...</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
+                    var wait_message = _t("One moment please ...");
+                    $.blockUI({ message: '<h3><span id="progress">'+ wait_message + '</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
 
                     var tid = setInterval(progress, 5000);
 
@@ -350,27 +357,30 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
 
                     function progress() {
-                        ajax.jsonRpc('/configurator/progress', 'call', {'domain': domain}).then(function(result) {
+                        ajax.jsonRpc('/configurator/progress', 'call', {'subdomain': subdomain}).then(function(result) {
                             $("#progress").text(result.message);
 
                                 if (result.message == "Done") {
                                     $.unblockUI();
                                     abortTimer();
-                                    $("[name='domain']").val("");
+                                    $("[name='subdomain']").val("");
                                     $("[name='email']").val("");
-                                    $("#dialog-message").html("Your BeOpen exprience is ready at <a target='_blank' href='http://" +
-                                        domain +".beopen.be'>http://" +
-                                        domain + ".beopen.be.</a> <br/>You can login with your credentials that have been send to " + email);
+
+                                    var success_message = r.success_message;
+                                    success_message = success_message.replace(new RegExp('<subdomain>', 'g'), subdomain);
+                                    success_message = success_message.replace(new RegExp('<domain>', 'g'), r.domain);
+                                    success_message = success_message.replace(new RegExp('<email>', 'g'), email);
+
+                                    $("#dialog-message").html(success_message);
                                     $("#dialog" ).dialog( "open" );
                                     $(".ui-dialog-titlebar").hide();
                                 }
                                 if (result.message.startsWith("ERROR")) {
                                     $.unblockUI();
                                     abortTimer();
-                                    $("[name='domain']").val("");
+                                    $("[name='subdomain']").val("");
                                     $("[name='email']").val("");
-                                    $("#dialog-message").html("Oops..., an unexpected error occured.<br/>Please <a href='https://beopen.be/page/contactus'>" +
-                                        "contact us</a> to set up your environment manually.");
+                                    $("#dialog-message").html(r.error_message);
                                     $("#dialog" ).dialog( "open" );
                                     $(".ui-dialog-titlebar").hide();
                                 }
@@ -378,7 +388,7 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
 
                     ajax.jsonRpc('/configurator/createinstance', 'call', {
-                        'domain': domain, 'email': email, 'market_type':market_type, 'apps': apps, 'services': services, 'price': price, 'flavor_id': flavor_id
+                        'subdomain': subdomain, 'email': email, 'market_type':market_type, 'apps': apps, 'services': services, 'price': price, 'flavor_id': flavor_id
                     }).then(function(result) {
                         if (result.type == "ok") {
                         }

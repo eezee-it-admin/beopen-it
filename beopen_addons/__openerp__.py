@@ -8,7 +8,7 @@
         Beopen addons
     """,
     'depends': ['web', "base"],
-    'auto_install': True,
+    'auto_install': False,
     'author': "BeOpen NV",
     'website': "http://www.beopen.be",
 

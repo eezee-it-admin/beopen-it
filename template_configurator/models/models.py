@@ -1,6 +1,7 @@
 from odoo  import models, fields, api, tools
 import odoo
 from contextlib import closing
+from datetime import timedelta, datetime
 import paramiko
 import logging
 import ConfigParser
@@ -262,6 +263,7 @@ class ContainerInstance(models.Model):
     flavor=fields.Char(string="Flavor", related="docker_image_id.flavor_id.name", readonly=True)
     http_config=fields.Text(string="Http Config")
     odoo_config=fields.Text(string="Odoo Config")
+    expiry_date=fields.Date(string="Expiry Date")
 
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install, flavor_id):
@@ -343,29 +345,32 @@ class ContainerInstance(models.Model):
         extra_parameters = dockerimage.extra_parameters
         extra_parameters = self.replace_values(extra_parameters, domain, dockerserver, longpolling_port, xmlrpc_port)
 
+        trial_days = int(self.env['ir.config_parameter'].get_param('botc_trial_days', default='30'))
+
         container_instance_vals = {"domain": domain,
-                              "market_type_id": markettype.id,
-                              "module_ids": module_ids,
-                              "dbserver_id": dbserver.id ,
-                              "httpserver_id": httpserver.id,
-                              "docker_image_id":dockerimage.id,
-                              "docker_server_id":dockerserver.id,
-                              "template_id":template.id,
-                              "http_config":http_config,
-                              "odoo_config":odoo_config,
-                              "port_mapping_ids":port_mapping_ids,
-                              "volume_mapping_ids":volume_mapping_ids,
-                              "extra_parameters":extra_parameters
-                              }
+                                   "market_type_id": markettype.id,
+                                   "module_ids": module_ids,
+                                   "dbserver_id": dbserver.id ,
+                                   "httpserver_id": httpserver.id,
+                                   "docker_image_id":dockerimage.id,
+                                   "docker_server_id":dockerserver.id,
+                                   "template_id":template.id,
+                                   "http_config":http_config,
+                                   "odoo_config":odoo_config,
+                                   "port_mapping_ids":port_mapping_ids,
+                                   "volume_mapping_ids":volume_mapping_ids,
+                                   "extra_parameters":extra_parameters,
+                                   "expiry_date":datetime.today() + timedelta(days=trial_days + 1)
+                                   }
 
         container_instance = self.create(container_instance_vals)
-        container_instance.deploy_addons()
-        container_instance.deploy_filestore()
-        container_instance.deploy_logging()
-        container_instance.deploy_config()
-        container_instance.configure_http_server()
-        container_instance.create_docker_container()
-        container_instance.start_docker_container()
+        # container_instance.deploy_addons()
+        # container_instance.deploy_filestore()
+        # container_instance.deploy_logging()
+        # container_instance.deploy_config()
+        # container_instance.configure_http_server()
+        # container_instance.create_docker_container()
+        # container_instance.start_docker_container()
 
         return admin_pwd, template, dockerserver.ip, xmlrpc_port
 
@@ -718,6 +723,12 @@ class ContainerInstance(models.Model):
 
         return self.docker_server_id.docker_images()
 
+    @api.model
+    def _process_container_instance_expiry(self):
+        container_instances = self.search([('expiry_date', '<=', fields.Datetime.now())])
+        for container_instance in container_instances:
+            container_instance.stop_docker_container()
+
 
 class PortMapping(models.Model):
     _name="botc.portmapping"
@@ -806,3 +817,4 @@ class ExecutedCommand(models.Model):
         log = super(ExecutedCommand, self).create(vals)
 
         return log
+

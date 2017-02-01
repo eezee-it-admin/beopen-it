@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <openerp>
-    <data noupdate="1">
+    <data>
 
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Configurator">
             <xpath expr="." position="inside">
@@ -370,25 +370,26 @@
                             <div class="col-md-9">
                                 <div class="row">
                         			<div class="col-md-6">
-                                        <div t-attf-class="form-group #{error.get('domain') and 'has-error' or ''}">
-                                            <label class="control-label" for="contact_name">Domain</label>
-                                            <input type="domain" name="domain" class="form-control" required="required" autofocus="autofocus"/>
+                                        <div class="form-group">
+                                            <label class="control-label" for="contact_name">Subdomain (.<t t-esc="domain"/>)</label>
+                                            <input type="subdomain" name="subdomain" class="form-control" required="required" autofocus="autofocus"/>
 
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''}">
+                                        <div class="form-group">
                                             <label class="control-label" for="contact_name">Email</label>
                                             <input type="email" name="email" class="form-control" required="required"/>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a class="btn btn-primary btn-block openerp_website_button_create_instance" href="https://beopen.be/trial"
+                                            <a class="btn btn-primary btn-block openerp_website_button_create_instance"
                                            style="position: relative; overflow: hidden;">Start now
-                                            <span style="opacity:0.65;">- 30 days Free trial</span>
+                                            <span style="opacity:0.65;">- <t t-esc="str(trial_days)"/> days Free trial</span>
                                             </a>
                                         </div>
+                                        <div class="col-md-12"/>
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +400,7 @@
 
                         <div id="dialog" title="Ready">
                           <div>
-                              <img src="/template_configurator/static/src/img/logo.png"/>
+                              <img t-att-src="'data:image/png;base64,%s' % logo"/>
                               <p id="dialog-message"></p>
                           </div>
                         </div>
