@@ -24,7 +24,7 @@ def create_action(log):
         "view_mode": "form,tree",
         'view_id': False,
         "target": "new",
-        'res_id': log.id
+        "res_id": log.id
     }
     return action
 
