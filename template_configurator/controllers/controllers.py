@@ -22,6 +22,7 @@ class Configurator(http.Controller):
         '^!\$%&/()=?{[]}+~#-_.:,;<>|\\',
     ]
 
+
     def mkpassword(self, length=16):
         pwd = []
         charset = choice(self.charsets)
@@ -54,7 +55,7 @@ class Configurator(http.Controller):
 
     @http.route("/configurator/<code>", auth="public", website=True)
     def configuratorForCode(self, code, *kw, **kwargs):
-        domain, trial_days = self.get_settings()
+        domain, trial_days, salesdocument_type = self.get_settings()
 
         error_message = http.request.env['ir.config_parameter'].sudo().get_param('botc_error_message')
         success_message = http.request.env['ir.config_parameter'].sudo().get_param('botc_success_message')
@@ -71,19 +72,19 @@ class Configurator(http.Controller):
 
         apps_data = {}
         for optional_module in optional_modules:
-            apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.price,
+            apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.product_template_id.list_price,
                                                                      "flavor" : optional_module.flavor_id.id if optional_module.flavor_id else -1}
 
         services_data = {}
         for optional_service in optional_services:
-            services_data["service_" + str(optional_service.service_id.id)] = {"price" : optional_service.service_id.price,
+            services_data["service_" + str(optional_service.service_id.id)] = {"price" : optional_service.service_id.product_template_id.list_price,
                                                                                "flavor" : optional_service.flavor_id.id if optional_service.flavor_id else -1,
                                                                                "minimum_amount" : optional_service.service_id.minimum_amount,
                                                                                "fixed_price" : optional_service.service_id.fixed_price,
                                                                                "name" : optional_service.service_id.name}
 
-        module_data = {"price": markettype.price,
-                "currency": markettype.currency_id.name,
+        module_data = {"price": markettype.product_template_id.list_price,
+                "currency": markettype.product_template_id.currency_id.name,
                 "localeLang": {"USD": "en", "EUR": "fr"},
                 "current_country": "BE",
                 "apps": apps_data,
@@ -104,7 +105,9 @@ class Configurator(http.Controller):
             "module_data" : module_data_json,
             "domain" : domain,
             "trial_days": trial_days,
+            "salesdocument_type": salesdocument_type,
             "logo": logo
+
         })
 
     @http.route("/configurator/prices", auth="public", website=True)
@@ -129,13 +132,238 @@ class Configurator(http.Controller):
     def get_settings(self):
         domain = http.request.env['ir.config_parameter'].sudo().get_param('botc_domain', default='beopen.be')
         trial_days = http.request.env['ir.config_parameter'].sudo().get_param('botc_trial_days', default='30')
-        return domain, trial_days
+        salesdocument_type = http.request.env['ir.config_parameter'].sudo().get_param('salesdocument_type', default='sales order')
+        return domain, trial_days, salesdocument_type
+
+    def generate_description(self, domain, markettype, modules_to_install, password, price, services, subdomain, user):
+        description = _("URL : http://{}.{}\n").format(subdomain, domain)
+        description += _("Username : {}\n").format(user)
+        description += _("Password : {}\n\n").format(password)
+        description += _("Package  : {}\n").format(markettype.name)
+        description += _("Installed modules : {}\n").format(', '.join([m for (o, m) in modules_to_install]))
+        description += _("Requested services : {}\n").format(', '.join([s for s in services]))
+        description += _("Price after trial : {} {}").format(str(price), markettype.product_template_id.currency_id.name)
+
+        return description
+
+    #Create the sale order and the sale order lines
+    def create_crm_sales_document(self, values, markettype, modules_to_install, services):
+        sale_order_object = http.request.env["sale.order"].sudo()
+        sale_order_line_object = http.request.env["sale.order.line"].sudo()
+
+        botc_module_object = http.request.env["botc.module"].sudo()
+        botc_availablemodules_object = http.request.env["botc.availablemodules"].sudo()
+        product_object = http.request.env["product.product"].sudo()
+
+        sale_order = sale_order_object.create(values)
+
+        if sale_order:
+
+            #First add the package
+
+            product = product_object.search([('product_tmpl_id', '=', markettype.product_template_id.id)])
+
+            order_line_values = {
+                "product_id": product.id,
+                'product_qty': 1,
+                'order_id': sale_order.id
+                # 'product_uom': self.product_uom.id,
+                # 'company_id': self.order_id.company_id.id,
+                # 'group_id': group_id,
+                # 'sale_line_id': self.id
+            }
+            sale_order_line = sale_order_line_object.create(order_line_values)
+
+
+            #Now add the submodules...
+            #Via the sequence the lines will be ordened correctly on the order: first the modules that are included, then the additional ones
+            seq_incl = 0
+            seq_excl = 0
+
+            for key, val in dict(modules_to_install).items():
+                module = botc_module_object.search([('odoo_module_name', '=', key), ('name', '=ilike', val)], limit=1)
+
+                if module:
+
+                    # Is the botc_module linked to a product_template?
+                    if module.product_template_id.id:
+
+                        botc_availablemodule = botc_availablemodules_object.search([('module_id', '=', module.id), ('markettype_id', '=', markettype.id)], limit=1)
+
+                        product = product_object.search([('product_tmpl_id', '=', module.product_template_id.id)])
+
+                        order_line_values = {
+                            "product_id": product.id,
+                            'product_qty': 1,
+                            'order_id': sale_order.id
+                            # 'product_uom': self.product_uom.id,
+                            # 'company_id': self.order_id.company_id.id,
+                            # 'group_id': group_id,
+                            # 'sale_line_id': self.id
+                        }
+
+                        #If module is included in package, add line but set price to 0 because price is on package level
+                        if botc_availablemodule:
+                            if botc_availablemodule.included:
+                                seq_incl += 1
+                                order_line_values['price_unit'] = 0
+                                order_line_values['sequence'] = 10 + (seq_incl * 10)
+
+                            else:
+                                seq_excl += 1
+                                order_line_values['sequence'] = 500 + (seq_excl * 10)
+
+                        sale_order_line = sale_order_line_object.create(order_line_values)
+
+            #Afterwards the ones that are not included in the package
+
+        return sale_order
+
+    #Create a lead document
+    def create_crm_sales_document_lead(self, domain, email, markettype, modules_to_install,
+                                             password,
+                                             price, services,
+                                             subdomain, user,
+                                             contact_company, contact_name, contact_vat, contact_address, contact_city,
+                                             contact_state, contact_zip):
+
+        description =  self.generate_description(domain, markettype, modules_to_install, password, price, services, subdomain, user)
+
+        _logger.info("Create lead for %s", subdomain)
+
+        values_lead = {
+            "name": "new database %s" % subdomain,
+            "description": description,
+            "planned_revenue": price,
+            "email_from": email
+        }
+
+        lead = http.request.env["crm.lead"].sudo().create(values_lead)
+
+        #There is no company or partner involved, so return reference to lead as company and partner because mail template is based on that
+        return lead, lead, lead
+
+
+    #Create a quotation document
+    def create_crm_sales_document_quotation(self, domain, email, markettype, modules_to_install,
+                                            password,
+                                            price, services,
+                                            subdomain, user,
+                                            contact_company, contact_name, contact_vat, contact_address, contact_city,
+                                            contact_state, contact_zip):
+
+        company, partner = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
+
+        description = self.generate_description(domain, markettype, modules_to_install, password, price, services,
+                                                subdomain, user)
+
+
+        values_quotation = {
+            "partner_id": partner.id,
+            "state": "sent"
+            # "description": description,
+            # "planned_revenue": price,
+            # "email_from": email
+        }
+
+        quotation = self.create_crm_sales_document(values_quotation, markettype, modules_to_install, services)
+
+        _logger.info("Quotation %s for %s created.", quotation.name, subdomain)
+
+        return quotation, company, partner
+
+    #Create a sales order document
+    def create_crm_sales_document_sales_order(self, domain, email, markettype, modules_to_install,
+                                              password,
+                                              price, services,
+                                              subdomain, user,
+                                              contact_company, contact_name, contact_vat, contact_address, contact_city,
+                                              contact_state, contact_zip):
+
+
+        company, partner = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
+
+        description = self.generate_description(domain, markettype, modules_to_install, password, price, services,
+                                                subdomain, user)
+
+        _logger.info("Create sales order for %s", subdomain)
+
+        values_sales_order = {
+            "partner_id": partner.id,
+            "state": "sale"
+            # "description": description,
+            # "planned_revenue": price,
+            # "email_from": email
+        }
+
+        sale_order = self.create_crm_sales_document(values_sales_order, markettype, modules_to_install, services)
+
+        _logger.info("Sales order %s for %s created.", sale_order.name, subdomain)
+
+        return sale_order, company, partner
+
+    #Create a partner to link to oportunity or sales order
+    def create_partner_for_configurator(self, email, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip):
+        res_partner_object = http.request.env["res.partner"].sudo()
+
+        company = False
+
+        if contact_company != "":
+            company = res_partner_object.search([('vat', '=ilike', contact_vat)], limit=1)
+
+            if not company.id:
+                res_company_values = {
+
+                    "name": contact_company,
+                    "vat": contact_vat,
+                    "street": contact_address,
+                    "zip": contact_zip,
+                    "city": contact_city,
+                    "email": email,
+                    "type": "invoice",
+                    "is_company": True
+                }
+
+                company = res_partner_object.create(res_company_values)
+
+
+
+        partner = res_partner_object.search([('email', '=ilike', email), ('name', '=ilike', contact_contactperson)], limit=1)
+
+        if not partner.id:
+            res_partner_values = {
+
+                "name": contact_contactperson,
+                "street": contact_address,
+                "zip": contact_zip,
+                "city": contact_city,
+                "email": email,
+                "type": "contact",
+                "is_company": False
+            }
+
+            #If Company was found, link contact to company
+            if company:
+                res_partner_values['parent_id'] = company.id
+
+            partner = res_partner_object.create(res_partner_values)
+
+        return company, partner
+
+
+    document_creation_code = {
+        'lead': create_crm_sales_document_lead,
+        'quotation': create_crm_sales_document_quotation,
+        'sales order': create_crm_sales_document_sales_order
+    }
+
+
 
     @http.route("/configurator/createinstance", type="json", auth="public", website=True)
-    def createinstance(self, subdomain, email, market_type, apps, services, price, flavor_id):
+    def createinstance(self, subdomain, email, market_type, apps, services, price, flavor_id, selected_salestype, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip):
 
         try:
-            domain, trial_days = self.get_settings()
+            domain, trial_days, salesdocument_type = self.get_settings()
 
             subdomain = subdomain.lower()
 
@@ -156,30 +384,26 @@ class Configurator(http.Controller):
             modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
             modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
 
-            description = _("URL : http://{}.{}\n").format(subdomain, domain)
-            description += _("Username : {}\n").format(user)
-            description += _("Password : {}\n\n").format(password)
-            description += _("Package  : {}\n").format(markettype.name)
-            description += _("Installed modules : {}\n").format(', '.join([m for (o,m) in modules_to_install]))
-            description += _("Requested services : {}\n").format(', '.join([s for s in services]))
-            description += _("Price after trial : {} {}").format(str(price) ,markettype.currency_id.name)
 
-            _logger.info("Create lead for %s", subdomain)
+            _logger.info("Creating %s document for %s", selected_salestype, subdomain)
 
-            values_lead = {
-                "name": "new database %s" % subdomain,
-                "description": description,
-                "planned_revenue": price,
-                "email_from": email
-            }
+            mydocument_creation_code = self.document_creation_code[salesdocument_type]
+            sale_document, company, partner = mydocument_creation_code(self, domain, email, markettype, modules_to_install, password, price, services, subdomain, user, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip)
 
-            lead = http.request.env["crm.lead"].sudo().create(values_lead)
+            #Exit for test purposes ... Guy
+            #return {"type": "ok"}
 
-            mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
+
+            if salesdocument_type == "lead":
+                mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
+            else:
+                mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator_partner')
+
+
             if mail_template_id:
                 _logger.info("Send mail for %s to %s", subdomain, email)
                 mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
-                mail_template.send_mail(lead.id, True)
+                mail_template.send_mail(partner.id, True)
             else:
                 _logger.warning("No email template found for sending email to the configurator user")
 

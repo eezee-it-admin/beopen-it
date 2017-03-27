@@ -76,9 +76,9 @@
                                             <div class="openerp_website_pricing_step_head">
                                                 <h3 class="mt16 mb16 text-violet-dark">Default <b>Apps</b> (
                                                     <b>
-                                                        <t t-esc="markettype.price"/>
+                                                        <t t-esc="markettype.product_template_id.list_price"/>
                                                         <span class="openerp_website_pricing_currency">
-                                                            <t t-esc="markettype.currency_id.name"/>
+                                                            <t t-esc="markettype.product_template_id.currency_id.name"/>
                                                         </span>
                                                     </b>
                                                     / month)
@@ -152,9 +152,9 @@
                                                                             </div>
                                                                             <div class="openerp_website_pricing_app_price">
                                                                                 <b>
-                                                                                    <t t-esc="module.module_id.price"/>
+                                                                                    <t t-esc="module.module_id.product_template_id.list_price"/>
                                                                                     <span class="openerp_website_pricing_currency">
-                                                                                        <t t-esc="module.module_id.currency_id.name"/>
+                                                                                        <t t-esc="module.module_id.product_template_id.currency_id.name"/>
                                                                                     </span>
                                                                                 </b>
                                                                                 / month
@@ -204,9 +204,9 @@
                                                                             </div>
                                                                             <div class="openerp_website_pricing_service_price">
                                                                                 <b>
-                                                                                    <t t-esc="service.service_id.price"/>
+                                                                                    <t t-esc="service.service_id.product_template_id.list_price"/>
                                                                                     <span class="openerp_website_pricing_currency">
-                                                                                        <t t-esc="service.service_id.currency_id.name"/>
+                                                                                        <t t-esc="service.service_id.product_template_id.currency_id.name"/>
                                                                                     </span>
                                                                                 </b>
                                                                                 /
@@ -274,8 +274,8 @@
                                                                     Default Apps
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <span class="openerp_website_pricing_default_modules_price_monthly"><t t-esc="markettype.price"/></span>
-                                                                    <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
+                                                                    <span class="openerp_website_pricing_default_modules_price_monthly"><t t-esc="markettype.product_template_id.list_price"/></span>
+                                                                    <span class="openerp_website_pricing_currency"><t t-esc="markettype.product_template_id.currency_id.name"/></span>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -287,7 +287,7 @@
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <span class="openerp_website_pricing_optional_modules_price_monthly">0</span>
-                                                                    <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
+                                                                    <span class="openerp_website_pricing_currency"><t t-esc="markettype.product_template_id.currency_id.name"/></span>
                                                                 </td>
                                                             </tr>
                                                             <t t-foreach="optional_services" t-as="service">
@@ -300,8 +300,8 @@
                                                                             <t t-esc="service.service_id.name"/>
                                                                         </td>
                                                                         <td class="text-right">
-                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="service.service_id.minimum_amount * service.service_id.price"/></span>
-                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.currency_id.name"/></span>
+                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="service.service_id.minimum_amount * service.service_id.product_template_id.list_price"/></span>
+                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.product_template_id.currency_id.name"/></span>
                                                                         </td>
                                                                     </tr>
                                                                 </t>
@@ -314,7 +314,7 @@
                                                                 <td class="text-right">
                                                                     <b>
                                                                         <span class="openerp_website_pricing_price_monthly">0</span>
-                                                                        <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
+                                                                        <span class="openerp_website_pricing_currency"><t t-esc="markettype.product_template_id.currency_id.name"/></span>
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -340,8 +340,8 @@
                                                                             <t t-esc="service.service_id.name"/>
                                                                         </td>
                                                                         <td class="text-right">
-                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="'{:.0f}'.format(service.service_id.price)"/></span>
-                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.currency_id.name"/></span>
+                                                                            <span class="openerp_website_pricing_optional_services_price_monthly"><t t-esc="'{:.0f}'.format(service.service_id.product_template_id.list_price)"/></span>
+                                                                            <span class="openerp_website_pricing_currency"><t t-esc="service.service_id.product_template_id.currency_id.name"/></span>
                                                                         </td>
                                                                     </tr>
                                                                 </t>
@@ -353,7 +353,7 @@
                                                                 <td class="text-right">
                                                                     <b>
                                                                         <span class="openerp_website_pricing_price_oneshot">0</span>
-                                                                        <span class="openerp_website_pricing_currency"><t t-esc="markettype.currency_id.name"/></span>
+                                                                        <span class="openerp_website_pricing_currency"><t t-esc="markettype.product_template_id.currency_id.name"/></span>
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -371,27 +371,119 @@
                                 <div class="row">
                         			<div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label" for="contact_name">Subdomain (.<t t-esc="domain"/>)</label>
+                                            <label class="control-label" for="subdomain">Subdomain (.<t t-esc="domain"/>)</label>
                                             <input type="subdomain" name="subdomain" class="form-control" required="required" autofocus="autofocus"/>
 
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label" for="contact_name">Email</label>
+                                            <label class="control-label" for="email">Email</label>
                                             <input type="email" name="email" class="form-control" required="required"/>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <a class="btn btn-primary btn-block openerp_website_button_create_instance"
-                                           style="position: relative; overflow: hidden;">Start now
-                                            <span style="opacity:0.65;">- <t t-esc="str(trial_days)"/> days Free trial</span>
-                                            </a>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div t-if="salesdocument_type[0:1] == 'l'">
+                                            <input type="radio" name="selected_salesdocument_type" value="lead" t-att-checked="salesdocument_type[0:1] == 'l'">  I want to start trial period</input>
                                         </div>
-                                        <div class="col-md-12"/>
+                                        <div t-if="salesdocument_type[0:1] == 'l' or salesdocument_type[0:1] == 'q'">
+                                            <input type="radio" name="selected_salesdocument_type" value="quotation" t-att-checked="salesdocument_type[0:1] == 'q'">  I want to start trial period and receive quotation</input>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="selected_salesdocument_type" value="sales order" t-att-checked="salesdocument_type[0:1] == 's'">  I want to start trial period and place sales order</input>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- Only show contact data when we have to generate oportunity or sales order -->
+                                <div class="openerp_website_contactinfo" t-att-hidden="salesdocument_type[0:1] == 'l'">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_company">Company name</label>
+                                                <input type="text" name="contact_company" class="form-control" required="required"/>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_tva">VAT number</label>
+                                                <input type="text" name="contact_vat" class="form-control" required="required"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_contactperson">Name contactperson</label>
+                                                <input type="text" name="contact_contactperson" class="form-control" required="required"/>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_address">Address</label>
+                                                <input type="text" name="contact_address" class="form-control" required="required"/>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_city">City</label>
+                                                <input type="text" name="contact_city" class="form-control" required="required"/>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_state">State</label>
+                                                <input type="text" name="contact_state" class="form-control" required="required"/>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="control-label" for="contact_zip">Zip</label>
+                                                <input type="text" name="contact_zip" class="form-control" required="required"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12" />
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a class="btn btn-primary btn-block openerp_website_button_create_instance"
+                                       style="position: relative; overflow: hidden;">Start now
+                                        <span style="opacity:0.65;">- <t t-esc="str(trial_days)"/> days Free trial</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-12"/>
+                                </div>
+
+
                             </div>
                         </div>
                         <t t-raw="'&lt;script>$(function () {'"/>

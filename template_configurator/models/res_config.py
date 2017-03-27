@@ -9,6 +9,9 @@ class TemplateConfiguratorConfiguration(models.TransientModel):
     success_message = fields.Char(string="Success message")
     error_message = fields.Char(string="Error message")
     logo = fields.Binary(string="Logo")
+    salesdocument_type = fields.Selection([('lead', 'Lead'), ('quotation', 'Quotation'), ('sales order', 'Sales order')], index=True, required=True,
+        default=lambda self: 'lead' if self.env['res.users'].has_group('crm.group_use_lead') else 'sales order',
+        help="Type of sales document to be created when configuration is confirmed")
 
     def set_domain(self):
         self.env['ir.config_parameter'].set_param(
@@ -49,3 +52,12 @@ class TemplateConfiguratorConfiguration(models.TransientModel):
     def get_default_logo(self, fields):
         logo = self.env['ir.config_parameter'].get_param('botc_logo')
         return dict(logo=logo)
+
+
+    def set_salesdocument_type(self):
+        self.env['ir.config_parameter'].set_param(
+            'salesdocument_type', (self.salesdocument_type or '').strip(), groups=['base.group_system'])
+
+    def get_default_salesdocument_type(self, fields):
+        salesdocument_type = self.env['ir.config_parameter'].get_param('salesdocument_type', default=lambda self: 'lead' if self.env['res.users'].has_group('crm.group_use_lead') else 'sales order')
+        return dict(salesdocument_type=salesdocument_type)

@@ -20,9 +20,11 @@
             <field name="arch" type="xml">
                 <form string="Market Form">
                     <sheet>
-                        <group>
-                            <field name="name"/>
-                        </group>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                     </sheet>
                 </form>
             </field>
@@ -59,9 +61,11 @@
             <field name="arch" type="xml">
                 <form string="Goal Form">
                     <sheet>
-                        <group>
-                            <field name="name"/>
-                        </group>
+                        <h1>
+                            <group>
+                                <field name="name" class="oe_title"/>
+                            </group>
+                        </h1>
                     </sheet>
                 </form>
             </field>
@@ -94,37 +98,61 @@
         </record>
 
         <!-- Form view for MarketType -->
-        <record model="ir.ui.view" id="botc_type_form_view">
+        <record model="ir.ui.view" id="botc_markettype_form_view">
             <field name="name">botc_markettype.form</field>
             <field name="model">botc.markettype</field>
             <field name="arch" type="xml">
                 <form string="MarketType Form">
                     <sheet>
+
                         <group>
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="price"/>
-                            <field name="currency_id"/>
-                            <field name="market_id"/>
-                            <field name="goal_id"/>
-                            <field name="template_ids" widget="many2many_tags"/>
-                            <field name="preferred_flavor_id"/>
-                            <field name="available_module_ids" mode="tree">
-                                <tree editable="bottom">
-                                    <field name="module_id"/>
-                                    <field name="flavor_id"/>
-                                    <field name="included"/>
-                                    <field name="order"/>
-                                </tree>
-                            </field>
-                            <field name="available_service_ids" mode="tree">
-                                <tree editable="bottom">
-                                    <field name="service_id"/>
-                                    <field name="flavor_id"/>
-                                    <field name="order"/>
-                                </tree>
-                            </field>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
                         </group>
+
+
+                        <div>
+                            <group>
+                                <field name="code"/>
+                                <field name="product_template_id"/>
+                                <field name="market_id"/>
+                                <field name="goal_id"/>
+                                <field name="template_ids" widget="many2many_tags"/>
+                                <field name="preferred_flavor_id"/>
+                            </group>
+                        </div>
+
+                        <separator/>
+
+                        <div>
+                            <group>
+
+                                <field name="available_module_ids" mode="tree">
+                                    <tree editable="bottom">
+                                        <field name="module_id"/>
+                                        <field name="flavor_id"/>
+                                        <field name="included"/>
+                                        <field name="order"/>
+                                    </tree>
+                                </field>
+                            </group>
+
+                        </div>
+
+                        <separator/>
+
+                        <div>
+                            <group>
+                                <field name="available_service_ids" mode="tree">
+                                    <tree editable="bottom">
+                                        <field name="service_id"/>
+                                        <field name="flavor_id"/>
+                                        <field name="order"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </div>
                     </sheet>
                 </form>
             </field>
@@ -150,9 +178,8 @@
                 <tree string="Module Tree">
                     <field name="name"/>
                     <field name="description"/>
+                    <field name="product_template_id" />
                     <field name="odoo_module_name"/>
-                    <field name="price"/>
-                    <field name="currency_id"/>
                     <field name="active"/>
                     <field name="standard"/>
                 </tree>
@@ -166,19 +193,31 @@
             <field name="arch" type="xml">
                 <form string="Module Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="description"/>
                             <field name="odoo_module_name"/>
-                            <field name="standard"/>
-                            <field name="package_file_location"/>
-                            <field name="price"/>
-                            <field name="currency_id"/>
-                            <field name="active"/>
-                            <field name="image"/>
-                            <field name="module_ids"/>
                         </group>
+
+                        <separator/>
+                        <group>
+                            <field name="standard"/>
+                            <field name="active"/>
+                            <field name="image" widget="image"/>
+                        </group>
+                        <group>
+                            <field name="package_file_location"/>
+                            <field name="product_template_id" />
+                        </group>
+                        <separator/>
+
+                        <field name="module_ids"/>
                     </sheet>
+
                 </form>
             </field>
         </record>
@@ -203,25 +242,30 @@
                 <tree string="Module Tree">
                     <field name="name"/>
                     <field name="description"/>
-                    <field name="price"/>
-                    <field name="currency_id"/>
+                    <field name="product_template_id" />
                     <field name="active"/>
                 </tree>
             </field>
         </record>
 
         <!-- Form view for Service -->
-        <record model="ir.ui.view" id="botc_module_form_view">
+        <record model="ir.ui.view" id="botc_service_form_view">
             <field name="name">botc_service.form</field>
             <field name="model">botc.service</field>
             <field name="arch" type="xml">
                 <form string="Module Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
+
                         <group>
-                            <field name="name"/>
                             <field name="description"/>
-                            <field name="price"/>
-                            <field name="currency_id"/>
+                            <field name="product_template_id" />
+                        </group>
+                        <group>
                             <field name="unit"/>
                             <field name="active"/>
                             <field name="image"/>
@@ -265,8 +309,12 @@
             <field name="arch" type="xml">
                 <form string="Flavor Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="version"/>
                             <field name="edition"/>
                         </group>
@@ -305,8 +353,12 @@
             <field name="arch" type="xml">
                 <form string="Db Server Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="ip"/>
                             <field name="port"/>
                             <field name="username"/>
@@ -347,8 +399,12 @@
             <field name="arch" type="xml">
                 <form string="Http Server Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="ip"/>
                             <field name="port"/>
                             <field name="username"/>
@@ -398,8 +454,12 @@
                         <button type="object" name="list_containers" string="List Containers"/>
                     </header>
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="ip"/>
                             <field name="port"/>
                             <field name="username"/>
@@ -443,8 +503,12 @@
             <field name="arch" type="xml">
                 <form string="Docker Image Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="image_name"/>
                             <field name="extra_parameters"/>
                             <field name="flavor_id"/>
@@ -528,10 +592,13 @@
 
                     <sheet>
                         <group>
-                            <group >
-                                <field name="domain"/>
-                                <field name="market_type_id"/>
-                            </group>
+                            <h1>
+                                <group >
+                                    <field name="domain"/>
+                                    <field name="market_type_id"/>
+                                </group>
+                            </h1>
+
                             <group >
                                 <field name="dbserver_id"/>
                                 <field name="docker_server_id"/>
@@ -600,7 +667,7 @@
             <field name="name">botc_executedcommand.tree</field>
             <field name="model">botc.executedcommand</field>
             <field name="arch" type="xml">
-                <tree string="Execution Log Tree">
+                <tree string="Execution Log Tree" create="false" edit="false">
                     <field name="datetime_executed"/>
                     <field name="command"/>
                 </tree>
@@ -612,7 +679,7 @@
             <field name="name">botc_executedcommand.form</field>
             <field name="model">botc.executedcommand</field>
             <field name="arch" type="xml">
-                <form string="Execution Log Form">
+                <form string="Execution Log Form" create="false" edit="false">
                     <sheet>
                         <group>
                             <field name="datetime_executed"/>
@@ -655,8 +722,12 @@
             <field name="arch" type="xml">
                 <form string="Execution Log Form">
                     <sheet>
+                        <h1>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </h1>
                         <group>
-                            <field name="name"/>
                             <field name="template_username"/>
                             <field name="template_password" password="True"/>
                             <field name="template_apps_location"/>
@@ -695,6 +766,7 @@
                     <group name="botc_general_settings" string="General Settings">
                         <field name="domain"/>
                         <field name="trial_days"/>
+                        <field name="salesdocument_type" />
                     </group>
                     <group name="botc_website_settings" string="Website Settings">
                         <field name="success_message"/>
@@ -764,5 +836,6 @@
             <field name="function">_process_container_instance_expiry</field>
             <field name="args">()</field>
         </record>
+
     </data>
 </openerp>

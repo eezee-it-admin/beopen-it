@@ -124,19 +124,10 @@ class DockerServer(models.Model):
 class MarketType(models.Model):
     _name="botc.markettype"
 
-    @api.model
-    def _get_currency(self):
-        currency=False
-        context=self._context or {}
-        if context.get('default_journal_id', False):
-            currency=self.env['account.journal'].browse(context['default_journal_id']).currency_id
-        return currency
 
     name=fields.Char(string="Name", required=True, translate = True)
     code=fields.Char(string="Code", required=True)
     description=fields.Html(string="Description", translate = True)
-    price=fields.Monetary(string="Price", required=True)
-    currency_id=fields.Many2one('res.currency', string='Currency', default=_get_currency)
 
     goal_id=fields.Many2one("botc.goal", string="Goal")
     market_id=fields.Many2one("botc.market", string="Market", required=True)
@@ -146,6 +137,7 @@ class MarketType(models.Model):
     available_module_ids = fields.One2many("botc.availablemodules", "markettype_id", string="Available Modules")
     available_service_ids = fields.One2many("botc.availableservices", "markettype_id", string="Available Services")
 
+    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
 
 class DockerImage(models.Model):
     _name="botc.dockerimage"
@@ -174,8 +166,6 @@ class Module(models.Model):
 
     name=fields.Char(string="Name", required=True, translate = True)
     description=fields.Text(string="Description", translate = True)
-    price = fields.Monetary(string="Price", required=True)
-    currency_id = fields.Many2one('res.currency', string='Currency')
     active = fields.Boolean(string="Active", default=True)
     image = fields.Binary(string="Image Icon")
 
@@ -185,18 +175,20 @@ class Module(models.Model):
     standard=fields.Boolean(string="Standard", default=True)
     package_file_location=fields.Char(string="Package File Location")
 
+    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
+
+
 class Service(models.Model):
     _name="botc.service"
 
     name=fields.Char(string="Name", required=True, translate = True)
     description=fields.Text(string="Description", translate = True)
-    price = fields.Monetary(string="Price", required=True)
-    currency_id = fields.Many2one('res.currency', string='Currency')
     active = fields.Boolean(string="Active", default=True)
     image = fields.Binary(string="Image Icon")
     unit = fields.Char(string="Units", translate = True, required = True)
     fixed_price=fields.Boolean(string="Fixed price", default=True)
     minimum_amount=fields.Integer(string="Minimum amount")
+    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
 
 class AvailableModules(models.Model):
     _name="botc.availablemodules"

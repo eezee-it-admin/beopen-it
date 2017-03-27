@@ -11,7 +11,7 @@
     'author': "BeOpen NV",
     'website': "http://www.beopen.be",
     'category': 'Configurator',
-    'version': '10.1',
+    'version': '10.0.10.1.1',
     'depends': ['website', 'mail', 'crm'],
     'data': [
         'security/configurator_security.xml',

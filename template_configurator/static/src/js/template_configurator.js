@@ -88,6 +88,20 @@ odoo.define('template_configurator.configurate', function(require) {
                     closest.toggleClass("selected", $(o).prop('checked'));
                 });
             }
+
+
+            var show_contact_info_fields = function() {
+                var salesdocument_type = $("[name='selected_salesdocument_type']:checked").val();
+                switch(salesdocument_type.substring(0, 1)) {
+                    case "q": case "s":
+                         $(".openerp_website_contactinfo").prop("hidden", false);
+                         break;
+                    default:
+                         $(".openerp_website_contactinfo").prop("hidden", true);
+                }
+            }
+
+
             var ensure_constraints = function(e) {
                 var checkbox = $(e.target);
                 var depends = get_depends(checkbox);
@@ -198,7 +212,6 @@ odoo.define('template_configurator.configurate', function(require) {
 
                 price_monthly += parseFloat(default_modules_price_monthly) + parseFloat(optional_modules_price_monthly);
 
-
                 return price_monthly;
 
             };
@@ -216,6 +229,11 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
                 });
             };
+
+
+            $("[name='selected_salesdocument_type']").on("change", function() {
+                show_contact_info_fields();
+            });
 
             $(".openerp_website_pricing").on("change", "input", update_price);
             $(".openerp_website_pricing").on("change", "input[type='checkbox']", function(o) {
@@ -347,6 +365,15 @@ odoo.define('template_configurator.configurate', function(require) {
                     var email = $("[name='email']").val();
                     var price = calculate_monthly_price();
 
+                    var selected_salesdocument_type = $("[name='selected_salesdocument_type']").val();
+                    var contact_company = $("[name='contact_company']").val().trim();
+                    var contact_contactperson = $("[name='contact_contactperson']").val().trim();
+                    var contact_vat = $("[name='contact_vat']").val().trim();
+                    var contact_address = $("[name='contact_address']").val().trim();
+                    var contact_city = $("[name='contact_city']").val().trim();
+                    var contact_state = $("[name='contact_state']").val().trim();
+                    var contact_zip = $("[name='contact_zip']").val().trim();
+
                     var wait_message = _t("One moment please ...");
                     $.blockUI({ message: '<h3><span id="progress">'+ wait_message + '</span></h3><img id="spinner" src="/template_configurator/static/src/img/ajax-loader.gif"/>' });
 
@@ -388,7 +415,8 @@ odoo.define('template_configurator.configurate', function(require) {
                     }
 
                     ajax.jsonRpc('/configurator/createinstance', 'call', {
-                        'subdomain': subdomain, 'email': email, 'market_type':market_type, 'apps': apps, 'services': services, 'price': price, 'flavor_id': flavor_id
+                        'subdomain': subdomain, 'email': email, 'market_type':market_type, 'apps': apps, 'services': services, 'price': price, 'flavor_id': flavor_id, 'selected_salestype': selected_salesdocument_type,
+                        'contact_company': contact_company, 'contact_contactperson': contact_contactperson, 'contact_vat': contact_vat, 'contact_address': contact_address, 'contact_city': contact_city, 'contact_state': contact_state, 'contact_zip': contact_zip
                     }).then(function(result) {
                         if (result.type == "ok") {
                         }
