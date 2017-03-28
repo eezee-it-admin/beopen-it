@@ -152,7 +152,9 @@ class Configurator(http.Controller):
         sale_order_line_object = http.request.env["sale.order.line"].sudo()
 
         botc_module_object = http.request.env["botc.module"].sudo()
+        botc_service_object = http.request.env["botc.service"].sudo()
         botc_availablemodules_object = http.request.env["botc.availablemodules"].sudo()
+        botc_availableservices_object = http.request.env["botc.availableservices"].sudo()
         product_object = http.request.env["product.product"].sudo()
 
         sale_order = sale_order_object.create(values)
@@ -165,7 +167,7 @@ class Configurator(http.Controller):
 
             order_line_values = {
                 "product_id": product.id,
-                'product_qty': 1,
+                'product_uom_qty': 1,
                 'order_id': sale_order.id
                 # 'product_uom': self.product_uom.id,
                 # 'company_id': self.order_id.company_id.id,
@@ -194,7 +196,7 @@ class Configurator(http.Controller):
 
                         order_line_values = {
                             "product_id": product.id,
-                            'product_qty': 1,
+                            'product_uom_qty': 1,
                             'order_id': sale_order.id
                             # 'product_uom': self.product_uom.id,
                             # 'company_id': self.order_id.company_id.id,
@@ -215,7 +217,51 @@ class Configurator(http.Controller):
 
                         sale_order_line = sale_order_line_object.create(order_line_values)
 
-            #Afterwards the ones that are not included in the package
+            #Add the services
+            if seq_excl != 0:
+                seq_incl = 500 + (seq_excl * 10)
+            else:
+                seq_incl = 10 + (seq_incl * 10)
+
+
+            for service in services:
+                service_stripped = service.strip(" ")
+
+                #If Service contains (xxx), then (xxx) is the quantity for this service
+                pos = service_stripped.rfind("(")
+                service_quantity = 1
+
+                if pos != -1:
+                    #Take value between ( )  at end of string
+                    service_quantity = service_stripped[pos+1:len(service_stripped)-1]
+                    service_stripped = service_stripped[:pos]
+
+                #Name of service is service minus quantity = service_stripped
+                botc_service = botc_service_object.search([('name', '=', service_stripped)], limit=1)
+
+                if botc_service:
+
+                    # Is the botc_service linked to a product_template?
+                    if botc_service.product_template_id.id:
+
+                        botc_availableservice = botc_availableservices_object.search(
+                            [('service_id', '=', botc_service.id), ('markettype_id', '=', markettype.id)], limit=1)
+
+                        product = product_object.search(
+                            [('product_tmpl_id', '=', botc_service.product_template_id.id)])
+
+                        order_line_values = {
+                            "product_id": product.id,
+                            'product_uom_qty': service_quantity,
+                            'order_id': sale_order.id
+                        }
+
+                        # If module is included in package, add line but set price to 0 because price is on package level
+                        if botc_availableservice:
+                            seq_incl += 10
+                            order_line_values['sequence'] = seq_incl
+
+                        sale_order_line = sale_order_line_object.create(order_line_values)
 
         return sale_order
 
@@ -341,6 +387,9 @@ class Configurator(http.Controller):
                 "type": "contact",
                 "is_company": False
             }
+
+            if (contact_contactperson == ""):
+                res_partner_values['name'] = email
 
             #If Company was found, link contact to company
             if company:
