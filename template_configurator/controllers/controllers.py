@@ -306,13 +306,16 @@ class Configurator(http.Controller):
 
         values_quotation = {
             "partner_id": partner.id,
-            "state": "sent"
+            "state": "sent",
+            "configuration_info": description
             # "description": description,
             # "planned_revenue": price,
             # "email_from": email
         }
 
         quotation = self.create_crm_sales_document(values_quotation, markettype, modules_to_install, services)
+
+        quotation.force_quotation_send()
 
         _logger.info("Quotation %s for %s created.", quotation.name, subdomain)
 
@@ -336,13 +339,13 @@ class Configurator(http.Controller):
 
         values_sales_order = {
             "partner_id": partner.id,
-            "state": "sale"
-            # "description": description,
-            # "planned_revenue": price,
-            # "email_from": email
+            "state": "sale",
+            "configurator_info": description
         }
 
         sale_order = self.create_crm_sales_document(values_sales_order, markettype, modules_to_install, services)
+
+        sale_order.force_quotation_send()
 
         _logger.info("Sales order %s for %s created.", sale_order.name, subdomain)
 
@@ -452,9 +455,14 @@ class Configurator(http.Controller):
             if mail_template_id:
                 _logger.info("Send mail for %s to %s", subdomain, email)
                 mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
-                mail_template.send_mail(partner.id, True)
+                if salesdocument_type == "lead":
+                    mail_template.send_mail(partner.id, True)
+                else:
+                    mail_template.send_mail(sale_document.id, True)
             else:
                 _logger.warning("No email template found for sending email to the configurator user")
+
+
 
             template_user = template.template_username
             template_passwd = template.template_password

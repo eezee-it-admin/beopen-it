@@ -41,9 +41,9 @@
 
         <record id="mail_template_configurator_partner" model="mail.template">
             <field name="name">Your new BeOpen experience (partner)</field>
-            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="model_id" ref="sale.model_sale_order"/>
             <field name="email_from">sales@beopen.be</field>
-            <field name="email_to">${object.email}</field>
+            <field name="email_to">${object.partner_id.email}</field>
             <field name="subject">Your new BeOpen experience</field>
             <field name="lang">en</field>
             <field name="auto_delete" eval="True"/>
@@ -64,7 +64,7 @@
                  <p>
                     The credentials for your personalised environment are:
                  </p>
-                 <pre>${object.description}</pre>
+                 <pre>${object.configurator_info}</pre>
                  <p>
                  Thank you again for choosing BeOpen and enjoy your new and modern application environment.
                  </p>

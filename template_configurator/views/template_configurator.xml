@@ -837,5 +837,24 @@
             <field name="args">()</field>
         </record>
 
+
+
+        <!-- Sales order -->
+        <record id="configurator_inherit_sale_order" model="ir.ui.view">
+            <field name="name">botc.inherit.sale_order</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="priority">32</field>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Configurator info">
+                        <group>
+                            <field name="configurator_info"/>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
     </data>
 </openerp>

@@ -810,3 +810,7 @@ class ExecutedCommand(models.Model):
 
         return log
 
+class SalesOrder(models.Model):
+    _inherit = 'sale.order'
+
+    configurator_info = fields.Text(string="Configurator info")
