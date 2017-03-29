@@ -137,7 +137,7 @@ class MarketType(models.Model):
     available_module_ids = fields.One2many("botc.availablemodules", "markettype_id", string="Available Modules")
     available_service_ids = fields.One2many("botc.availableservices", "markettype_id", string="Available Services")
 
-    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
+    product_template_id = fields.Many2one("product.template", string="Product", required=True)
 
 class DockerImage(models.Model):
     _name="botc.dockerimage"
@@ -175,7 +175,7 @@ class Module(models.Model):
     standard=fields.Boolean(string="Standard", default=True)
     package_file_location=fields.Char(string="Package File Location")
 
-    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
+    product_template_id = fields.Many2one("product.template", string="Product", required=True)
 
 
 class Service(models.Model):
@@ -188,7 +188,7 @@ class Service(models.Model):
     unit = fields.Char(string="Units", translate = True, required = True)
     fixed_price=fields.Boolean(string="Fixed price", default=True)
     minimum_amount=fields.Integer(string="Minimum amount")
-    product_template_id = fields.Many2one("product.template", string="Product template", required=True)
+    product_template_id = fields.Many2one("product.template", string="Product", required=True)
 
 class AvailableModules(models.Model):
     _name="botc.availablemodules"
