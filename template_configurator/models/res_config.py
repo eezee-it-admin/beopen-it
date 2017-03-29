@@ -9,8 +9,7 @@ class TemplateConfiguratorConfiguration(models.TransientModel):
     success_message = fields.Char(string="Success message")
     error_message = fields.Char(string="Error message")
     logo = fields.Binary(string="Logo")
-    salesdocument_type = fields.Selection([('lead', 'Lead'), ('quotation', 'Quotation'), ('sales order', 'Sales order')], index=True, required=True,
-        default=lambda self: 'lead' if self.env['res.users'].has_group('crm.group_use_lead') else 'sales order',
+    salesdocument_type = fields.Selection([('lead', 'Lead'), ('quotation', 'Quotation'), ('sales order', 'Sales order')], required=True,
         help="Type of sales document to be created when configuration is confirmed")
 
     def set_domain(self):
@@ -59,5 +58,10 @@ class TemplateConfiguratorConfiguration(models.TransientModel):
             'salesdocument_type', (self.salesdocument_type or '').strip(), groups=['base.group_system'])
 
     def get_default_salesdocument_type(self, fields):
-        salesdocument_type = self.env['ir.config_parameter'].get_param('salesdocument_type', default=lambda self: 'lead' if self.env['res.users'].has_group('crm.group_use_lead') else 'sales order')
+        salesdocument_type = self.env['ir.config_parameter'].get_param('salesdocument_type')
+        if not salesdocument_type:
+            if self.env['res.users'].has_group('crm.group_use_lead'):
+                salesdocument_type = 'lead'
+            else:
+                salesdocument_type = 'sales order'
         return dict(salesdocument_type=salesdocument_type)
