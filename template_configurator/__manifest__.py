@@ -12,7 +12,7 @@
     'website': "http://www.beopen.be",
     'category': 'Configurator',
     'version': '10.0.10.1.1',
-    'depends': ['website', 'mail', 'crm'],
+    'depends': ['website', 'mail', 'crm', 'website_quote'],
     'data': [
         'security/configurator_security.xml',
         'security/ir.model.access.csv',

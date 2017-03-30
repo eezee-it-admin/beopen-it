@@ -148,122 +148,137 @@ class Configurator(http.Controller):
 
     #Create the sale order and the sale order lines
     def create_crm_sales_document(self, values, markettype, modules_to_install, services):
-        sale_order_object = http.request.env["sale.order"].sudo()
-        sale_order_line_object = http.request.env["sale.order.line"].sudo()
 
-        botc_module_object = http.request.env["botc.module"].sudo()
-        botc_service_object = http.request.env["botc.service"].sudo()
-        botc_availablemodules_object = http.request.env["botc.availablemodules"].sudo()
-        botc_availableservices_object = http.request.env["botc.availableservices"].sudo()
-        product_object = http.request.env["product.product"].sudo()
+        try:
+            sale_order_object = http.request.env["sale.order"].sudo()
+            sale_order_line_object = http.request.env["sale.order.line"].sudo()
 
-        sale_order = sale_order_object.create(values)
+            botc_module_object = http.request.env["botc.module"].sudo()
+            botc_service_object = http.request.env["botc.service"].sudo()
+            botc_availablemodules_object = http.request.env["botc.availablemodules"].sudo()
+            botc_availableservices_object = http.request.env["botc.availableservices"].sudo()
+            sale_quote_template_object = http.request.env["sale.quote.template"].sudo()
 
-        if sale_order:
+            product_object = http.request.env["product.product"].sudo()
 
-            #First add the package
+            # Find the quotation template for generation of subscription
+            sale_quote_template = sale_quote_template_object.search([('name', '=', "Configurator quotation template")])
 
-            product = product_object.search([('product_tmpl_id', '=', markettype.product_template_id.id)])
-
-            order_line_values = {
-                "product_id": product.id,
-                'product_uom_qty': 1,
-                'order_id': sale_order.id
-                # 'product_uom': self.product_uom.id,
-                # 'company_id': self.order_id.company_id.id,
-                # 'group_id': group_id,
-                # 'sale_line_id': self.id
-            }
-            sale_order_line = sale_order_line_object.create(order_line_values)
+            #If found, link template to order
+            if sale_quote_template:
+                values['template_id'] = sale_quote_template.id
 
 
-            #Now add the submodules...
-            #Via the sequence the lines will be ordened correctly on the order: first the modules that are included, then the additional ones
-            seq_incl = 0
-            seq_excl = 0
+            sale_order = sale_order_object.create(values)
 
-            for key, val in dict(modules_to_install).items():
-                module = botc_module_object.search([('odoo_module_name', '=', key), ('name', '=ilike', val)], limit=1)
+            if sale_order:
 
-                if module:
+                #First add the package
 
-                    # Is the botc_module linked to a product_template?
-                    if module.product_template_id.id:
+                product = product_object.search([('product_tmpl_id', '=', markettype.product_template_id.id)])
 
-                        botc_availablemodule = botc_availablemodules_object.search([('module_id', '=', module.id), ('markettype_id', '=', markettype.id)], limit=1)
-
-                        product = product_object.search([('product_tmpl_id', '=', module.product_template_id.id)])
-
-                        order_line_values = {
-                            "product_id": product.id,
-                            'product_uom_qty': 1,
-                            'order_id': sale_order.id
-                            # 'product_uom': self.product_uom.id,
-                            # 'company_id': self.order_id.company_id.id,
-                            # 'group_id': group_id,
-                            # 'sale_line_id': self.id
-                        }
-
-                        #If module is included in package, add line but set price to 0 because price is on package level
-                        if botc_availablemodule:
-                            if botc_availablemodule.included:
-                                seq_incl += 1
-                                order_line_values['price_unit'] = 0
-                                order_line_values['sequence'] = 10 + (seq_incl * 10)
-
-                            else:
-                                seq_excl += 1
-                                order_line_values['sequence'] = 500 + (seq_excl * 10)
-
-                        sale_order_line = sale_order_line_object.create(order_line_values)
-
-            #Add the services
-            if seq_excl != 0:
-                seq_incl = 500 + (seq_excl * 10)
-            else:
-                seq_incl = 10 + (seq_incl * 10)
+                order_line_values = {
+                    "product_id": product.id,
+                    'product_uom_qty': 1,
+                    'order_id': sale_order.id
+                    # 'product_uom': self.product_uom.id,
+                    # 'company_id': self.order_id.company_id.id,
+                    # 'group_id': group_id,
+                    # 'sale_line_id': self.id
+                }
+                sale_order_line = sale_order_line_object.create(order_line_values)
 
 
-            for service in services:
-                service_stripped = service.strip(" ")
+                #Now add the submodules...
+                #Via the sequence the lines will be ordened correctly on the order: first the modules that are included, then the additional ones
+                seq_incl = 0
+                seq_excl = 0
 
-                #If Service contains (xxx), then (xxx) is the quantity for this service
-                pos = service_stripped.rfind("(")
-                service_quantity = 1
+                for key, val in dict(modules_to_install).items():
+                    module = botc_module_object.search([('odoo_module_name', '=', key), ('name', '=ilike', val)], limit=1)
 
-                if pos != -1:
-                    #Take value between ( )  at end of string
-                    service_quantity = service_stripped[pos+1:len(service_stripped)-1]
-                    service_stripped = service_stripped[:pos]
+                    if module:
 
-                #Name of service is service minus quantity = service_stripped
-                botc_service = botc_service_object.search([('name', '=', service_stripped)], limit=1)
+                        # Is the botc_module linked to a product_template?
+                        if module.product_template_id.id:
 
-                if botc_service:
+                            botc_availablemodule = botc_availablemodules_object.search([('module_id', '=', module.id), ('markettype_id', '=', markettype.id)], limit=1)
 
-                    # Is the botc_service linked to a product_template?
-                    if botc_service.product_template_id.id:
+                            product = product_object.search([('product_tmpl_id', '=', module.product_template_id.id)])
 
-                        botc_availableservice = botc_availableservices_object.search(
-                            [('service_id', '=', botc_service.id), ('markettype_id', '=', markettype.id)], limit=1)
+                            order_line_values = {
+                                "product_id": product.id,
+                                'product_uom_qty': 1,
+                                'order_id': sale_order.id
+                                # 'product_uom': self.product_uom.id,
+                                # 'company_id': self.order_id.company_id.id,
+                                # 'group_id': group_id,
+                                # 'sale_line_id': self.id
+                            }
 
-                        product = product_object.search(
-                            [('product_tmpl_id', '=', botc_service.product_template_id.id)])
+                            #If module is included in package, add line but set price to 0 because price is on package level
+                            if botc_availablemodule:
+                                if botc_availablemodule.included:
+                                    seq_incl += 1
+                                    order_line_values['price_unit'] = 0
+                                    order_line_values['sequence'] = 10 + (seq_incl * 10)
 
-                        order_line_values = {
-                            "product_id": product.id,
-                            'product_uom_qty': service_quantity,
-                            'order_id': sale_order.id
-                        }
+                                else:
+                                    seq_excl += 1
+                                    order_line_values['sequence'] = 500 + (seq_excl * 10)
 
-                        # If module is included in package, add line but set price to 0 because price is on package level
-                        if botc_availableservice:
-                            seq_incl += 10
-                            order_line_values['sequence'] = seq_incl
+                            sale_order_line = sale_order_line_object.create(order_line_values)
 
-                        sale_order_line = sale_order_line_object.create(order_line_values)
+                #Add the services
+                if seq_excl != 0:
+                    seq_incl = 500 + (seq_excl * 10)
+                else:
+                    seq_incl = 10 + (seq_incl * 10)
 
-        return sale_order
+
+                for service in services:
+                    service_stripped = service.strip(" ")
+
+                    #If Service contains (xxx), then (xxx) is the quantity for this service
+                    pos = service_stripped.rfind("(")
+                    service_quantity = 1
+
+                    if pos != -1:
+                        #Take value between ( )  at end of string
+                        service_quantity = service_stripped[pos+1:len(service_stripped)-1]
+                        service_stripped = service_stripped[:pos]
+
+                    #Name of service is service minus quantity = service_stripped
+                    botc_service = botc_service_object.search([('name', '=', service_stripped)], limit=1)
+
+                    if botc_service:
+
+                        # Is the botc_service linked to a product_template?
+                        if botc_service.product_template_id.id:
+
+                            botc_availableservice = botc_availableservices_object.search(
+                                [('service_id', '=', botc_service.id), ('markettype_id', '=', markettype.id)], limit=1)
+
+                            product = product_object.search(
+                                [('product_tmpl_id', '=', botc_service.product_template_id.id)])
+
+                            order_line_values = {
+                                "product_id": product.id,
+                                'product_uom_qty': service_quantity,
+                                'order_id': sale_order.id
+                            }
+
+                            # If module is included in package, add line but set price to 0 because price is on package level
+                            if botc_availableservice:
+                                seq_incl += 10
+                                order_line_values['sequence'] = seq_incl
+
+                            sale_order_line = sale_order_line_object.create(order_line_values)
+
+            return sale_order
+
+        except (Exception) as e :
+            sys.exit(0)
 
     #Create a lead document
     def create_crm_sales_document_lead(self, domain, email, markettype, modules_to_install,
@@ -298,14 +313,14 @@ class Configurator(http.Controller):
                                             contact_company, contact_name, contact_vat, contact_address, contact_city,
                                             contact_state, contact_zip):
 
-        company, partner = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
+        company = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
 
         description = self.generate_description(domain, markettype, modules_to_install, password, price, services,
                                                 subdomain, user)
 
 
         values_quotation = {
-            "partner_id": partner.id,
+            "partner_id": company.id,
             "state": "sent",
             "configuration_info": description
             # "description": description,
@@ -319,7 +334,7 @@ class Configurator(http.Controller):
 
         _logger.info("Quotation %s for %s created.", quotation.name, subdomain)
 
-        return quotation, company, partner
+        return quotation, company
 
     #Create a sales order document
     def create_crm_sales_document_sales_order(self, domain, email, markettype, modules_to_install,
@@ -330,7 +345,7 @@ class Configurator(http.Controller):
                                               contact_state, contact_zip):
 
 
-        company, partner = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
+        company = self.create_partner_for_configurator(email, contact_company, contact_name, contact_vat, contact_address, contact_city, contact_state, contact_zip)
 
         description = self.generate_description(domain, markettype, modules_to_install, password, price, services,
                                                 subdomain, user)
@@ -338,7 +353,7 @@ class Configurator(http.Controller):
         _logger.info("Create sales order for %s", subdomain)
 
         values_sales_order = {
-            "partner_id": partner.id,
+            "partner_id": company.id,
             "state": "sale",
             "configurator_info": description
         }
@@ -349,7 +364,7 @@ class Configurator(http.Controller):
 
         _logger.info("Sales order %s for %s created.", sale_order.name, subdomain)
 
-        return sale_order, company, partner
+        return sale_order, company
 
     #Create a partner to link to oportunity or sales order
     def create_partner_for_configurator(self, email, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip):
@@ -400,7 +415,11 @@ class Configurator(http.Controller):
 
             partner = res_partner_object.create(res_partner_values)
 
-        return company, partner
+        #If there is no company, assign value of partner to company, because email will be send to company
+        if not company:
+            company = partner
+
+        return company
 
 
     document_creation_code = {
@@ -440,7 +459,7 @@ class Configurator(http.Controller):
             _logger.info("Creating %s document for %s", selected_salestype, subdomain)
 
             mydocument_creation_code = self.document_creation_code[salesdocument_type]
-            sale_document, company, partner = mydocument_creation_code(self, domain, email, markettype, modules_to_install, password, price, services, subdomain, user, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip)
+            sale_document, company = mydocument_creation_code(self, domain, email, markettype, modules_to_install, password, price, services, subdomain, user, contact_company, contact_contactperson, contact_vat, contact_address, contact_city, contact_state, contact_zip)
 
             #Exit for test purposes ... Guy
             #return {"type": "ok"}
@@ -456,7 +475,7 @@ class Configurator(http.Controller):
                 _logger.info("Send mail for %s to %s", subdomain, email)
                 mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
                 if salesdocument_type == "lead":
-                    mail_template.send_mail(partner.id, True)
+                    mail_template.send_mail(company.id, True)
                 else:
                     mail_template.send_mail(sale_document.id, True)
             else:
