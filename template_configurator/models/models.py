@@ -813,4 +813,4 @@ class ExecutedCommand(models.Model):
 class SalesOrder(models.Model):
     _inherit = 'sale.order'
 
-    configurator_info = fields.Text(string="Configurator info")
+    configurator_info = fields.Text(string="Configurator info", default="")

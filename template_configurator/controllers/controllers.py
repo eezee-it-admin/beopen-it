@@ -314,7 +314,7 @@ class Configurator(http.Controller):
         values_quotation = {
             "partner_id": company.id,
             "state": "sent",
-            "configuration_info": description
+            "configurator_info": description
             # "description": description,
             # "planned_revenue": price,
             # "email_from": email
