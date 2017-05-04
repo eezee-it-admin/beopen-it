@@ -294,7 +294,7 @@ class Configurator(http.Controller):
         lead = http.request.env["crm.lead"].sudo().create(values_lead)
 
         #There is no company or partner involved, so return reference to lead as company and partner because mail template is based on that
-        return lead, lead, lead
+        return lead, lead
 
 
     #Create a quotation document
