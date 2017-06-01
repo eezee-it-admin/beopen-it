@@ -365,7 +365,7 @@ class Configurator(http.Controller):
         company = False
 
         if contact_company != "":
-            company = res_partner_object.search([('vat', '=ilike', contact_vat)], limit=1)
+            company = res_partner_object.search([('name', '=ilike', contact_company)], limit=1)
 
             if not company.id:
                 res_company_values = {
