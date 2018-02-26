@@ -9,7 +9,7 @@
     """,
     'depends': ['web', "base"],
     'auto_install': True,
-    'author': "BeOpen NV",
+    'author': "BeOpen-IT",
     'website': "http://www.beopen.be",
 
     # Categories can be used to filter modules in modules listing
