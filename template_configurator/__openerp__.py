@@ -8,8 +8,8 @@
         BeOpen Template Configurator
     """,
 
-    'author': "Rhea NV",
-    'website': "http://www.rhea.be",
+    'author': "BeOpen-IT",
+    'website': "http://www.beopen.be",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/openerp/addons/base/module/module_data.xml
