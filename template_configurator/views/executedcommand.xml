@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for ExecuteCommand -->
+    <record model="ir.ui.view" id="botc_executedcommand_tree_view">
+        <field name="name">botc_executedcommand.tree</field>
+        <field name="model">botc.executedcommand</field>
+        <field name="arch" type="xml">
+            <tree string="Execution Log Tree">
+                <field name="datetime_executed"/>
+                <field name="command"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for ExecuteCommand -->
+    <record model="ir.ui.view" id="botc_executedcommand_form_view">
+        <field name="name">botc_executedcommand.form</field>
+        <field name="model">botc.executedcommand</field>
+        <field name="arch" type="xml">
+            <form string="Execution Log Form">
+                <sheet>
+                    <group>
+                        <field name="datetime_executed"/>
+                        <field name="command"/>
+                        <field name="standard_output"/>
+                        <field name="standard_error"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for ExecuteCommand -->
+    <record model="ir.actions.act_window" id="botc_executedcommand_list_action">
+        <field name="name">Execution Logs</field>
+        <field name="res_model">botc.executedcommand</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">View Execution Logs
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="executioncommand_menu" name="Execution Log" parent="configurator_template_configurator_menu"
+                  action="botc_executedcommand_list_action" groups="template_configurator.group_configurator_administrator"/>
+
+</odoo>

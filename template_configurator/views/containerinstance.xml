@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for ContainerInstance -->
+    <record model="ir.ui.view" id="botc_containerinstance_tree_view">
+        <field name="name">botc_containerinstance.tree</field>
+        <field name="model">botc.containerinstance</field>
+        <field name="arch" type="xml">
+            <tree string="Container Instance Tree">
+                <field name="domain"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for ContainerInstance -->
+    <record model="ir.ui.view" id="botc_containerinstance_form_view">
+        <field name="name">botc_containerinstance.form</field>
+        <field name="model">botc.containerinstance</field>
+        <field name="arch" type="xml">
+            <form string="Container Instance Form">
+                <header>
+                    <button type="object" name="create_docker_container" string="Create Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="delete_docker_container" string="Delete Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="stop_docker_container" string="Stop Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="start_docker_container" string="Start Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="inspect_docker_container" string="Inspect Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="configure_http_server" string="Configure Http Server" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="unconfigure_http_server" string="Unconfigure Http Server" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="deploy_filestore" string="Deploy Filestore" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="deploy_addons" string="Deploy Addons" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="deploy_logging" string="Deploy Logging" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="deploy_config" string="Deploy Odoo Configuration" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="image_history" string="Image History" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="container_top" string="Container Top" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="docker_info" string="Docker Info" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="docker_images" string="Docker Images" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" name="list_containers" string="List Containers" groups="template_configurator.group_configurator_administrator"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group >
+                            <field name="domain"/>
+                            <field name="market_type_id"/>
+                        </group>
+                        <group >
+                            <field name="dbserver_id"/>
+                            <field name="docker_server_id"/>
+                            <field name="httpserver_id"/>
+                            <field name="docker_image_id"/>
+                            <field name="extra_parameters"/>
+                            <field name="template_id"/>
+                            <field name="restart_policy"/>
+                            <field name="flavor"/>
+                        </group>
+                    </group>
+                    <notebook >
+                        <page string="Modules">
+                            <field name="module_ids" mode="tree">
+                                <tree>
+                                    <field name="module_id"/>
+                                    <field name="installed_on"/>
+                                    <field name="uninstalled_on"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Port Mappings">
+                            <field name="port_mapping_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="port_id"/>
+                                    <field name="port_map"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Volume Mappings">
+                            <field name="volume_mapping_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="volume_id"/>
+                                    <field name="volume_map"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Http Config">
+                            <field name="http_config"/>
+                        </page>
+                        <page string="Odoo Config">
+                            <field name="odoo_config"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for ContainerInstance -->
+    <record model="ir.actions.act_window" id="botc_containerinstance_list_action">
+        <field name="name">Container Instances</field>
+        <field name="res_model">botc.containerinstance</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Container Instance
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="containerinstances_menu" name="Container Instances" parent="configurator_template_configurator_menu"
+                  action="botc_containerinstance_list_action"/>
+</odoo>

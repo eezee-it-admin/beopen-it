@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Httpserver -->
+    <record model="ir.ui.view" id="botc_httpserver_tree_view">
+        <field name="name">botc_httpserver.tree</field>
+        <field name="model">botc.httpserver</field>
+        <field name="arch" type="xml">
+            <tree string="Http Server Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Httpserver -->
+    <record model="ir.ui.view" id="botc_httpserver_form_view">
+        <field name="name">botc_httpserver.form</field>
+        <field name="model">botc.httpserver</field>
+        <field name="arch" type="xml">
+            <form string="Http Server Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="ip"/>
+                        <field name="port"/>
+                        <field name="username"/>
+                        <field name="pwd" password="True"/>
+                        <field name="config_path"/>
+                        <field name="config_template"/>
+                        <field name="reload_command"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Httpserver -->
+    <record model="ir.actions.act_window" id="botc_httpserver_list_action">
+        <field name="name">HTTP Servers</field>
+        <field name="res_model">botc.httpserver</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Http Servers
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="httpservers_menu" name="Http Servers" parent="configuration_template_configurator_menu"
+                  action="botc_httpserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+</odoo>

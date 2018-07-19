@@ -17,23 +17,19 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import availablemodules
-from . import availableservices
-from . import containerinstance
-from . import dbserver
-from . import dockerimage
-from . import dockerserver
-from . import executedcommand
-from . import flavor
-from . import goal
-from . import httpserver
-from . import instancemodule
-from . import market
-from . import markettype
-from . import module
-from . import port
-from . import portmapping
-from . import service
-from . import template
-from . import volume
-from . import volumemapping
+
+from odoo import fields, models
+
+
+class Service(models.Model):
+    _name = "botc.service"
+
+    name = fields.Char(string="Name", required=True, translate=True)
+    description = fields.Text(string="Description", translate=True)
+    price = fields.Monetary(string="Price", required=True)
+    currency_id = fields.Many2one('res.currency', string='Currency')
+    active = fields.Boolean(string="Active", default=True)
+    image = fields.Binary(string="Image Icon")
+    unit = fields.Char(string="Units", translate=True, required=True)
+    fixed_price = fields.Boolean(string="Fixed price", default=True)
+    minimum_amount = fields.Integer(string="Minimum amount")

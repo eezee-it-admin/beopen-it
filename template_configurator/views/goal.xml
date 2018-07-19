@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Goal -->
+    <record model="ir.ui.view" id="botc_type_tree_view">
+        <field name="name">botc_goal.tree</field>
+        <field name="model">botc.goal</field>
+        <field name="arch" type="xml">
+            <tree string="Goal Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Goal -->
+    <record model="ir.ui.view" id="botc_type_form_view">
+        <field name="name">botc_goal.form</field>
+        <field name="model">botc.goal</field>
+        <field name="arch" type="xml">
+            <form string="Goal Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Goal -->
+    <record model="ir.actions.act_window" id="botc_goal_list_action">
+        <field name="name">Goals</field>
+        <field name="res_model">botc.goal</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Goals
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="goals_menu" name="Goals" parent="configuration_template_configurator_menu"
+                  action="botc_goal_list_action"/>
+</odoo>

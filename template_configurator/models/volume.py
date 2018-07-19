@@ -17,23 +17,19 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import availablemodules
-from . import availableservices
-from . import containerinstance
-from . import dbserver
-from . import dockerimage
-from . import dockerserver
-from . import executedcommand
-from . import flavor
-from . import goal
-from . import httpserver
-from . import instancemodule
-from . import market
-from . import markettype
-from . import module
-from . import port
-from . import portmapping
-from . import service
-from . import template
-from . import volume
-from . import volumemapping
+from odoo import fields, models
+
+
+class Volume(models.Model):
+    _name = "botc.volume"
+    _rec_name = "type"
+
+    type = fields.Selection([
+        ("filestore", "File Store"),
+        ("addons", "Addons"),
+        ("logging", "Logging"),
+        ("config", "Configuration")
+    ], required=True)
+    path = fields.Char(string="Path", required=True)
+    docker_image_id = fields.Many2one(
+        "botc.dockerimage", string="Docker Image", required=True)

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <!-- Tree view for Dbserver -->
+    <record model="ir.ui.view" id="botc_dbserver_tree_view">
+        <field name="name">botc_dbserver.tree</field>
+        <field name="model">botc.dbserver</field>
+        <field name="arch" type="xml">
+            <tree string="Db Server Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Dbserver -->
+    <record model="ir.ui.view" id="botc_dbserver_form_view">
+        <field name="name">botc_dbservr.form</field>
+        <field name="model">botc.dbserver</field>
+        <field name="arch" type="xml">
+            <form string="Db Server Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="ip"/>
+                        <field name="port"/>
+                        <field name="username"/>
+                        <field name="pwd" password="True"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Dbserver -->
+    <record model="ir.actions.act_window" id="botc_dbserver_list_action">
+        <field name="name">DB Servers</field>
+        <field name="res_model">botc.dbserver</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create DB Servers
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="dbservers_menu" name="Db Servers" parent="configuration_template_configurator_menu"
+                  action="botc_dbserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+</odoo>

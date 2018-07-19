@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Service -->
+    <record model="ir.ui.view" id="botc_service_tree_view">
+        <field name="name">botc_service.tree</field>
+        <field name="model">botc.service</field>
+        <field name="arch" type="xml">
+            <tree string="Module Tree">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="price"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Service -->
+    <record model="ir.ui.view" id="botc_module_form_view">
+        <field name="name">botc_service.form</field>
+        <field name="model">botc.service</field>
+        <field name="arch" type="xml">
+            <form string="Module Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="price"/>
+                        <field name="currency_id"/>
+                        <field name="unit"/>
+                        <field name="active"/>
+                        <field name="image"/>
+                        <field name="fixed_price"/>
+                        <field name="minimum_amount"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Service -->
+    <record model="ir.actions.act_window" id="botc_service_list_action">
+        <field name="name">Services</field>
+        <field name="res_model">botc.service</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Services
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="services_menu" name="Services" parent="configuration_template_configurator_menu"
+                  action="botc_service_list_action"/>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <menuitem id="main_template_configurator_menu" name="Configurator"/>
+        <menuitem id="configurator_template_configurator_menu" name="Configurator"
+                  parent="main_template_configurator_menu"/>
+
+    <menuitem id="configuration_template_configurator_menu" name="Configuration"
+                  parent="main_template_configurator_menu"/>
+</odoo>

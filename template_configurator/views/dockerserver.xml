@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Dockerserver -->
+    <record model="ir.ui.view" id="botc_dockerserver_tree_view">
+        <field name="name">botc_dockerserver.tree</field>
+        <field name="model">botc.dockerserver</field>
+        <field name="arch" type="xml">
+            <tree string="Docker Server Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Dockerserver -->
+    <record model="ir.ui.view" id="botc_dockerserver_form_view">
+        <field name="name">botc_dockerserver.form</field>
+        <field name="model">botc.dockerserver</field>
+        <field name="arch" type="xml">
+            <form string="Docker Server Form">
+                <header>
+                    <button type="object" name="docker_info" string="Docker Info"/>
+                    <button type="object" name="docker_images" string="Docker Images"/>
+                    <button type="object" name="docker_stats" string="Docker Stats"/>
+                    <button type="object" name="list_containers" string="List Containers"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="ip"/>
+                        <field name="port"/>
+                        <field name="username"/>
+                        <field name="pwd" password="True"/>
+                        <field name="data_path"/>
+                        <field name="min_port"/>
+                        <field name="max_port"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Dockerserver -->
+    <record model="ir.actions.act_window" id="botc_dockerserver_list_action">
+        <field name="name">Docker Servers</field>
+        <field name="res_model">botc.dockerserver</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Docker Servers
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="dockerservers_menu" name="Docker Servers" parent="configuration_template_configurator_menu"
+                  action="botc_dockerserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+</odoo>

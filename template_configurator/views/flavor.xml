@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Flavor -->
+    <record model="ir.ui.view" id="botc_flavor_tree_view">
+        <field name="name">botc_flavor.tree</field>
+        <field name="model">botc.flavor</field>
+        <field name="arch" type="xml">
+            <tree string="Goal Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Flavor -->
+    <record model="ir.ui.view" id="botc_flavor_form_view">
+        <field name="name">botc_flavor.form</field>
+        <field name="model">botc.flavor</field>
+        <field name="arch" type="xml">
+            <form string="Flavor Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="version"/>
+                        <field name="edition"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Flavor -->
+    <record model="ir.actions.act_window" id="botc_flavor_list_action">
+        <field name="name">Flavors</field>
+        <field name="res_model">botc.flavor</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Flavors
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="flavors_menu" name="Flavors" parent="configuration_template_configurator_menu"
+                  action="botc_flavor_list_action" groups="template_configurator.group_configurator_administrator"/>
+</odoo>

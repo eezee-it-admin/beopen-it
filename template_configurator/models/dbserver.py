@@ -17,23 +17,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import availablemodules
-from . import availableservices
-from . import containerinstance
-from . import dbserver
-from . import dockerimage
-from . import dockerserver
-from . import executedcommand
-from . import flavor
-from . import goal
-from . import httpserver
-from . import instancemodule
-from . import market
-from . import markettype
-from . import module
-from . import port
-from . import portmapping
-from . import service
-from . import template
-from . import volume
-from . import volumemapping
+
+from odoo import fields, models
+
+
+class DbServer(models.Model):
+    _name = "botc.dbserver"
+
+    name = fields.Char(string="Name", required=True)
+    ip = fields.Char(string="IP", required=True)
+    port = fields.Integer(string="DB Port", required=True)
+    username = fields.Char(string="DB Username", required=True)
+    pwd = fields.Char(string="DB Password", required=True)

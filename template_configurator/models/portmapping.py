@@ -17,23 +17,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import availablemodules
-from . import availableservices
-from . import containerinstance
-from . import dbserver
-from . import dockerimage
-from . import dockerserver
-from . import executedcommand
-from . import flavor
-from . import goal
-from . import httpserver
-from . import instancemodule
-from . import market
-from . import markettype
-from . import module
-from . import port
-from . import portmapping
-from . import service
-from . import template
-from . import volume
-from . import volumemapping
+from odoo import fields, models
+
+
+class PortMapping(models.Model):
+    _name = "botc.portmapping"
+    _rec_name = "container_instance_id"
+
+    container_instance_id = fields.Many2one(
+        "botc.containerinstance", string="Container Instance", required=True)
+    port_id = fields.Many2one("botc.port", string="Port")
+    port_map = fields.Integer(string="mapped to")

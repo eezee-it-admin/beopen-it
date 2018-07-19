@@ -17,23 +17,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from . import availablemodules
-from . import availableservices
-from . import containerinstance
-from . import dbserver
-from . import dockerimage
-from . import dockerserver
-from . import executedcommand
-from . import flavor
-from . import goal
-from . import httpserver
-from . import instancemodule
-from . import market
-from . import markettype
-from . import module
-from . import port
-from . import portmapping
-from . import service
-from . import template
-from . import volume
-from . import volumemapping
+from odoo import fields, models
+
+
+class AvailableModules(models.Model):
+    _name = "botc.availablemodules"
+    _rec_name = "module_id"
+
+    module_id = fields.Many2one("botc.module", string="Module", required=True)
+    markettype_id = fields.Many2one(
+        "botc.markettype", string="Market Type", required=True)
+    included = fields.Boolean(string="Included in package", default=False)
+    flavor_id = fields.Many2one("botc.flavor", string="Flavor")
+    order = fields.Integer(string="Sort Order")

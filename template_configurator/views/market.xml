@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Market -->
+    <record model="ir.ui.view" id="botc_market_tree_view">
+        <field name="name">botc_market.tree</field>
+        <field name="model">botc.market</field>
+        <field name="arch" type="xml">
+            <tree string="Market Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Market -->
+    <record model="ir.ui.view" id="botc_market_form_view">
+        <field name="name">botc_market.form</field>
+        <field name="model">botc.market</field>
+        <field name="arch" type="xml">
+            <form string="Market Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Market -->
+    <record model="ir.actions.act_window" id="botc_market_list_action">
+        <field name="name">Markets</field>
+        <field name="res_model">botc.market</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Markets
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="markets_menu" name="Markets" parent="configuration_template_configurator_menu"
+                  action="botc_market_list_action"/>
+</odoo>

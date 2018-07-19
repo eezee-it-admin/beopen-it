@@ -1,13 +1,32 @@
+# ############################################################################
+#
+#    Copyright Eezee-It (C) 2016
+#    Author: Eezee-It <info@eezee-it.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
 import json
 from openerp import http, api
 from openerp.http import request
 from openerp.service import db
-import xmlrpclib
+import xmlrpc.client
 import logging
 import openerp
 from contextlib import closing
 import time
-import thread
+import _thread
 import threading
 import tempfile
 from openerp import SUPERUSER_ID
@@ -16,7 +35,6 @@ import sys
 from random import choice
 import requests
 _logger = logging.getLogger(__name__)
-
 
 
 class Configurator(http.Controller):
@@ -39,22 +57,22 @@ class Configurator(http.Controller):
     def _write_log(self, key, text):
         key = key.lower()
 
-        tempdir = tempfile.gettempdir();
+        tempdir = tempfile.gettempdir()
         with open(tempdir + "/" + key + ".txt", "w") as file:
             file.write(text)
-            file.flush();
-            file.close();
+            file.flush()
+            file.close()
 
     def _read_log(self, key):
         try:
             key = key.lower()
 
-            tempdir = tempfile.gettempdir();
+            tempdir = tempfile.gettempdir()
             with open(tempdir + "/" + key + ".txt", "r") as file:
                 text = file.readline()
                 file.close()
         except (Exception) as e:
-             return "One moment please ..."
+            return "One moment please ..."
 
         return text
 
@@ -62,7 +80,8 @@ class Configurator(http.Controller):
     def configuratorForCode(self, code, *kw, **kwargs):
         error = dict()
 
-        default_modules, markettype, optional_modules = self.get_markettype(code)
+        default_modules, markettype, optional_modules = self.get_markettype(
+            code)
 
         if not markettype:
             return self.module_prices(kw, kwargs)
@@ -73,47 +92,49 @@ class Configurator(http.Controller):
 
         apps_data = {}
         for optional_module in optional_modules:
-            apps_data[optional_module.module_id.odoo_module_name] = {"price" : optional_module.module_id.price,
-                                                                     "flavor" : optional_module.flavor_id.id if optional_module.flavor_id else -1}
+            apps_data[optional_module.module_id.odoo_module_name] = {"price": optional_module.module_id.price,
+                                                                     "flavor": optional_module.flavor_id.id if optional_module.flavor_id else -1}
 
         services_data = {}
         for optional_service in optional_services:
-            services_data["service_" + str(optional_service.service_id.id)] = {"price" : optional_service.service_id.price,
-                                                                               "flavor" : optional_service.flavor_id.id if optional_service.flavor_id else -1,
-                                                                               "minimum_amount" : optional_service.service_id.minimum_amount,
-                                                                               "fixed_price" : optional_service.service_id.fixed_price,
-                                                                               "name" : optional_service.service_id.name}
+            services_data["service_" + str(optional_service.service_id.id)] = {"price": optional_service.service_id.price,
+                                                                               "flavor": optional_service.flavor_id.id if optional_service.flavor_id else -1,
+                                                                               "minimum_amount": optional_service.service_id.minimum_amount,
+                                                                               "fixed_price": optional_service.service_id.fixed_price,
+                                                                               "name": optional_service.service_id.name}
 
         module_data = {"price": markettype.price,
-                "currency": markettype.currency_id.name,
-                "localeLang": {"USD": "en", "EUR": "fr"},
-                "current_country": "BE",
-                "apps": apps_data,
-                "services": services_data
-                }
+                       "currency": markettype.currency_id.name,
+                       "localeLang": {"USD": "en", "EUR": "fr"},
+                       "current_country": "BE",
+                       "apps": apps_data,
+                       "services": services_data
+                       }
 
         module_data_json = "'" + json.dumps(module_data) + "'"
 
         return http.request.render("template_configurator.configurator_for_code", {
             "markettype": markettype,
-            "default_modules" : default_modules,
-            "optional_modules" : optional_modules,
-            "optional_services" : optional_services,
-            "module_data" : module_data_json,
-            "error" : error
+            "default_modules": default_modules,
+            "optional_modules": optional_modules,
+            "optional_services": optional_services,
+            "module_data": module_data_json,
+            "error": error
         })
 
     @http.route("/configurator/prices", auth="public", website=True)
     def module_prices(self, *kw, **kwargs):
 
-        modules = http.request.env["botc.module"].sudo().search([("active", "=", True)]).sorted(key=lambda r: r.name)
+        modules = http.request.env["botc.module"].sudo().search(
+            [("active", "=", True)]).sorted(key=lambda r: r.name)
 
         return http.request.render("template_configurator.module_prices", {
-            "modules" : modules
+            "modules": modules
         })
 
     def get_markettype(self, code):
-        markettype = http.request.env["botc.markettype"].sudo().search([("code", "=", code)])
+        markettype = http.request.env[
+            "botc.markettype"].sudo().search([("code", "=", code)])
         default_modules = http.request.env["botc.availablemodules"].sudo(). \
             search([("markettype_id", "=", markettype.id), ("included", "=", True)]). \
             sorted(key=lambda r: (r.order, r.module_id.name))
@@ -134,23 +155,32 @@ class Configurator(http.Controller):
 
         _logger.info("Creating instance for %s", domain)
 
-        default_modules, markettype, optional_modules = self.get_markettype(market_type)
+        default_modules, markettype, optional_modules = self.get_markettype(
+            market_type)
 
-        module_ids_to_install = [module.module_id for module in default_modules]
-        module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name, module.module_id) for module in optional_modules] if o in apps]
+        module_ids_to_install = [
+            module.module_id for module in default_modules]
+        module_ids_to_install += [m for (o, m) in [(module.module_id.odoo_module_name,
+                                                    module.module_id) for module in optional_modules] if o in apps]
 
-        admin_pwd, template, ip, port = http.request.env["botc.containerinstance"].sudo().create_instance(domain, markettype, module_ids_to_install, flavor_id)
+        admin_pwd, template, ip, port = http.request.env["botc.containerinstance"].sudo(
+        ).create_instance(domain, markettype, module_ids_to_install, flavor_id)
 
-        modules_to_install = [(module.module_id.odoo_module_name, module.module_id.name) for module in default_modules]
-        modules_to_install += [(o,m) for (o,m) in [(module.module_id.odoo_module_name, module.module_id.name) for module in optional_modules] if o in apps]
+        modules_to_install = [(module.module_id.odoo_module_name,
+                               module.module_id.name) for module in default_modules]
+        modules_to_install += [(o, m) for (o, m) in [(module.module_id.odoo_module_name,
+                                                      module.module_id.name) for module in optional_modules] if o in apps]
 
         description = "URL : http://" + domain + ".beopen.be\n"
         description += "Username : " + user + "\n"
         description += "Password : " + password + "\n\n"
         description += "Package  : " + markettype.name + "\n"
-        description += "Installed modules : " + ', '.join([m for (o,m) in modules_to_install]) + "\n"
-        description += "Requested services : " + ', '.join([s for s in services]) + "\n"
-        description += "Price after trial : " + price + " " + markettype.currency_id.name
+        description += "Installed modules : " + \
+            ', '.join([m for (o, m) in modules_to_install]) + "\n"
+        description += "Requested services : " + \
+            ', '.join([s for s in services]) + "\n"
+        description += "Price after trial : " + \
+            price + " " + markettype.currency_id.name
 
         _logger.info("Create lead for %s", domain)
 
@@ -163,14 +193,16 @@ class Configurator(http.Controller):
 
         lead = http.request.env["crm.lead"].sudo().create(values_lead)
 
-        mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id('template_configurator.mail_template_configurator')
+        mail_template_id = http.request.env['ir.model.data'].sudo().xmlid_to_res_id(
+            'template_configurator.mail_template_configurator')
         if mail_template_id:
             _logger.info("Send mail for %s to %s", domain, email)
-            mail_template = http.request.env['mail.template'].sudo().browse(mail_template_id)
+            mail_template = http.request.env[
+                'mail.template'].sudo().browse(mail_template_id)
             mail_template.send_mail(lead.id, True)
         else:
-            _logger.warning("No email template found for sending email to the configurator user")
-
+            _logger.warning(
+                "No email template found for sending email to the configurator user")
 
         template_user = template.template_username
         template_passwd = template.template_password
@@ -207,13 +239,13 @@ class Configurator(http.Controller):
         if not domain is None and len(domain) < 5:
             return {"type": "error", "message": "Must be minimum 5 characters."}
 
-        domains = http.request.env["botc.containerinstance"].sudo().search([("domain", "=", domain)])
+        domains = http.request.env["botc.containerinstance"].sudo().search([
+            ("domain", "=", domain)])
 
         if domains and len(domains) > 0:
             return {"type": "error", "message": "Database already exists."}
 
         return {"type": "ok"}
-
 
     @http.route("/configurator/progress", type="json", auth="public", website=True)
     def progress(self, domain):
@@ -251,31 +283,33 @@ class Configurator(http.Controller):
                 # master_pwd = openerp.tools.config['admin_passwd']
                 _logger.info("Restore database to %s", url)
                 restore_url = "%s/web/database/restore" % url
-                file = open(template_backup,'r').read()
+                file = open(template_backup, 'r').read()
                 files = {'backup_file': ('backup_file', file)}
-                response = requests.post(restore_url, data={"name":domain,
-                                                            "copy":True,
-                                                            "master_pwd":admin_pwd
+                response = requests.post(restore_url, data={"name": domain,
+                                                            "copy": True,
+                                                            "master_pwd": admin_pwd
                                                             }, files=files)
 
                 _logger.info("Response = %s", response)
-
 
             else:
                 raise ValueError("No database template defined")
                 # _logger.info("Create database %s to %s", template_database, domain)
                 # db.exp_create_database(domain, False, language, password, user, country_code)
 
-            #authenticate to new created database
-            _logger.info("Authenticate on instance %s on %s:%s", domain, ip, port)
-            common = xmlrpclib.ServerProxy('{}/xmlrpc/2/common'.format(url))
-            uid = common.authenticate(domain, template_user, template_passwd, {})
-            models = xmlrpclib.ServerProxy('{}/xmlrpc/2/object'.format(url))
+            # authenticate to new created database
+            _logger.info("Authenticate on instance %s on %s:%s",
+                         domain, ip, port)
+            common = xmlrpc.client.ServerProxy(
+                '{}/xmlrpc/2/common'.format(url))
+            uid = common.authenticate(
+                domain, template_user, template_passwd, {})
+            models = xmlrpc.client.ServerProxy(
+                '{}/xmlrpc/2/object'.format(url))
             success = True
 
-
             _logger.info("Receiving ID's for modules on instance %s", domain)
-            #Install modules
+            # Install modules
             IDList = []
             for module_to_install in modules_to_install:
                 module_record = models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'search',
@@ -283,12 +317,15 @@ class Configurator(http.Controller):
                 if module_record:
                     IDList.append((module_record[0], module_to_install[1]))
 
-            _logger.info("ID's for modules on instance %s are %s", domain, IDList)
+            _logger.info("ID's for modules on instance %s are %s",
+                         domain, IDList)
             if len(IDList) > 0:
                 for (id, name) in IDList:
-                    self._write_log(domain, "Installing module {0}".format(name.encode('utf-8')))
+                    self._write_log(
+                        domain, "Installing module {0}".format(name.encode('utf-8')))
 
-                    _logger.info("Installing module %s in instance %s", name.encode('utf-8'), domain)
+                    _logger.info("Installing module %s in instance %s",
+                                 name.encode('utf-8'), domain)
 
                     models.execute_kw(domain, uid, template_passwd, 'ir.module.module', 'button_immediate_install',
                                       [[id],
@@ -296,21 +333,21 @@ class Configurator(http.Controller):
                                         'params': {'action': '36'}}])
 
             _logger.info("Resetting password instance %s", domain)
-            models.execute_kw(domain, uid, template_passwd, 'res.users', 'write',[[1], {
-                        'login': user, 'password': password
-                    }])
+            models.execute_kw(domain, uid, template_passwd, 'res.users', 'write', [[1], {
+                'login': user, 'password': password
+            }])
             _logger.info("Instance %s ready", domain)
             self._write_log(domain, "Done")
 
             sys.exit(0)
 
         except (db.DatabaseExists) as e:
-            self._write_log(domain, "ERROR : Unexpected by creating instance %s".format(domain))
+            self._write_log(
+                domain, "ERROR : Unexpected by creating instance %s".format(domain))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
-        except (Exception) as e :
-            self._write_log(domain, "ERROR : Unexpected by creating instance %s".format(domain))
+        except (Exception) as e:
+            self._write_log(
+                domain, "ERROR : Unexpected by creating instance %s".format(domain))
             _logger.info("Error by creating instance %s : %s", domain, str(e))
             sys.exit(0)
-
-

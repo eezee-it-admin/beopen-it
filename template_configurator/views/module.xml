@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Module -->
+    <record model="ir.ui.view" id="botc_module_tree_view">
+        <field name="name">botc_module.tree</field>
+        <field name="model">botc.module</field>
+        <field name="arch" type="xml">
+            <tree string="Module Tree">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="odoo_module_name"/>
+                <field name="price"/>
+                <field name="currency_id"/>
+                <field name="active"/>
+                <field name="standard"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Module -->
+    <record model="ir.ui.view" id="botc_module_form_view">
+        <field name="name">botc_module.form</field>
+        <field name="model">botc.module</field>
+        <field name="arch" type="xml">
+            <form string="Module Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="odoo_module_name"/>
+                        <field name="standard"/>
+                        <field name="package_file_location"/>
+                        <field name="price"/>
+                        <field name="currency_id"/>
+                        <field name="active"/>
+                        <field name="image"/>
+                        <field name="module_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Module -->
+    <record model="ir.actions.act_window" id="botc_module_list_action">
+        <field name="name">Modules</field>
+        <field name="res_model">botc.module</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Modules
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="modules_menu" name="Modules" parent="configuration_template_configurator_menu"
+                  action="botc_module_list_action"/>
+</odoo>

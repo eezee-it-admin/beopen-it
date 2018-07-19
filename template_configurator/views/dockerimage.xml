@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree view for Dockerimage -->
+    <record model="ir.ui.view" id="botc_dockerimage_tree_view">
+        <field name="name">botc_dockerimage.tree</field>
+        <field name="model">botc.dockerimage</field>
+        <field name="arch" type="xml">
+            <tree string="Docker Image Tree">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for Dockerimage-->
+    <record model="ir.ui.view" id="botc_dockerimage_form_view">
+        <field name="name">botc_dockerimage.form</field>
+        <field name="model">botc.dockerimage</field>
+        <field name="arch" type="xml">
+            <form string="Docker Image Form">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="image_name"/>
+                        <field name="extra_parameters"/>
+                        <field name="flavor_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Volumes">
+                            <field name="volume_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="type"/>
+                                    <field name="path"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Ports">
+                            <field name="port_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="type"/>
+                                    <field name="portnumber"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Configuration">
+                            <field name="odoo_config"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Dockerimage -->
+    <record model="ir.actions.act_window" id="botc_dockerimage_list_action">
+        <field name="name">Docker Images</field>
+        <field name="res_model">botc.dockerimage</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create Docker Images
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="dockerimages_menu" name="Docker Images" parent="configuration_template_configurator_menu"
+                  action="botc_dockerimage_list_action" groups="template_configurator.group_configurator_administrator"/>
+</odoo>
