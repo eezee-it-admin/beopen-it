@@ -59,9 +59,9 @@
                                                                     </div>
                                                                     <div class="openerp_website_pricing_app_price">
                                                                         <b>
-                                                                            <t t-esc="module.price"/>
+                                                                            <t t-esc="module.product_template_id.price"/>
                                                                             <span class="openerp_website_pricing_currency">
-                                                                                <t t-esc="module.currency_id.name"/>
+                                                                                <t t-esc="module.product_template_id.currency_id.name"/>
                                                                             </span>
                                                                         </b>
                                                                         / month

@@ -51,6 +51,7 @@ class ExecutedCommand(models.Model):
         }
         return action
 
+    @api.model
     def execute_ssh_command(self, ip, username, pwd, port, command):
         _logger.info("Executing %s on %s:%s with user %s",
                      command, ip, port, username)
@@ -73,6 +74,7 @@ class ExecutedCommand(models.Model):
         log = super(ExecutedCommand, self).create(vals)
         return stdout_string, stderr_string, log
 
+    @api.model
     def sftp_write_to_file(self, ip, username, pwd, port, filename,
                            filecontents):
         _logger.info("Writing contents to %s in %s:%s with user %s",
@@ -96,15 +98,17 @@ class ExecutedCommand(models.Model):
 
         vals = {
             "datetime_executed": fields.Datetime.now(),
-            "command": "sftp %s" % filename,
-            "standard_output": file_info,
+            "command": "sftp %s" %
+            filename, "standard_output": file_info,
             "standard_error": error
         }
 
         log = super(ExecutedCommand, self).create(vals)
         return log
 
-    def sftp_put_file(self, ip, username, pwd, port, local_file, remote_file):
+    @api.model
+    def sftp_put_file(self, ip, username, pwd, port, local_file,
+                      remote_file):
         _logger.info("Put file %s to %s in %s:%s with user %s",
                      local_file, remote_file, ip, port, username)
 

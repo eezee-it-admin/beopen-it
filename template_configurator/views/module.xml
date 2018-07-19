@@ -8,9 +8,8 @@
             <tree string="Module Tree">
                 <field name="name"/>
                 <field name="description"/>
+                <field name="product_template_id" />
                 <field name="odoo_module_name"/>
-                <field name="price"/>
-                <field name="currency_id"/>
                 <field name="active"/>
                 <field name="standard"/>
             </tree>
@@ -24,19 +23,31 @@
         <field name="arch" type="xml">
             <form string="Module Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="description"/>
                         <field name="odoo_module_name"/>
-                        <field name="standard"/>
-                        <field name="package_file_location"/>
-                        <field name="price"/>
-                        <field name="currency_id"/>
-                        <field name="active"/>
-                        <field name="image"/>
-                        <field name="module_ids"/>
                     </group>
+
+                    <separator/>
+                    <group>
+                        <field name="standard"/>
+                        <field name="active"/>
+                        <field name="image" widget="image"/>
+                    </group>
+                    <group>
+                        <field name="package_file_location"/>
+                        <field name="product_template_id" />
+                    </group>
+                    <separator/>
+
+                    <field name="module_ids"/>
                 </sheet>
+
             </form>
         </field>
     </record>
@@ -54,5 +65,5 @@
     </record>
 
     <menuitem id="modules_menu" name="Modules" parent="configuration_template_configurator_menu"
-                  action="botc_module_list_action"/>
+                  action="botc_module_list_action" sequence="4"/>
 </odoo>

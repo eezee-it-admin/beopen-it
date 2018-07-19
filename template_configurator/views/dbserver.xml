@@ -18,8 +18,12 @@
         <field name="arch" type="xml">
             <form string="Db Server Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="ip"/>
                         <field name="port"/>
                         <field name="username"/>
@@ -43,5 +47,5 @@
     </record>
 
     <menuitem id="dbservers_menu" name="Db Servers" parent="configuration_template_configurator_menu"
-                  action="botc_dbserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_dbserver_list_action" groups="template_configurator.group_configurator_administrator" sequence="6"/>
 </odoo>

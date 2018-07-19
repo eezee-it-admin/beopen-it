@@ -18,8 +18,12 @@
         <field name="arch" type="xml">
             <form string="Docker Image Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="image_name"/>
                         <field name="extra_parameters"/>
                         <field name="flavor_id"/>
@@ -63,5 +67,5 @@
     </record>
 
     <menuitem id="dockerimages_menu" name="Docker Images" parent="configuration_template_configurator_menu"
-                  action="botc_dockerimage_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_dockerimage_list_action" groups="template_configurator.group_configurator_administrator" sequence="9"/>
 </odoo>

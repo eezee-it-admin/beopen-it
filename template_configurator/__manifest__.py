@@ -23,7 +23,7 @@
     'description': """
         BeOpen Template Configurator
     """,
-    'author': "Beopen",
+    'author': "Beopen NV",
     'website': "http://www.beopen.be",
 
     # Categories can be used to filter modules in modules listing
@@ -37,7 +37,8 @@
     'depends': [
         'website',
         'mail',
-        'crm'
+        'crm',
+        'website_quote',
     ],
 
     # always loaded
@@ -65,5 +66,6 @@
         'templates/module_prices.xml',
 
         'data/data.xml',
+        'data/crons.xml',
     ],
 }

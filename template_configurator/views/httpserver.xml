@@ -18,8 +18,12 @@
         <field name="arch" type="xml">
             <form string="Http Server Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="ip"/>
                         <field name="port"/>
                         <field name="username"/>
@@ -46,5 +50,5 @@
     </record>
 
     <menuitem id="httpservers_menu" name="Http Servers" parent="configuration_template_configurator_menu"
-                  action="botc_httpserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_httpserver_list_action" groups="template_configurator.group_configurator_administrator" sequence="7"/>
 </odoo>

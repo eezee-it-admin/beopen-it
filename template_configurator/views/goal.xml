@@ -18,9 +18,11 @@
         <field name="arch" type="xml">
             <form string="Goal Form">
                 <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
+                    <h1>
+                        <group>
+                            <field name="name" class="oe_title"/>
+                        </group>
+                    </h1>
                 </sheet>
             </form>
         </field>
@@ -39,5 +41,5 @@
     </record>
 
     <menuitem id="goals_menu" name="Goals" parent="configuration_template_configurator_menu"
-                  action="botc_goal_list_action"/>
+                  action="botc_goal_list_action" sequence="2"/>
 </odoo>

@@ -14,37 +14,61 @@
     </record>
 
     <!-- Form view for MarketType -->
-    <record model="ir.ui.view" id="botc_type_form_view">
+    <record model="ir.ui.view" id="botc_markettype_form_view">
         <field name="name">botc_markettype.form</field>
         <field name="model">botc.markettype</field>
         <field name="arch" type="xml">
             <form string="MarketType Form">
                 <sheet>
+
                     <group>
-                        <field name="name"/>
-                        <field name="code"/>
-                        <field name="price"/>
-                        <field name="currency_id"/>
-                        <field name="market_id"/>
-                        <field name="goal_id"/>
-                        <field name="template_ids" widget="many2many_tags"/>
-                        <field name="preferred_flavor_id"/>
-                        <field name="available_module_ids" mode="tree">
-                            <tree editable="bottom">
-                                <field name="module_id"/>
-                                <field name="flavor_id"/>
-                                <field name="included"/>
-                                <field name="order"/>
-                            </tree>
-                        </field>
-                        <field name="available_service_ids" mode="tree">
-                            <tree editable="bottom">
-                                <field name="service_id"/>
-                                <field name="flavor_id"/>
-                                <field name="order"/>
-                            </tree>
-                        </field>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
                     </group>
+
+
+                    <div>
+                        <group>
+                            <field name="code"/>
+                            <field name="product_template_id"/>
+                            <field name="market_id"/>
+                            <field name="goal_id"/>
+                            <field name="template_ids" widget="many2many_tags"/>
+                            <field name="preferred_flavor_id"/>
+                        </group>
+                    </div>
+
+                    <separator/>
+
+                    <div>
+                        <group>
+
+                            <field name="available_module_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="module_id"/>
+                                    <field name="flavor_id"/>
+                                    <field name="included"/>
+                                    <field name="order"/>
+                                </tree>
+                            </field>
+                        </group>
+
+                    </div>
+
+                    <separator/>
+
+                    <div>
+                        <group>
+                            <field name="available_service_ids" mode="tree">
+                                <tree editable="bottom">
+                                    <field name="service_id"/>
+                                    <field name="flavor_id"/>
+                                    <field name="order"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -63,5 +87,5 @@
     </record>
 
     <menuitem id="markettypes_menu" name="Types" parent="configurator_template_configurator_menu"
-                  action="botc_markettype_list_action"/>
+                  action="botc_markettype_list_action" sequence="1"/>
 </odoo>

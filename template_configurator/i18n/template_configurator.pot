@@ -1,0 +1,1441 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* template_configurator
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-25 11:11+0000\n"
+"PO-Revision-Date: 2017-01-25 11:11+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: template_configurator
+#: model:mail.template,body_html:template_configurator.mail_template_configurator
+msgid "\n"
+"            	<p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\">\n"
+"                    Dear Subscriber,\n"
+"                </p>\n"
+"                <p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\"> Thank you for choosing BeOpen. Your 30-day FREE trial has started.</p>\n"
+"                \n"
+"                 <p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\">During this period, we will be in touch to assist you to get the best experience from using BeOpen for your business.</p>\n"
+"                 <p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\"> The credentials for your database instance are: </p>\n"
+"                 <pre style=\"padding:8.5px 8.5px 8.5px 8.5px;margin:0px 0px 9px 0px;border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-top-right-radius:4px;border-top-left-radius:4px;border-image-repeat:initial;border-image-outset:initial;border-image-width:initial;border-image-slice:initial;border-image-source:initial;border-left-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-top-color:rgb(204, 204, 204);border-left-style:solid;border-bottom-style:solid;border-right-style:solid;border-top-style:solid;border-left-width:1px;border-bottom-width:1px;border-right-width:1px;border-top-width:1px;background-color:rgb(245, 245, 245);color:rgb(51, 51, 51);word-wrap:break-word;word-break:break-all;line-height:1.42857;font-size:12px;font-family:Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace;overflow-y:auto;overflow-x:auto;\">${object.description}</pre>\n"
+"                 <p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\"> Thank you again for choosing BeOpen and enjoy your new and modern application environment. </p>\n"
+"                 <p style=\"margin:0px 0px 9px 0px;font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;\"> The <a href=\"https://www.beopen.be\" class=\"btn btn-default btn-xs\" data-original-title=\"\" title=\"\" style=\"padding:1px 5px 1px 5px;user-select:none;border-bottom-left-radius:3px;border-bottom-right-radius:3px;border-top-right-radius:3px;border-top-left-radius:3px;line-height:1.5;font-size:12px;white-space:nowrap;border-image-repeat:initial;border-image-outset:initial;border-image-width:initial;border-image-slice:initial;border-image-source:initial;border-left-color:rgb(174, 167, 159);border-bottom-color:rgb(174, 167, 159);border-right-color:rgb(174, 167, 159);border-top-color:rgb(174, 167, 159);border-left-style:solid;border-bottom-style:solid;border-right-style:solid;border-top-style:solid;border-left-width:1px;border-bottom-width:1px;border-right-width:1px;border-top-width:1px;background-image:none;cursor:pointer;touch-action:manipulation;vertical-align:middle;text-align:center;font-weight:normal;margin-bottom:0px;display:inline-block;text-decoration:none;color:rgb(255, 255, 255);background-color:rgb(174, 167, 159);\">BeOpen</a> team</p>\n"
+"            \n"
+"            "
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "/ month"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "/ month)"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "<b>\n"
+"                                                                        <span class=\"openerp_website_pricing_optional_modules_num\">0</span>\n"
+"                                                                    </b>\n"
+"                                                                    Optional Apps"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "<b>Total</b>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "<b>Total</b>\n"
+"                                                                    / month"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_active
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_active
+msgid "Active"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.volume,type:0
+msgid "Addons"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "All modules and prices in one place<br/>"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.containerinstance,restart_policy:0
+msgid "Always"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Annually\n"
+"                                                        <small>(10 + 2 free)\n"
+"                                                        </small>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_view_config
+msgid "Apply"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Are you sure you want to do this? This will delete the Container Instance including the database!"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_available_module_ids
+msgid "Available Modules"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_available_service_ids
+msgid "Available Services"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_view_config
+msgid "Cancel"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_code
+msgid "Code"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_command
+msgid "Command"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_config_path
+msgid "Config Location"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_config_template
+msgid "Config Template"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.volume,type:0
+#: model:ir.ui.menu,name:template_configurator.configuration_template_configurator_menu
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerimage_form_view
+msgid "Configuration"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.menu,name:template_configurator.configurator_template_configurator_menu
+#: model:ir.ui.menu,name:template_configurator.main_template_configurator_menu
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Configurator"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Configure Http Server"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_container_instance_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_container_instance_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_container_instance_id
+msgid "Container Instance"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Container Instance Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_tree_view
+msgid "Container Instance Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_containerinstance_list_action
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_containerinstance_ids
+#: model:ir.ui.menu,name:template_configurator.containerinstances_menu
+msgid "Container Instances"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Container Top"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_containerinstance_list_action
+msgid "Create Container Instance"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_dbserver_list_action
+msgid "Create DB Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Create Docker Container"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_dockerimage_list_action
+msgid "Create Docker Images"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_dockerserver_list_action
+msgid "Create Docker Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_flavor_list_action
+msgid "Create Flavors"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_goal_list_action
+msgid "Create Goals"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_httpserver_list_action
+msgid "Create Http Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_markettype_list_action
+msgid "Create Market Types"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_market_list_action
+msgid "Create Markets"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_module_list_action
+msgid "Create Modules"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_service_list_action
+msgid "Create Services"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_create_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_create_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_create_date
+msgid "Created on"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:233
+#, python-format
+msgid "Creating instance {0}"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_currency_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_currency_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_pwd
+msgid "DB Password"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_port
+msgid "DB Port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_dbserver_id
+msgid "DB Server"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_dbserver_list_action
+msgid "DB Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_username
+msgid "DB Username"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_data_path
+msgid "Data Path"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:220
+#, python-format
+msgid "Database already exists."
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dbserver_form_view
+msgid "Db Server Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dbserver_tree_view
+msgid "Db Server Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.menu,name:template_configurator.dbservers_menu
+msgid "Db Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Default <b>Apps</b> ("
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Default Apps"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Delete Container Instance"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Delete Docker Container"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_module_ids
+msgid "Dependent Modules"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Deploy Addons"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Deploy Filestore"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Deploy Logging"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Deploy Odoo Configuration"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_description
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_description
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_description
+msgid "Description"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_display_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_docker_image_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_docker_image_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_docker_image_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_docker_image_id
+msgid "Docker Image"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerimage_form_view
+msgid "Docker Image Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerimage_tree_view
+msgid "Docker Image Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_dockerimage_list_action
+#: model:ir.ui.menu,name:template_configurator.dockerimages_menu
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_form_view
+msgid "Docker Images"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_form_view
+msgid "Docker Info"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_docker_server_id
+msgid "Docker Server"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_form_view
+msgid "Docker Server Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_tree_view
+msgid "Docker Server Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_dockerserver_list_action
+#: model:ir.ui.menu,name:template_configurator.dockerservers_menu
+msgid "Docker Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_form_view
+msgid "Docker Stats"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_domain
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_domain
+msgid "Domain"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_edition
+msgid "Edition"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Email"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.menu,name:template_configurator.executioncommand_menu
+msgid "Execution Log"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_executedcommand_form_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_template_form_view
+msgid "Execution Log Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_executedcommand_tree_view
+msgid "Execution Log Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_executedcommand_list_action
+msgid "Execution Logs"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_expiry_date
+msgid "Expiry Date"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Extra One-Time Services"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_extra_parameters
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_extra_parameters
+msgid "Extra Parameters"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.volume,type:0
+msgid "File Store"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_fixed_price
+msgid "Fixed price"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_flavor_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_flavor_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_flavor
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_flavor_id
+msgid "Flavor"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_flavor_form_view
+msgid "Flavor Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_flavor_list_action
+#: model:ir.ui.menu,name:template_configurator.flavors_menu
+msgid "Flavors"
+msgstr ""
+
+#. module: template_configurator
+#: model:res.groups,name:template_configurator.group_configurator_user
+msgid "Functional User"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.action_config_settings
+#: model:ir.ui.menu,name:template_configurator.general_settings_menu
+#: model:ir.ui.view,arch_db:template_configurator.botc_view_config
+msgid "General Settings"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_goal_id
+msgid "Goal"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_flavor_tree_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_type_tree_view
+msgid "Goal Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_goal_list_action
+#: model:ir.ui.menu,name:template_configurator.goals_menu
+msgid "Goals"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_httpserver_id
+msgid "HTTP Server"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_httpserver_list_action
+msgid "HTTP Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_http_config
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Http Config"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_httpserver_form_view
+msgid "Http Server Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_httpserver_tree_view
+msgid "Http Server Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.menu,name:template_configurator.httpservers_menu
+msgid "Http Servers"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_id
+msgid "ID"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_ip
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_ip
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_ip
+msgid "IP"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Image History"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_image
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_image
+msgid "Image Icon"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_image_name
+msgid "Image Name"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_included
+msgid "Included in package"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Inspect Docker Container"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:156
+#, python-format
+msgid "Installed modules : %s\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_installed_on
+msgid "Installed on"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:293
+#, python-format
+msgid "Installing module {0}"
+msgstr ""
+
+#. module: template_configurator
+#. openerp-web
+#: code:addons/template_configurator/static/src/js/template_configurator.js:288
+#, python-format
+msgid "Invalid email address"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "Just for viewing only<br/>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume___last_update
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping___last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_write_uid
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_write_date
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerserver_form_view
+msgid "List Containers"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.volume,type:0
+msgid "Logging"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.port,type:0
+msgid "LongPolling"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_market_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_market_id
+msgid "Market"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_market_form_view
+msgid "Market Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_market_tree_view
+msgid "Market Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_markettype_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_markettype_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_market_type_id
+msgid "Market Type"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_markettype_list_action
+msgid "Market Types"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_type_form_view
+msgid "MarketType Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_market_list_action
+#: model:ir.ui.menu,name:template_configurator.markets_menu
+msgid "Markets"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_markettype_tree_view
+msgid "MatketType Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_max_port
+msgid "Maximum port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_minimum_amount
+msgid "Minimum amount"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_min_port
+msgid "Minimum port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_module_id
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_module_id
+msgid "Module"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_module_form_view
+msgid "Module Form"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "Module Prices"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_module_tree_view
+#: model:ir.ui.view,arch_db:template_configurator.botc_service_tree_view
+msgid "Module Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "Module prices"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_module_list_action
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_module_ids
+#: model:ir.ui.menu,name:template_configurator.modules_menu
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Modules"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Monthly"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:215
+#, python-format
+msgid "Must be minimum 5 characters."
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dbserver_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_name
+msgid "Name"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.containerinstance,restart_policy:0
+msgid "No"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_odoo_config
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Odoo Config"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_odoo_config
+msgid "Odoo Configuration"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_odoo_module_name
+msgid "Odoo Module Name"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.containerinstance,restart_policy:0
+msgid "On Failure"
+msgstr ""
+
+#. module: template_configurator
+#. openerp-web
+#: code:addons/template_configurator/static/src/js/template_configurator.js:349
+#, python-format
+msgid "One moment please ..."
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:212
+#, python-format
+msgid "Only alfanumeric characters are allowed."
+msgstr ""
+
+#. module: template_configurator
+#. openerp-web
+#: code:addons/template_configurator/static/src/js/template_configurator.js:384
+#, python-format
+msgid "Oops..., an unexpected error occured.<br/>Please <a href='https://beopen.be/page/contactus'>contact us</a> to set up your environment manually."
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:155
+#, python-format
+msgid "Package  : %s\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_package_file_location
+msgid "Package File Location"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:154
+#, python-format
+msgid "Password : %s\n"
+"\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_path
+msgid "Path"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_port_id
+msgid "Port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Port Mappings"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_port_mapping_ids
+msgid "Port mapping ids"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_portnumber
+msgid "Portnumber"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_port_ids
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerimage_form_view
+msgid "Ports"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_preferred_flavor_id
+msgid "Preferred Flavor"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_price
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_price
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_price
+msgid "Price"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:158
+#, python-format
+msgid "Price after trial : %s %s"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Ready"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_reload_command
+msgid "Reload Command"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:157
+#, python-format
+msgid "Requested services : %s\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_restart_policy
+msgid "Restart policy"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_pwd
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_pwd
+msgid "SSH Password"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_port
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_port
+msgid "SSH Port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerserver_username
+#: model:ir.model.fields,field_description:template_configurator.field_botc_httpserver_username
+msgid "SSH Username"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Select your <b>Edition</b>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Select your <b>Optional Apps</b>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Select your <b>Services</b>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_service_id
+msgid "Service"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_service_list_action
+#: model:ir.ui.menu,name:template_configurator.services_menu
+msgid "Services"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availablemodules_order
+#: model:ir.model.fields,field_description:template_configurator.field_botc_availableservices_order
+msgid "Sort Order"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_module_standard
+msgid "Standard"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_standard_error
+msgid "Standard Error"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_standard_output
+msgid "Standard Output"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Start Docker Container"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Start now"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Stop Docker Container"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Subdomain (."
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "Subscription"
+msgstr ""
+
+#. module: template_configurator
+#: model:res.groups,name:template_configurator.group_configurator_administrator
+msgid "Technical Administrator"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_template_id
+msgid "Template"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_template_apps_location
+msgid "Template Apps Location (zip)"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_template_backup_location
+msgid "Template Backup Location (zip)"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_template_tree_view
+msgid "Template Tree"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_template_password
+msgid "Template password"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_template_username
+msgid "Template username"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,name:template_configurator.botc_template_list_action
+#: model:ir.model.fields,field_description:template_configurator.field_botc_markettype_template_ids
+#: model:ir.ui.menu,name:template_configurator.templates_menu
+msgid "Templates"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_executedcommand_datetime_executed
+msgid "Time Executed"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_config_settings_trial_days
+msgid "Trial period (days)"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_goal_name
+#: model:ir.model.fields,field_description:template_configurator.field_botc_port_type
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volume_type
+msgid "Type"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_template_markettype_ids
+#: model:ir.ui.menu,name:template_configurator.markettypes_menu
+msgid "Types"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:152
+#, python-format
+msgid "URL : http://%s.%s\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Unconfigure Http Server"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:204
+#: code:addons/template_configurator/controllers/controllers.py:312
+#: code:addons/template_configurator/controllers/controllers.py:316
+#, python-format
+msgid "Unexpected by creating instance %s"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_instancemodule_uninstalled_on
+msgid "Uninstalled on"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_service_unit
+msgid "Units"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.containerinstance,restart_policy:0
+msgid "Unless Stopped"
+msgstr ""
+
+#. module: template_configurator
+#: code:addons/template_configurator/controllers/controllers.py:153
+#, python-format
+msgid "Username : %s\n"
+""
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_flavor_version
+msgid "Version"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.module_prices
+msgid "View All Prices<br/>"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_executedcommand_list_action
+msgid "View Execution Logs"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.actions.act_window,help:template_configurator.botc_template_list_action
+msgid "View Templates"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_volume_id
+msgid "Volume"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.botc_containerinstance_form_view
+msgid "Volume Mappings"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_containerinstance_volume_mapping_ids
+msgid "Volume mapping ids"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_dockerimage_volume_ids
+#: model:ir.ui.view,arch_db:template_configurator.botc_dockerimage_form_view
+msgid "Volumes"
+msgstr ""
+
+#. module: template_configurator
+#: selection:botc.port,type:0
+msgid "XML RPC"
+msgstr ""
+
+#. module: template_configurator
+#. openerp-web
+#: code:addons/template_configurator/static/src/js/template_configurator.js:370
+#, python-format
+msgid "Your BeOpen experience is ready at <a target='_blank' href='http://<subdomain>.<domain>'>http://<subdomain>.<domain>.</a> <br/>You can login with your credentials that have been sent to <email>"
+msgstr ""
+
+#. module: template_configurator
+#: model:mail.template,subject:template_configurator.mail_template_configurator
+msgid "Your BeOpen database is ready"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_availablemodules
+msgid "botc.availablemodules"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_availableservices
+msgid "botc.availableservices"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_config_settings
+msgid "botc.config.settings"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_containerinstance
+msgid "botc.containerinstance"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_dbserver
+msgid "botc.dbserver"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_dockerimage
+msgid "botc.dockerimage"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_dockerserver
+msgid "botc.dockerserver"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_executedcommand
+msgid "botc.executedcommand"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_flavor
+msgid "botc.flavor"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_goal
+msgid "botc.goal"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_httpserver
+msgid "botc.httpserver"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_instancemodule
+msgid "botc.instancemodule"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_market
+msgid "botc.market"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_markettype
+msgid "botc.markettype"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_module
+msgid "botc.module"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_port
+msgid "botc.port"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_portmapping
+msgid "botc.portmapping"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_service
+msgid "botc.service"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_template
+msgid "botc.template"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_volume
+msgid "botc.volume"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model,name:template_configurator.model_botc_volumemapping
+msgid "botc.volumemapping"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.ui.view,arch_db:template_configurator.configurator_for_code
+msgid "days Free trial"
+msgstr ""
+
+#. module: template_configurator
+#: model:ir.model.fields,field_description:template_configurator.field_botc_portmapping_port_map
+#: model:ir.model.fields,field_description:template_configurator.field_botc_volumemapping_volume_map
+msgid "mapped to"
+msgstr ""
+

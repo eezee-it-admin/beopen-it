@@ -26,8 +26,6 @@ class Module(models.Model):
 
     name = fields.Char(string="Name", required=True, translate=True)
     description = fields.Text(string="Description", translate=True)
-    price = fields.Monetary(string="Price", required=True)
-    currency_id = fields.Many2one('res.currency', string='Currency')
     active = fields.Boolean(string="Active", default=True)
     image = fields.Binary(string="Image Icon")
 
@@ -38,3 +36,6 @@ class Module(models.Model):
 
     standard = fields.Boolean(string="Standard", default=True)
     package_file_location = fields.Char(string="Package File Location")
+
+    product_template_id = fields.Many2one(
+        "product.template", string="Product", required=True)

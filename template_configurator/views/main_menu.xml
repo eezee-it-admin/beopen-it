@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-   <menuitem id="main_template_configurator_menu" name="Configurator"/>
-        <menuitem id="configurator_template_configurator_menu" name="Configurator"
-                  parent="main_template_configurator_menu"/>
+   <menuitem id="main_template_configurator_menu" name="Configurator" web_icon="template_configurator,static/description/icon.png"
+                  groups="template_configurator.group_configurator_administrator,template_configurator.group_configurator_user"/>
+    <menuitem id="configurator_template_configurator_menu" name="Configurator"
+                  parent="main_template_configurator_menu" sequence="1"/>
 
     <menuitem id="configuration_template_configurator_menu" name="Configuration"
-                  parent="main_template_configurator_menu"/>
+                  parent="main_template_configurator_menu" sequence="2"/>
 </odoo>

@@ -18,8 +18,12 @@
         <field name="arch" type="xml">
             <form string="Flavor Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="version"/>
                         <field name="edition"/>
                     </group>
@@ -41,5 +45,5 @@
     </record>
 
     <menuitem id="flavors_menu" name="Flavors" parent="configuration_template_configurator_menu"
-                  action="botc_flavor_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_flavor_list_action" groups="template_configurator.group_configurator_administrator" sequence="3"/>
 </odoo>

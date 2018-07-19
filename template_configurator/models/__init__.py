@@ -33,6 +33,7 @@ from . import markettype
 from . import module
 from . import port
 from . import portmapping
+from . import sale_order
 from . import service
 from . import template
 from . import volume

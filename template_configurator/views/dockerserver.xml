@@ -24,8 +24,12 @@
                     <button type="object" name="list_containers" string="List Containers"/>
                 </header>
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="ip"/>
                         <field name="port"/>
                         <field name="username"/>
@@ -52,5 +56,5 @@
     </record>
 
     <menuitem id="dockerservers_menu" name="Docker Servers" parent="configuration_template_configurator_menu"
-                  action="botc_dockerserver_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_dockerserver_list_action" groups="template_configurator.group_configurator_administrator" sequence="8"/>
 </odoo>

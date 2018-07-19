@@ -18,9 +18,11 @@
         <field name="arch" type="xml">
             <form string="Market Form">
                 <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                 </sheet>
             </form>
         </field>
@@ -39,5 +41,5 @@
     </record>
 
     <menuitem id="markets_menu" name="Markets" parent="configuration_template_configurator_menu"
-                  action="botc_market_list_action"/>
+                  action="botc_market_list_action" sequence="1"/>
 </odoo>

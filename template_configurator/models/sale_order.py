@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ############################################################################
 #
 #    Copyright Eezee-It (C) 2016
@@ -18,27 +17,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
 from odoo import fields, models
 
 
-class MarketType(models.Model):
-    _name = "botc.markettype"
+class SalesOrder(models.Model):
+    _inherit = 'sale.order'
 
-    name = fields.Char(string="Name", required=True, translate=True)
-    code = fields.Char(string="Code", required=True)
-    description = fields.Html(string="Description", translate=True)
-
-    goal_id = fields.Many2one("botc.goal", string="Goal")
-    market_id = fields.Many2one("botc.market", string="Market", required=True)
-    template_ids = fields.Many2many("botc.template", string="Templates")
-    preferred_flavor_id = fields.Many2one(
-        "botc.flavor", string="Preferred Flavor", required=True)
-
-    available_module_ids = fields.One2many(
-        "botc.availablemodules", "markettype_id", string="Available Modules")
-    available_service_ids = fields.One2many(
-        "botc.availableservices", "markettype_id", string="Available Services")
-
-    product_template_id = fields.Many2one(
-        "product.template", string="Product", required=True)
+    configurator_info = fields.Text(string="Configurator info", default="")

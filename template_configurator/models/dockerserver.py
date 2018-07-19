@@ -38,11 +38,10 @@ class DockerServer(models.Model):
     @api.multi
     def list_containers(self):
         command = "docker ps"
-
         executedcommand_env = self.env["botc.executedcommand"]
-
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
-            self.ip, self.username, self.pwd, self.port,
+            self.ip, self.username,
+            self.pwd, self.port,
             command)
 
         return executedcommand_env.create_action(log)
@@ -50,9 +49,7 @@ class DockerServer(models.Model):
     @api.multi
     def docker_info(self):
         command = "docker info"
-
         executedcommand_env = self.env["botc.executedcommand"]
-
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.ip, self.username,
             self.pwd, self.port,
@@ -63,9 +60,7 @@ class DockerServer(models.Model):
     @api.multi
     def docker_images(self):
         command = "docker images"
-
         executedcommand_env = self.env["botc.executedcommand"]
-
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.ip, self.username,
             self.pwd, self.port,
@@ -76,7 +71,6 @@ class DockerServer(models.Model):
     @api.multi
     def docker_stats(self):
         command = "docker stats --no-stream"
-
         executedcommand_env = self.env["botc.executedcommand"]
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.ip, self.username,

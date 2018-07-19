@@ -18,8 +18,12 @@
         <field name="arch" type="xml">
             <form string="Execution Log Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="template_username"/>
                         <field name="template_password" password="True"/>
                         <field name="template_apps_location"/>
@@ -45,5 +49,5 @@
     </record>
 
     <menuitem id="templates_menu" name="Templates" parent="configuration_template_configurator_menu"
-                  action="botc_template_list_action" groups="template_configurator.group_configurator_administrator"/>
+                  action="botc_template_list_action" groups="template_configurator.group_configurator_administrator" sequence="10"/>
 </odoo>

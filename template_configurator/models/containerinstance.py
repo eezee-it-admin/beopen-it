@@ -19,7 +19,12 @@
 ##############################################################################
 import configparser
 import io
+import os
 import logging
+import odoo
+import tempfile
+from contextlib import closing
+from datetime import timedelta, datetime
 from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
@@ -56,14 +61,22 @@ class ContainerInstance(models.Model):
         required=True, default="unless-stopped")
     extra_parameters = fields.Char(string="Extra Parameters")
     flavor = fields.Char(
-        string="Flavor",
-        related="docker_image_id.flavor_id.name", readonly=True)
+        string="Flavor", related="docker_image_id.flavor_id.name",
+        readonly=True)
     http_config = fields.Text(string="Http Config")
     odoo_config = fields.Text(string="Odoo Config")
+    expiry_date = fields.Date(string="Expiry Date")
 
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install,
                         flavor_id):
+        domain = domain.lower()
+
+        if not domain.isalnum():
+            raise Exception("Only alfanumeric characters are allowed.")
+
+        if domain is not None and len(domain) < 5:
+            raise Exception("Domain must be minimum 5 characters.")
 
         domains = self.env["botc.containerinstance"].sudo().search(
             [("domain", "=", domain)])
@@ -110,8 +123,8 @@ class ContainerInstance(models.Model):
             max_port = dockerserver.min_port
 
         port_xmlrpc = next(
-            (port for port in dockerimage.port_ids if port.type == "xmlrpc"),
-            None)
+            (port for port in dockerimage.port_ids
+                if port.type == "xmlrpc"), None)
         port_longpolling = next(
             (port for port in dockerimage.port_ids
                 if port.type == "longpolling"), None)
@@ -160,17 +173,20 @@ class ContainerInstance(models.Model):
             })]
 
         http_config = httpserver.config_template
-        http_config = http_config.replace("%domain%", domain)
-        http_config = http_config.replace("%docker_server%", dockerserver.ip)
-        http_config = http_config.replace(
-            "%longpolling_port%", str(longpolling_port))
-        http_config = http_config.replace("%xmlrpc_port%", str(xmlrpc_port))
+        http_config = self.replace_values(
+            http_config, domain, dockerserver, longpolling_port, xmlrpc_port)
 
         odoo_config = dockerimage.odoo_config
-        odoo_config = odoo_config.replace("%domain%", domain)
+        odoo_config = self.replace_values(
+            odoo_config, domain, dockerserver, longpolling_port, xmlrpc_port)
 
         extra_parameters = dockerimage.extra_parameters
-        extra_parameters = extra_parameters.replace("%domain%", domain)
+        extra_parameters = self.replace_values(
+            extra_parameters, domain, dockerserver, longpolling_port,
+            xmlrpc_port)
+
+        trial_days = int(self.env['ir.config_parameter'].get_param(
+            'botc_trial_days', default='30'))
 
         container_instance_vals = {
             "domain": domain,
@@ -185,7 +201,8 @@ class ContainerInstance(models.Model):
             "odoo_config": odoo_config,
             "port_mapping_ids": port_mapping_ids,
             "volume_mapping_ids": volume_mapping_ids,
-            "extra_parameters": extra_parameters
+            "extra_parameters": extra_parameters,
+            "expiry_date": datetime.today() + timedelta(days=trial_days + 1)
         }
 
         container_instance = self.create(container_instance_vals)
@@ -198,6 +215,44 @@ class ContainerInstance(models.Model):
         container_instance.start_docker_container()
 
         return admin_pwd, template, dockerserver.ip, xmlrpc_port
+
+    @api.model
+    def replace_values(self, text, domain, dockerserver, longpolling_port, xmlrpc_port):
+        if text:
+            text = text.replace("%domain%", domain)
+            text = text.replace("%docker_server%", dockerserver.ip)
+            text = text.replace("%longpolling_port%", str(longpolling_port))
+            text = text.replace("%xmlrpc_port%", str(xmlrpc_port))
+        return text
+
+    @api.multi
+    def delete_instance(self):
+
+        self.unconfigure_http_server()
+        self.stop_docker_container()
+        self.delete_docker_container()
+        self.remove_docker_data()
+
+        db = odoo.sql_db.db_connect('postgres')
+        with closing(db.cursor()) as cr:
+            try:
+                _logger.info("Drop database %s", self.domain)
+                cr.autocommit(True)  # avoid transaction block
+                cr.execute("""DROP DATABASE "%s" """ % self.domain)
+            except Exception as e:
+                _logger.info("Exception %s", e)
+                pass
+
+        for volume_mapping in self.volume_mapping_ids:
+            volume_mapping.unlink()
+
+        for port_mapping in self.port_mapping_ids:
+            port_mapping.unlink()
+
+        for module in self.module_ids:
+            module.unlink()
+
+        self.unlink()
 
     @api.multi
     def create_docker_container(self):
@@ -225,7 +280,6 @@ class ContainerInstance(models.Model):
                                       volume_mapping.volume_id.path)
 
         command += " %s" % self.docker_image_id.image_name
-
         executedcommand_env = self.env["botc.executedcommand"]
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
@@ -236,7 +290,6 @@ class ContainerInstance(models.Model):
     @api.multi
     def delete_docker_container(self):
         command = "docker rm %s" % self.domain
-
         executedcommand_env = self.env["botc.executedcommand"]
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
@@ -248,19 +301,16 @@ class ContainerInstance(models.Model):
     @api.multi
     def stop_docker_container(self):
         command = "docker stop %s" % self.domain
-
         executedcommand_env = self.env["botc.executedcommand"]
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
             self.docker_server_id.pwd, self.docker_server_id.port, command)
-
         return executedcommand_env.create_action(log)
 
     @api.multi
     def start_docker_container(self):
         command = "docker start %s" % self.domain
         executedcommand_env = self.env["botc.executedcommand"]
-
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
             self.docker_server_id.pwd, self.docker_server_id.port, command)
@@ -270,7 +320,6 @@ class ContainerInstance(models.Model):
     @api.multi
     def inspect_docker_container(self):
         command = "docker inspect %s" % self.domain
-
         executedcommand_env = self.env["botc.executedcommand"]
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
@@ -284,7 +333,6 @@ class ContainerInstance(models.Model):
             http_server = self.httpserver_id
             filename = "/tmp/%s.conf" % self.domain
             filecontents = self.http_config
-
             executedcommand_env = self.env["botc.executedcommand"]
             log = executedcommand_env.sftp_write_to_file(
                 http_server.ip, http_server.username, http_server.pwd,
@@ -310,11 +358,9 @@ class ContainerInstance(models.Model):
     def unconfigure_http_server(self):
         try:
             http_server = self.httpserver_id
-
+            executedcommand_env = self.env["botc.executedcommand"]
             move_command = "sudo rm %s/%s.conf " % (
                 self.httpserver_id.config_path, self.domain)
-
-            executedcommand_env = self.env["botc.executedcommand"]
             stdout, stderr, log = executedcommand_env.execute_ssh_command(
                 http_server.ip, http_server.username,
                 http_server.pwd,
@@ -331,15 +377,43 @@ class ContainerInstance(models.Model):
         return executedcommand_env.create_action(log)
 
     @api.multi
-    def deploy_filestore(self):
+    def remove_docker_data(self):
         try:
             log = None
             docker_server = self.docker_server_id
             executedcommand_env = self.env["botc.executedcommand"]
+            if docker_server.data_path:
+                tempdir = tempfile.gettempdir()
+
+                try:
+                    os.remove("%s/%s.txt" % (tempdir, self.domain))
+                except OSError:
+                    pass
+
+                rmdirbase_command = "sudo rm -fr %s/%s" % (
+                    docker_server.data_path, self.domain)
+
+                stdout, stderr, log = executedcommand_env.execute_ssh_command(
+                    docker_server.ip, docker_server.username,
+                    docker_server.pwd,
+                    docker_server.port, rmdirbase_command)
+
+        except Exception as e:
+            _logger.info("Exception %s", e)
+            return executedcommand_env.create_action(log)
+
+        return executedcommand_env.create_action(log)
+
+    @api.multi
+    def deploy_filestore(self):
+        executedcommand_env = self.env["botc.executedcommand"]
+        try:
+            log = None
+            docker_server = self.docker_server_id
 
             filestore_path = next(
                 (mapping.volume_map for mapping in self.volume_mapping_ids
-                 if mapping.volume_id.type == "filestore"), None)
+                    if mapping.volume_id.type == "filestore"), None)
             if filestore_path:
                 mkdirbase_command = "sudo mkdir -p %s" % (filestore_path)
 
@@ -364,7 +438,6 @@ class ContainerInstance(models.Model):
     @api.multi
     def deploy_logging(self):
         executedcommand_env = self.env["botc.executedcommand"]
-
         try:
             log = None
             docker_server = self.docker_server_id
@@ -397,14 +470,14 @@ class ContainerInstance(models.Model):
 
     @api.multi
     def deploy_config(self):
+        executedcommand_env = self.env["botc.executedcommand"]
         try:
             log = None
             docker_server = self.docker_server_id
-            executedcommand_env = self.env["botc.executedcommand"]
+
             config_path = next(
                 (mapping.volume_map for mapping in self.volume_mapping_ids if
                  mapping.volume_id.type == "config"), None)
-
             if config_path and self.odoo_config:
                 mkdirbase_command = "sudo mkdir -p %s" % (config_path)
 
@@ -438,31 +511,30 @@ class ContainerInstance(models.Model):
 
     @api.multi
     def deploy_addons(self):
+        executedcommand_env = self.env["botc.executedcommand"]
         try:
             log = None
             docker_server = self.docker_server_id
-            executedcommand_env = self.env["botc.executedcommand"]
 
             addons_path = next(
                 (mapping.volume_map for mapping in self.volume_mapping_ids
-                 if mapping.volume_id.type == "addons"), None)
-            if not addons_path:
-                return
+                    if mapping.volume_id.type == "addons"), None)
+            if addons_path:
+                mkdirbase_command = "sudo mkdir -p %s" % (addons_path)
+                stdout, stderr, log = executedcommand_env.execute_ssh_command(
+                    docker_server.ip, docker_server.username,
+                    docker_server.pwd,
+                    docker_server.port, mkdirbase_command)
 
-            mkdirbase_command = "sudo mkdir -p %s" % (addons_path)
-            stdout, stderr, log = executedcommand_env.execute_ssh_command(
-                docker_server.ip, docker_server.username,
-                docker_server.pwd,
-                docker_server.port, mkdirbase_command)
-
-            if self.template_id:
+                if not self.template_id:
+                    return executedcommand_env.create_action(log)
                 local_filestore = self.template_id.template_apps_location
                 zip_file = local_filestore.split("/")[::-1][0]
                 log = executedcommand_env.sftp_put_file(
                     docker_server.ip, docker_server.username,
                     docker_server.pwd,
-                    docker_server.port, local_filestore,
-                    "/tmp/%s" % zip_file)
+                    docker_server.port,
+                    local_filestore, "/tmp/%s" % zip_file)
 
                 unzip_command = "sudo unzip /tmp/%s -d %s" % (
                     zip_file, addons_path)
@@ -473,12 +545,12 @@ class ContainerInstance(models.Model):
                     docker_server.port,
                     unzip_command)
 
-            chmod_command = "sudo chmod -R 777 %s" % (addons_path)
-            stdout, stderr, log = executedcommand_env.execute_ssh_command(
-                docker_server.ip, docker_server.username,
-                docker_server.pwd,
-                docker_server.port,
-                chmod_command)
+                chmod_command = "sudo chmod -R 777 %s" % (addons_path)
+                stdout, stderr, log = executedcommand_env.execute_ssh_command(
+                    docker_server.ip, docker_server.username,
+                    docker_server.pwd,
+                    docker_server.port,
+                    chmod_command)
 
         except Exception as e:
             _logger.info("Exception %s", e)
@@ -523,3 +595,11 @@ class ContainerInstance(models.Model):
     def docker_images(self):
 
         return self.docker_server_id.docker_images()
+
+    @api.model
+    def _process_container_instance_expiry(self):
+        container_instances = self.search([
+            ('expiry_date', '<=', fields.Datetime.now())
+        ])
+        for container_instance in container_instances:
+            container_instance.stop_docker_container()

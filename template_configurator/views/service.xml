@@ -8,25 +8,30 @@
             <tree string="Module Tree">
                 <field name="name"/>
                 <field name="description"/>
-                <field name="price"/>
-                <field name="currency_id"/>
+                <field name="product_template_id" />
                 <field name="active"/>
             </tree>
         </field>
     </record>
 
     <!-- Form view for Service -->
-    <record model="ir.ui.view" id="botc_module_form_view">
+    <record model="ir.ui.view" id="botc_service_form_view">
         <field name="name">botc_service.form</field>
         <field name="model">botc.service</field>
         <field name="arch" type="xml">
             <form string="Module Form">
                 <sheet>
+                    <h1>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </h1>
+
                     <group>
-                        <field name="name"/>
                         <field name="description"/>
-                        <field name="price"/>
-                        <field name="currency_id"/>
+                        <field name="product_template_id" />
+                    </group>
+                    <group>
                         <field name="unit"/>
                         <field name="active"/>
                         <field name="image"/>
@@ -51,5 +56,5 @@
     </record>
 
     <menuitem id="services_menu" name="Services" parent="configuration_template_configurator_menu"
-                  action="botc_service_list_action"/>
+                  action="botc_service_list_action" sequence="5"/>
 </odoo>

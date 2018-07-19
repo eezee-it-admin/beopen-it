@@ -1,7 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <!--data noupdate="1"-->
-    <data>
+    <data noupdate="1">
+
+        <!-- Contract templates -->
+        <record id="configurator_contract_template" model="sale.subscription.template">
+            <field name="name">Configurator contract template</field>
+            <field name="code">MON</field>
+            <field name="user_closable">True</field>
+            <field name="payment_mandatory">True</field>
+            <field name="plan_description">
+                <![CDATA[
+                <ul>
+                    <li>Access to your Odoo instance</li>
+                    <li>Unlimited Support</li>
+                    <li>Pay Monthly, stop when you want</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="recurring_interval">1</field>
+            <field name="recurring_rule_type">monthly</field>
+            <field name="description">
+        Payment
+        All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.
+            </field>
+        </record>
+
+        <record id="configurator_quote_template" model="sale.quote.template">
+            <field name="name">Configurator quotation template</field>
+            <field name="number_of_days">30</field>
+            <field name="contract_template" ref="configurator_contract_template"/>
+            <field name="website_description" type="xml">
+                <section data-snippet-id="title">
+                    <h1 class="page-header">About us</h1>
+                </section>
+                <section data-snippet-id="text-block">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                This is a <strong>sample configurator quotation template</strong>. You should
+                                customize it to fit your own needs from the <i>Sale</i>
+                                application, using the menu: Configuration /
+                                Quotation Templates.
+                            </p><p>
+                                Great quotation templates will significantly
+                                <strong>boost your success rate</strong>. The
+                                first section is usually about your company,
+                                your references, your methodology or
+                                guarantees, your team, SLA, terms and conditions, etc.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-snippet-id="text-block">
+                    <h1 class="page-header">Our Offer</h1>
+                    <p>
+                        You can <strong>set a description per product</strong>. Odoo will
+                        automatically create a quotation using the descriptions
+                        of all products in the proposal. The table of content
+                        on the left is generated automatically using the styles you
+                        used in your description (heading 1, heading 2, ...)
+                    </p><p>
+                        If edit a quotation from the 'Preview' of a quotation, you will
+                        update the quotation for this customer only. If you edit the quotation
+                        template (from the Configuration menu), all future quotations will
+                        use this modified template.
+                    </p>
+                </section>
+            </field>
+        </record>
+
+
         <record id="mail_template_configurator" model="mail.template">
             <field name="name">Your new BeOpen experience</field>
             <field name="model_id" ref="crm.model_crm_lead"/>
@@ -39,6 +109,41 @@
             </field>
         </record>
 
-
+        <record id="mail_template_configurator_partner" model="mail.template">
+            <field name="name">Your new BeOpen experience (partner)</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="email_from">sales@beopen.be</field>
+            <field name="email_to">${object.partner_id.email}</field>
+            <field name="subject">Your new BeOpen experience</field>
+            <field name="lang">en</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="user_signature" eval="False"/>
+            <field name="body_html"><![CDATA[
+            	<p>
+                    Dear,
+                </p>
+                <p>
+                    Thank you for choosing BeOpen, we are delighted to have you on board.
+                </p>
+                <p>
+                    We are pleased to inform you that you can TRY your BeOpen environment for FREE during 30 days.
+                 </p>
+                 <p>
+                    During those 30 days we will contact you to see if any help is required and if you plan to convert your trial into a contract.
+                 </p>
+                 <p>
+                    The credentials for your personalised environment are:
+                 </p>
+                 <pre>${object.configurator_info}</pre>
+                 <p>
+                 Thank you again for choosing BeOpen and enjoy your new and modern application environment.
+                 </p>
+                 <p>
+                 The BeOpen team
+                 www.beopen.be
+                 </p>
+            ]]>
+            </field>
+        </record>
     </data>
-</openerp>
+</odoo>
