@@ -38,6 +38,7 @@
         'website',
         'mail',
         'crm',
+        'sale',
         'website_quote',
     ],
 
@@ -66,6 +67,7 @@
         'templates/module_prices.xml',
 
         'data/data.xml',
+        'data/mails.xml',
         'data/crons.xml',
     ],
 }

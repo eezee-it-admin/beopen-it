@@ -583,17 +583,14 @@ class ContainerInstance(models.Model):
 
     @api.multi
     def list_containers(self):
-
         return self.docker_server_id.list_containers()
 
     @api.multi
     def docker_info(self):
-
         return self.docker_server_id.docker_info()
 
     @api.multi
     def docker_images(self):
-
         return self.docker_server_id.docker_images()
 
     @api.model

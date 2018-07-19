@@ -3,14 +3,14 @@
     <!-- Cron that process the container instance expiry -->
      <record id="ir_cron_botc_container_instance_expiry" model="ir.cron">
         <field name="name">Process Container Instance Expiry</field>
-        <field eval="True" name="active" />
+        <field name="model_id" ref="model_botc_containerinstance" />
+        <field name="state">code</field>
+        <field name="code">model._process_container_instance_expiry()</field>
         <field name="user_id" ref="base.user_root" />
+        <field eval="True" name="active" />
         <field name="interval_number">60</field>
         <field name="interval_type">minutes</field>
         <field name="numbercall">-1</field>
         <field eval="False" name="doall" />
-        <field name="model">botc.containerinstance</field>
-        <field name="function">_process_container_instance_expiry</field>
-        <field name="args">()</field>
     </record>
 </odoo>
