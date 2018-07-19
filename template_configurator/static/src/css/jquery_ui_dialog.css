@@ -8,7 +8,7 @@
 
 .ui-widget-content {
 	border: 1px solid #dddddd;
-	background: #ffffff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
+	background: #ffffff;
 	color: #444444;
 }
 .ui-widget-content a {
@@ -88,7 +88,7 @@
 }
 .ui-widget-content {
 	border: 1px solid #dddddd;
-	background: #ffffff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
+	background: #ffffff;
 	color: #444444;
 }
 .ui-widget-content a {
@@ -96,7 +96,7 @@
 }
 .ui-widget-header {
 	border: 1px solid #dddddd;
-	background: #dddddd url("images/ui-bg_highlight-soft_50_dddddd_1x100.png") 50% 50% repeat-x;
+	background: #dddddd;
 	color: #444444;
 	font-weight: bold;
 }
