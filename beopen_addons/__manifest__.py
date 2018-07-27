@@ -21,15 +21,16 @@
 {
     'name': "Beopen addons",
     'summary': """Beopen addons""",
+
     'description': """
         Beopen addons
     """,
     'depends': [
         'web',
-        "base"
+        'base',
     ],
-    'auto_install': False,
-    'author': "BeOpen NV",
+    'auto_install': True,
+    'author': "Beopen NV",
     'website': "http://www.beopen.be",
 
     # Categories can be used to filter modules in modules listing
