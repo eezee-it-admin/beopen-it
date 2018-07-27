@@ -5,6 +5,14 @@
             <t t-set="title">Configurator</t>
             <div class="oe_structure">
                 <div class="container">
+                    <div id="website_published_button" class="" groups="sales_team.group_sale_manager">
+                        <t t-call="website.publish_management">
+                            <t t-set="object" t-value="markettype" />
+                            <t t-set="publish_edit" t-value="True" />
+                            <t t-set="action" t-value="'template_configurator.botc_markettype_list_action'" />
+                        </t>
+                    </div>
+                    
                     <div itemprop="description" t-field="markettype.description" class="oe_structure mt16" id="markettype_full_description"/>
                     <section class="container openerp_website_pricing bg-white">
                         <form class="openerp_website_pricing_form form-inline" name="configurator">

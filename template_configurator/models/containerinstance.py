@@ -19,6 +19,7 @@
 ##############################################################################
 import configparser
 import io
+import json
 import os
 import logging
 import odoo
@@ -66,6 +67,15 @@ class ContainerInstance(models.Model):
     http_config = fields.Text(string="Http Config")
     odoo_config = fields.Text(string="Odoo Config")
     expiry_date = fields.Date(string="Expiry Date")
+
+    state = fields.Selection([
+        ('running', 'Running'),
+        ('stopped', 'Stopped'),
+        ('expired', 'Expired'),
+    ],
+        string='Status (valued)', default='stopped', readonly=True,
+        required=True,
+        copy=False)
 
     @api.multi
     def create_instance(self, domain, markettype, module_ids_to_install,
@@ -305,6 +315,9 @@ class ContainerInstance(models.Model):
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
             self.docker_server_id.pwd, self.docker_server_id.port, command)
+
+        if not stderr:
+            self.state = 'stopped'
         return executedcommand_env.create_action(log)
 
     @api.multi
@@ -315,6 +328,9 @@ class ContainerInstance(models.Model):
             self.docker_server_id.ip, self.docker_server_id.username,
             self.docker_server_id.pwd, self.docker_server_id.port, command)
 
+        if not stderr:
+            self.state = 'running'
+
         return executedcommand_env.create_action(log)
 
     @api.multi
@@ -324,6 +340,17 @@ class ContainerInstance(models.Model):
         stdout, stderr, log = executedcommand_env.execute_ssh_command(
             self.docker_server_id.ip, self.docker_server_id.username,
             self.docker_server_id.pwd, self.docker_server_id.port, command)
+
+        if not stderr:
+            if log.standard_output:
+                infos = json.loads(log.standard_output)
+                info = infos[0] if infos else {}
+
+                if info and 'State' in info and info["State"]['Running']:
+                    self.state = 'running'
+
+                elif info and self.state != 'expired':
+                    self.state = 'stopped'
 
         return executedcommand_env.create_action(log)
 
@@ -600,3 +627,4 @@ class ContainerInstance(models.Model):
         ])
         for container_instance in container_instances:
             container_instance.stop_docker_container()
+            container_instance.state = 'expired'

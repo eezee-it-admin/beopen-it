@@ -7,6 +7,10 @@
         <field name="arch" type="xml">
             <tree string="Container Instance Tree">
                 <field name="domain"/>
+                <field name="market_type_id"/>
+                <field name="flavor"/>
+                <field name="expiry_date"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -18,28 +22,18 @@
         <field name="arch" type="xml">
             <form string="Container Instance Form">
                 <header>
-                    <button type="object" name="create_docker_container" string="Create Docker Container" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="delete_docker_container" string="Delete Docker Container" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="stop_docker_container" string="Stop Docker Container" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="start_docker_container" string="Start Docker Container" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="inspect_docker_container" string="Inspect Docker Container" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="configure_http_server" string="Configure Http Server" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="unconfigure_http_server" string="Unconfigure Http Server" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="deploy_filestore" string="Deploy Filestore" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="deploy_addons" string="Deploy Addons" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="deploy_logging" string="Deploy Logging" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="deploy_config" string="Deploy Odoo Configuration" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="image_history" string="Image History" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="container_top" string="Container Top" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="docker_info" string="Docker Info" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="docker_images" string="Docker Images" groups="template_configurator.group_configurator_administrator"/>
-                    <button type="object" name="list_containers" string="List Containers" groups="template_configurator.group_configurator_administrator"/>
-                    <separator/>
-                    <button type="object" name="delete_instance" string="Delete Container Instance" groups="template_configurator.group_configurator_administrator"
-                        confirm="Are you sure you want to do this? This will delete the Container Instance including the database!"/>
+                    <button type="object" class="btn btn-sm btn-default btn-primary" name="create_docker_container" string="Create Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" class="btn btn-danger" name="delete_docker_container" string="Delete Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    
+                    <button type="object" class="btn btn-sm btn-default btn-primary" name="start_docker_container" string="Start Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" class="btn btn-danger" name="stop_docker_container" string="Stop Docker Container" groups="template_configurator.group_configurator_administrator"/>
+                    <button type="object" class="oe_stat_button" name="inspect_docker_container" string="Inspect Docker Container" groups="template_configurator.group_configurator_administrator"/>
+
+                    <field name="state" widget="statusbar"/>
                 </header>
 
                 <sheet>
+
                     <group>
                         <h1>
                             <group >
@@ -86,11 +80,41 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Http Config">
-                            <field name="http_config"/>
+                        <page string="Http">
+                            <div class="mb16">
+                                <button type="object" class="btn btn-sm btn-default btn-primary" name="configure_http_server" string="Send config to http Server" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+
+                                <button type="object" class="btn btn-danger" name="unconfigure_http_server" string="Unconfigure Http Server" groups="template_configurator.group_configurator_administrator"/>
+                            </div>
+                            <div>
+                                <label for="http_config" />
+                                <field name="http_config"/>
+                            </div>
                         </page>
-                        <page string="Odoo Config">
-                            <field name="odoo_config"/>
+                        <page string="Odoo">
+                            <div class="mb16">
+                                <button type="object" class="btn btn-sm btn-default btn-primary" name="deploy_config" string="Deploy Odoo Configuration" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+
+                                <button type="object" class="btn btn-sm btn-default btn-primary" name="deploy_addons" string="Deploy Addons" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+
+                                <button type="object" class="btn btn-sm btn-default btn-primary" name="deploy_filestore" string="Deploy Filestore" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+
+                                <button type="object" class="btn btn-sm btn-default btn-primary" name="deploy_logging" string="Deploy Logging" groups="template_configurator.group_configurator_administrator"/>
+                            </div>
+
+                            <div>
+                                <label for="odoo_config"/>
+                                <field name="odoo_config"/>
+                            </div>
+                        </page>
+                        <page string="Actions" groups="base.group_no_one">
+                            <button type="object" class="oe_stat_button" name="image_history" string="Image History" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+                            <button type="object" class="oe_stat_button" name="container_top" string="Container Top" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+                            <button type="object" class="oe_stat_button" name="docker_info" string="Docker Info" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+                            <button type="object" class="oe_stat_button" name="docker_images" string="Docker Images" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+                            <button type="object" class="oe_stat_button" name="list_containers" string="List Containers" groups="template_configurator.group_configurator_administrator"/>&amp;nbsp;
+                            <button class="btn btn-danger" type="object" name="delete_instance" string="Delete Container Instance" groups="template_configurator.group_configurator_administrator"
+                            confirm="Are you sure you want to do this? This will delete the Container Instance including the database!"/>
                         </page>
                     </notebook>
                 </sheet>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="botc_service_user_licenses" model="botc.service">
+            <field name="name">User Licenses</field>
+            <field name="unit">User</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="False" />
+            <field name="minimum_amount">1</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">The Enterprise edition provides extra functionality. Amount is per user/per month with your 1st purchase. 2nd purchase €22.</field>
+            
+        </record>
+
+        <record id="botc_service_assistance_10h" model="botc.service">
+            <field name="name">Assistance (10h)</field>
+            <field name="unit">Pack 10h</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">10 hours assistance with the implementation / configuration / support of your BeOpen applications.</field> 
+        </record>
+
+        <record id="botc_service_assistance_50h" model="botc.service">
+            <field name="name">Assistance (50h)</field>
+            <field name="unit">Pack 50h</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">50 hours assistance with the implementation / configuration / support of your BeOpen applications.</field>
+        </record>
+
+        <record id="botc_service_domain_name" model="botc.service">
+            <field name="name">Domain Name</field>
+            <field name="unit">Year</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">This service includes the yearly registration of your own domain name ex. www.company.com.</field>
+            
+        </record>
+
+        <record id="botc_service_ssl_certificate" model="botc.service">
+            <field name="name">SSL Certificate</field>
+            <field name="unit">Fixed</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">This service includes the creation and configuration of a SSL certificate for your BeOpen environment.</field>
+            
+        </record>
+
+        <record id="botc_service_setup_gmail" model="botc.service">
+            <field name="name">Setup Gmail</field>
+            <field name="unit">Fixed</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">With this service we help you to integrate your Gmail account in BeOpen.</field>
+            
+        </record>
+
+        <record id="botc_service_users" model="botc.service">
+            <field name="name">Users</field>
+            <field name="unit">User</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">1</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">Number of Users that will have access to the Beopen applications.</field>
+            
+        </record>
+
+        <record id="botc_service_posbox" model="botc.service">
+            <field name="name">POSbox</field>
+            <field name="unit">Unit</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">0</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">Plug your peripherals to the PosBox, connect it to your local network, and you are done. Restart your BeOpen POS, and your peripherals are ready to use.</field>
+            
+        </record>
+
+        <record id="botc_service_hosting" model="botc.service">
+            <field name="name">Hosting</field>
+            <field name="unit">Month</field>
+            <field name="active" eval="True" />
+            <field name="fixed_price" eval="True" />
+            <field name="minimum_amount">1</field>
+            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+            <field name="description">Monthly hosting
+            </field>
+            
+        </record>
+    </data>
+</odoo>

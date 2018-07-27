@@ -44,8 +44,9 @@
                         <field name="product_template_id" />
                     </group>
                     <separator/>
-
-                    <field name="module_ids"/>
+                    <group>
+                        <field name="module_ids"/>
+                    </group>
                 </sheet>
 
             </form>

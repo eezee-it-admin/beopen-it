@@ -1,0 +1,17 @@
+\COPY botc_availablemodules TO '/opt/local/db_dump/configurator/botc_availablemodules.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_availableservices TO '/opt/local/db_dump/configurator/botc_availableservices.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_containerinstance TO '/opt/local/db_dump/configurator/botc_containerinstance.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_dbserver TO '/opt/local/db_dump/configurator/botc_dbserver.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_dockerimage TO '/opt/local/db_dump/configurator/botc_dockerimage.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_dockerserver TO '/opt/local/db_dump/configurator/botc_dockerserver.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_flavor TO '/opt/local/db_dump/configurator/botc_flavor.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_goal TO '/opt/local/db_dump/configurator/botc_goal.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_httpserver TO '/opt/local/db_dump/configurator/botc_httpserver.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_market TO '/opt/local/db_dump/configurator/botc_market.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_markettype TO '/opt/local/db_dump/configurator/botc_markettype.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_module TO '/opt/local/db_dump/configurator/botc_module.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_port TO '/opt/local/db_dump/configurator/botc_port.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_portmapping TO '/opt/local/db_dump/configurator/botc_portmapping.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_service TO '/opt/local/db_dump/configurator/botc_service.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_template TO '/opt/local/db_dump/configurator/botc_template.csv' DELIMITER ',' CSV HEADER;
+\COPY botc_volumemapping TO '/opt/local/db_dump/configurator/botc_volumemapping.csv' DELIMITER ',' CSV HEADER;

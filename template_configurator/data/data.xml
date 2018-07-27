@@ -4,7 +4,7 @@
     <data noupdate="1">
 
         <!-- Contract templates -->
-        <!-- <record id="configurator_contract_template" model="sale.subscription.template">
+        <record id="configurator_contract_template" model="sale.subscription.template">
             <field name="name">Configurator contract template</field>
             <field name="code">MON</field>
             <field name="user_closable">True</field>
@@ -20,13 +20,11 @@
             </field>
             <field name="recurring_interval">1</field>
             <field name="recurring_rule_type">monthly</field>
-            <field name="description">
-        Payment
-        All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.
-            </field>
-        </record> -->
+            <field name="description">Payment
+        All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.</field>
+        </record>
 
-        <!-- <record id="configurator_quote_template" model="sale.quote.template">
+        <record id="configurator_quote_template" model="sale.quote.template">
             <field name="name">Configurator quotation template</field>
             <field name="number_of_days">30</field>
             <field name="contract_template" ref="configurator_contract_template"/>
@@ -69,7 +67,7 @@
                     </p>
                 </section>
             </field>
-        </record> -->
+        </record>
 
 
         

@@ -19,16 +19,18 @@
 #
 ##############################################################################
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class MarketType(models.Model):
     _name = "botc.markettype"
 
+    _inherit = ["website.seo.metadata", 'website.published.mixin']
+
     name = fields.Char(string="Name", required=True, translate=True)
     code = fields.Char(string="Code", required=True)
     description = fields.Html(string="Description", translate=True)
-
+    active = fields.Boolean()
     goal_id = fields.Many2one("botc.goal", string="Goal")
     market_id = fields.Many2one("botc.market", string="Market", required=True)
     template_ids = fields.Many2many("botc.template", string="Templates")
@@ -42,3 +44,8 @@ class MarketType(models.Model):
 
     product_template_id = fields.Many2one(
         "product.template", string="Product", required=True)
+
+    @api.multi
+    def _compute_website_url(self):
+        for record in self:
+            record.website_url = "/configurator/%s" % (record.code)

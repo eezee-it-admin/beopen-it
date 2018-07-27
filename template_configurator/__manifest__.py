@@ -40,6 +40,7 @@
         'crm',
         'sale',
         'website_quote',
+        'sale_subscription',
     ],
 
     # always loaded
@@ -69,5 +70,9 @@
         'data/data.xml',
         'data/mails.xml',
         'data/crons.xml',
+        'data/product_template.xml',
+        'data/botc_service.xml',
+        'data/botc_market.xml',
+        'data/botc_module.xml',
     ],
 }
