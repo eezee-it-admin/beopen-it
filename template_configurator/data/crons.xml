@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <!-- Cron that process the container instance expiry -->
-     <record id="ir_cron_botc_container_instance_expiry" model="ir.cron">
+     <record forcecreate="False" id="ir_cron_botc_container_instance_expiry" model="ir.cron">
         <field name="name">Process Container Instance Expiry</field>
         <field name="model_id" ref="model_botc_containerinstance" />
         <field name="state">code</field>

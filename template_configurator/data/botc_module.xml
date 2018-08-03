@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data>
-        <record id="botc_module_website" model="botc.module">
-            <field name="name">Website</field>
-            <field name="odoo_module_name">website</field>
-            <field name="active" eval="True" />
-            <field name="standard" eval="True" />
-            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
-            <field name="description">Create your website from scratch by dragging and dropping pre-made, fully customizable building blocks.</field>
-        </record>
+<odoo noupdate="1">
+    <record forcecreate="False" id="botc_module_website" model="botc.module">
+        <field name="name">Website</field>
+        <field name="odoo_module_name">website</field>
+        <field name="active" eval="True" />
+        <field name="standard" eval="True" />
+        <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+        <field name="description">Create your website from scratch by dragging and dropping pre-made, fully customizable building blocks.</field>
+    </record>
 
-        <record id="botc_module_blog" model="botc.module">
-            <field name="name">Blog</field>
-            <field name="odoo_module_name">website_blog</field>
-            <field name="active" eval="True" />
-            <field name="standard" eval="True" />
-            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
-            <field name="description">Share your stories. Allow visitors to follow you and receive your blog posts by email with no effort and no need to register. Your visitors will share their favorite blog posts easily in one simple click.</field>
-        </record>
-        <record id="botc_module_forum" model="botc.module">
-            <field name="name">Forum</field>
-            <field name="odoo_module_name">website_forum</field>
-            <field name="active" eval="True" />
-            <field name="standard" eval="True" />
-            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
-            <field name="description">Communicate online with Beopen Forum and expect to see responses to messages you have left.</field>
-        </record>
-        <record id="botc_module_ecommerce" model="botc.module">
-            <field name="name">Webshop</field>
-            <field name="odoo_module_name">website_sale</field>
-            <field name="active" eval="True" />
-            <field name="standard" eval="True" />
-            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
-            <field name="description">Create an online sales channel and a great Webshop experience</field>
-        </record>
-        <record id="botc_module_inventory" model="botc.module">
-            <field name="name">Inventory</field>
-            <field name="odoo_module_name">stock</field>
-            <field name="active" eval="True" />
-            <field name="standard" eval="True" />
-            <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
-            <field name="description">Decrease your process times, automate transactions, reduce your stock levels and get complete traceability on all operations with the double entry inventory system</field>
-        </record>
-    </data>
+    <record forcecreate="False" id="botc_module_blog" model="botc.module">
+        <field name="name">Blog</field>
+        <field name="odoo_module_name">website_blog</field>
+        <field name="active" eval="True" />
+        <field name="standard" eval="True" />
+        <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+        <field name="description">Share your stories. Allow visitors to follow you and receive your blog posts by email with no effort and no need to register. Your visitors will share their favorite blog posts easily in one simple click.</field>
+    </record>
+    <record forcecreate="False" id="botc_module_forum" model="botc.module">
+        <field name="name">Forum</field>
+        <field name="odoo_module_name">website_forum</field>
+        <field name="active" eval="True" />
+        <field name="standard" eval="True" />
+        <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+        <field name="description">Communicate online with Beopen Forum and expect to see responses to messages you have left.</field>
+    </record>
+    <record forcecreate="False" id="botc_module_ecommerce" model="botc.module">
+        <field name="name">Webshop</field>
+        <field name="odoo_module_name">website_sale</field>
+        <field name="active" eval="True" />
+        <field name="standard" eval="True" />
+        <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+        <field name="description">Create an online sales channel and a great Webshop experience</field>
+    </record>
+    <record forcecreate="False" id="botc_module_inventory" model="botc.module">
+        <field name="name">Inventory</field>
+        <field name="odoo_module_name">stock</field>
+        <field name="active" eval="True" />
+        <field name="standard" eval="True" />
+        <field name="product_template_id" ref="template_configurator.botc_product_template_module_generic" />
+        <field name="description">Decrease your process times, automate transactions, reduce your stock levels and get complete traceability on all operations with the double entry inventory system</field>
+    </record>
 </odoo>

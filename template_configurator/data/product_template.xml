@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="botc_product_template_module_generic" model="product.template">
+    <data noupdate="1">
+        <record forcecreate="False" id="botc_product_template_module_generic" model="product.template">
             <field name="name">Configurator product module generic</field>
             <field name="uom_id" ref="product.product_uom_unit" />
         </record>

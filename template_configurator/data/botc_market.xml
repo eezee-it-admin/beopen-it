@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="botc_market_general" model="botc.market">
+    <data noupdate="1">
+        <record forcecreate="False" id="botc_market_general" model="botc.market">
             <field name="name">General</field>
         </record>
     </data>
