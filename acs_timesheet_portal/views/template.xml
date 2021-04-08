@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="head" inherit_id="web.assets_frontend">
+        <xpath expr="/t" position="inside">
+            <script type="text/javascript" src="/acs_timesheet_portal/static/src/js/custom.js"/>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Portal My Home: Timesheet entries" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//h3" position="inside">
+            <a groups="acs_timesheet_portal.portal_timesheet_entry" href="/timesheet/create" class="btn btn-default pull-right">
+                <span class="fa fa-plus"> New Timesheets</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="portal_my_project" name="My Project" inherit_id="project.portal_my_project" priority="30">
+        <xpath expr="//span[hasclass('float-right')]" position="inside">
+            <a role="button" t-attf-href="/my/timesheets?filterby=#{project.id}" class="btn btn-sm btn-secondary">
+                <span class="fa fa-tasks" role="img" aria-label="Timesheets" title="Timesheets"/>
+                Timesheets
+            </a>
+        </xpath>
+        <xpath expr="//h5/span" position="after">
+            <a groups="acs_timesheet_portal.portal_timesheet_entry" href="/timesheet/create" class="btn btn-default">
+                <span class="fa fa-plus"> New Timesheet</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="portal_my_timesheets" name="My Timesheets" inherit_id="hr_timesheet.portal_my_timesheets">
+        <xpath expr="//t[@t-call='portal.portal_searchbar']" position="replace">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Timesheets</t>
+                <xpath expr="//div[hasclass('navbar-toggler')]" position="before">
+                    <a groups="acs_timesheet_portal.portal_timesheet_entry" href="/timesheet/create" class="btn btn-default">
+                        <span class="fa fa-plus"> New Timesheet</span>
+                    </a>
+                </xpath>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="create_timesheet" name="Submit Timesheet">
+        <t t-call="portal.portal_layout">
+            <div class="container mb64">
+
+                <div id="wrap" class="oe_structure oe_empty">
+                    <section>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 mt32">
+                                    <h1 class="text-center">Submit Timesheet</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <form action="/timesheet/create/submit" method="POST" class="form-horizontal mt16 acs_select_project" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div t-attf-class="form-group #{error and 'project' in error and 'has-error' or ''}">
+                            <label class="col-md-3 col-sm-4 control-label" for="name">Project</label>
+                            <div class="col-md-7 col-sm-8">
+                                <select class="form-control" id="project" name="project">
+                                    <t t-foreach="projects" t-as="project">
+                                        <option value=""></option>
+                                        <option t-attf-value="#{project.id}"><t t-esc="project.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div t-attf-class="form-group #{error and 'task' in error and 'has-error' or ''}">
+                            <label class="col-md-3 col-sm-4 control-label" for="task">Task</label>
+                            <div class="col-md-7 col-sm-8">
+                                <select class="form-control" id="task" name="task" required="True">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div t-attf-class="form-group #{error and 'name' in error and 'has-error' or ''}">
+                            <label class="col-md-3 col-sm-4 control-label" for="name">Description</label>
+                            <div class="col-md-7 col-sm-8">
+                                <textarea  class="form-control" name="name" style="min-height: 120px" required="True"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row col-md-7">
+                            <div t-attf-class="form-group col-md-6 #{error and 'date' in error and 'has-error' or ''}">
+                                <label class="control-label" for="date">Date (mm/dd/YYYY)</label>
+                                <input class="form-control o_website_form_input o_website_form_date acs_datetimepicker" name="date" required="True"/>
+                            </div>
+                        
+                            <div t-attf-class="form-group col-md-6 #{error and 'unit_amount' in error and 'has-error' or ''}">
+                                <label class="control-label" for="unit_amount">Duration (Hour(s))</label>
+                                <input type="time" class="form-control" name="unit_amount" required="True" value="01:00"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-3 text-center col-sm-offset-4 col-sm-8 col-md-7">
+                                <button class="btn btn-primary btn-lg">Submit Timesheet</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </t>
+
+    </template>
+
+</odoo> 

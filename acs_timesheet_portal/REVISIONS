@@ -1,0 +1,27 @@
+1.0.1                                     18/10/2019
+====================================================
+Released module for v13
+
+1.0.2                                     06/11/2019
+====================================================
+Fixed error on project view.
+Improved code to set default day and show date format.
+
+1.0.3                                     21/04/2020
+====================================================
+Improved code for datepicker
+Removed duplicate entry of time-sheet menu
+
+1.0.4                                     06/06/2020
+====================================================
+Improved code to fix access error for project.
+
+1.0.5                                     08/10/2020
+====================================================
+Imrpvod code for Portal view conflidt wih default 
+odoo views.
+
+1.0.6                                     09/10/2020
+====================================================
+Imprvoed code for allowing timesheet entry of tasks
+where user do not have project access.
