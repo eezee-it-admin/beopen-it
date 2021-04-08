@@ -30,6 +30,7 @@
         "project_forecast",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/portal_task_template.xml",
         "views/project_planning_template.xml",
     ],
