@@ -105,10 +105,11 @@ class EzeeTimesheetPortal(TimesheetCustomerPortal):
             filterby = 'all'
 
         # Cutomization Start
+        new_search_filters = searchbar_filters.copy()
         # extends filterby criteria with project the customer has access to
         projects = request.env['project.project'].search([])
         for project in projects:
-            searchbar_filters.update({
+            new_search_filters.update({
                 str(project.id): {
                     'label': project.name,
                     'domain': [('project_id', '=', project.id)]
@@ -126,7 +127,7 @@ class EzeeTimesheetPortal(TimesheetCustomerPortal):
             proj_id = group['project_id'][0] if group['project_id'] else False
             proj_name =\
                 group['project_id'][1] if group['project_id'] else _('Others')
-            searchbar_filters.update({
+            new_search_filters.update({
                 str(proj_id): {
                     'label': proj_name,
                     'domain': [('project_id', '=', proj_id)]
@@ -134,7 +135,7 @@ class EzeeTimesheetPortal(TimesheetCustomerPortal):
             })
         # Cutomization End
 
-        domain = AND([domain, searchbar_filters[filterby]['domain']])
+        domain = AND([domain, new_search_filters[filterby]['domain']])
 
         if search and search_in:
             domain = AND([domain, [('name', 'ilike', search)]])
