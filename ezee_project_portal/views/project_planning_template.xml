@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="portal_my_home_project_planning_slots" name="Portal My Home : Project Planning Slots" inherit_id="portal.portal_my_home" priority="45">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Planning Slots</t>
+                <t t-set="url" t-value="'/my/planning_slots'"/>
+                <t t-set="count" t-value="planning_slots_count"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_slots" name="My Slots">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Planning Slots</t>
+            </t>
+            <t t-if="not grouped_slots">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no slots.
+                </div>
+            </t>
+            <t t-if="grouped_slots">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_slots" t-as="slots">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th t-if="groupby != 'none'" colspan="7">
+                                    <em class="font-weight-normal text-muted">
+                                        Planning slots for project:
+                                    </em>
+                                    <span t-field="slots[0].sudo().project_id.name"/>
+                                </th>
+                            </tr>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th>#</th>
+<!--                                 <th t-else=""> -->
+<!--                                     <em class="font-weight-normal text-muted"> -->
+<!--                                         <span t-field="slots[0].sudo().project_id.label_tasks"/> for project: -->
+<!--                                     </em> -->
+<!--                                     <span t-field="slots[0].sudo().project_id.name"/> -->
+<!--                                 </th> -->
+                                <th class="text-left">Employee</th>
+                                <th class="text-left">Role</th>
+                                <th class="text-center">Stat Date</th>
+                                <th class="text-center">End Date</th>
+                                <th class="text-right">Allocated Hours</th>
+                                <th class="text-right">Allocated Time (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="slots" t-as="slot">
+                                <tr>
+                                    <td>
+<!--                                         <a t-attf-href="/my/planning_slots/#{slot.id}?{{ keep_query() }}">#<span t-field="slot.id"/></a> -->
+                                        #<span t-field="slot.id"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="slot.sudo().employee_id.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="slot.sudo().role_id.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="slot.start_datetime"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="slot.end_datetime"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="slot.allocated_hours"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="slot.allocated_percentage"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

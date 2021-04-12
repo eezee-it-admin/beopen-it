@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="assets_frontend" inherit_id="web_editor.assets_frontend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/ezee_project_portal/static/src/css/project_portal.css"/>
+        </xpath>
+    </template>
+
+    <!-- Breadcrumbs -->
+    <template id="ezee_portal_layout" inherit_id="project.portal_layout">
+        <xpath expr="//li[@t-if='task']/span" position="replace">
+            <a t-if="task" t-attf-href="/my/task/#{task.id}?{{ keep_query() }}"><span t-field="task.name"/></a>
+        </xpath>
+    </template>
+
+    <template id="portal_my_task" inherit_id="project.portal_my_task">
+        <xpath expr="//t[@t-set='card_header']/div/div" position="after">
+            <div class="col-md text-md-center">
+                <a t-attf-href="/my/task/#{task.id}/edit" class="btn btn-primary">Edit</a>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-set='card_body']/div/div[@t-if='task.date_deadline']" position="after">
+            <div class="col-12 col-md-6">
+                <strong>Planned Hours:</strong>
+                <span t-field="task.planned_hours" t-options='{"widget": "float_time"}'/>
+            </div>
+            <div t-if="len(task.tag_ids) > 0" class="col-12 col-sm order-sm-2 o_wforum_index_entry_tags mb-1">
+                <i class="fa fa-tag text-muted"/>
+                <t t-foreach="task.tag_ids" t-as="task_tag">
+                    <span t-esc="task_tag.name" class=""
+                          t-attf-class="badge badge-pill oe_tag_color_#{task_tag.color}"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Edit Task -->
+    <template id="portal_my_task_edit" name="My Task Edit">
+        <t t-call="portal.portal_layout">
+            <div class="card-body">
+                <div id="wrap" class="oe_structure oe_empty">
+                    <t t-set="card_header">
+                        <div class="row no-gutters">
+                            <div class="col-md">
+                                <h5 class="mb-1 mb-md-0">
+                                    <span t-field="task.name"/>
+                                    <small class="text-muted"> (#<span t-field="task.id"/>)</small>
+                                </h5>
+                            </div>
+                            <div class="col-md text-md-right">
+                                <small class="text-right">Status:</small>
+                                <span t-field="task.stage_id.name" class=" badge badge-pill badge-info"
+                                      title="Current stage of this task"/>
+                            </div>
+                        </div>
+                    </t>
+                    <form action="/taske/save" method="POST"
+                          class="form-horizontal mt16" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="task_id" t-att-value="task.id"/>
+                        <div class="mb-1" t-if="user.partner_id.id in task.sudo().project_id.message_partner_ids.ids">
+                            <strong>Project:</strong>
+                            <a t-attf-href="/my/project/#{task.project_id.id}" t-field="task.project_id.name"/>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-12 col-md-6 mb-1">
+                                <strong>Date:</strong> <span t-field="task.create_date" t-options='{"widget": "date"}'/>
+                            </div>
+                            <div class="col-12 col-md-6" t-if="task.date_deadline">
+                                <strong>Deadline:</strong> <span t-field="task.date_deadline" t-options='{"widget": "date"}'/>
+                            </div>
+                            <div class="form-row col-md-7">
+                                <div class="mb-1 mt-2 col-md-3">
+                                    <strong>Planned Hours:</strong> 
+                                </div>
+                                <div>
+                                    <input type="char" class="form-control col-md-4" name="planned_hours"
+                                           required="True" placeholder="01:00"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4" t-if="task.user_id or task.partner_id">
+                            <div class="col-12 col-md-6 pb-2" t-if="task.user_id">
+                                <strong>Assigned to</strong>
+                                <div class="row">
+                                    <div class="col flex-grow-0 pr-3">
+                                        <img t-if="task.user_id.image_1024" class="rounded-circle mt-1 o_portal_contact_img"
+                                             t-att-src="image_data_uri(task.user_id.image_1024)" alt="Contact"/>
+                                        <img t-else="" class="rounded-circle mt-1 o_portal_contact_img"
+                                             src="/web/static/src/img/user_menu_avatar.png" alt="Contact"/>
+                                    </div>
+                                    <div class="col pl-md-0">
+                                        <div t-field="task.user_id" t-options='{"widget": "contact", "fields": ["name", "email", "phone"]}'/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="coll-12 col-md-6 pb-2" t-if="task.partner_id">
+                                <strong>Reported by</strong>
+                                <div class="row">
+                                    <div class="col flex-grow-0 pr-3">
+                                        <img t-if="task.partner_id.image_1024"
+                                             class="rounded-circle mt-1 o_portal_contact_img"
+                                             t-att-src="image_data_uri(task.partner_id.image_1024)" alt="Contact"/>
+                                        <img t-else="" class="rounded-circle mt-1 o_portal_contact_img"
+                                             src="/web/static/src/img/user_menu_avatar.png" alt="Contact"/>
+                                    </div>
+                                    <div class="col pl-md-0">
+                                        <div t-field="task.partner_id" t-options='{"widget": "contact", "fields": ["name", "email", "phone"]}'/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" t-if="task.description">
+                            <div t-if="task.description" t-attf-class="col-12 col-lg-7 mb-4 mb-md-0 col-lg-12">
+                                <hr class="mb-1"/>
+                                <strong class="d-block mb-2">Description</strong>
+                                <div class="py-1 px-2 bg-100 small" t-field="task.description"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-3 text-center col-sm-offset-4 col-sm-8 col-md-7">
+                                <button class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Task List -->
+    <template id="ezee_portal_my_tasks" inherit_id="project.portal_my_tasks" name="My Tasks">
+        <xpath expr="//thead/tr" position="inside">
+            <th class="text-left">Assigned to</th>
+            <th class="text-center">Tags</th>
+        </xpath>
+        <xpath expr="//tbody/t/tr" position="inside">
+            <td class="text-left">
+                <span t-field="task.user_id"/>
+            </td>
+            <td class="text-right">
+                <t t-if="len(task.tag_ids) > 0">
+<!--                     <i class="fa fa-tag text-muted"/> -->
+                    <t t-foreach="task.tag_ids" t-as="task_tag">
+                        <span t-esc="task_tag.name" class=""
+                              t-attf-class="badge badge-pill oe_tag_color_#{task_tag.color}"/>
+                    </t>
+                </t>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>
