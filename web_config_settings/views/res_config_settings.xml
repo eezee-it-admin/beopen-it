@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.mail</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <div data-key="general_settings" position='inside'>
+                <div id="epl">
+                    <h2>Eezee-It Platinum (EPL)</h2>
+
+<!--                    <div class="epl-web">-->
+<!--                        <h3>Web</h3>-->
+
+<!--                        <div class="row mt16 o_settings_container">-->
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_dynamic_column_listview" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_dynamic_column_listview" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        Show/hide the column(s) on the list/tree view of Odoo.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_web_manage_filters" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_web_manage_filters" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        Add an application to manage search filters of Odoo easily.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_web_export_visibility" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_web_export_visibility" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        Add a group to be allowed to export data from Odoo.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_web_pinned_filters" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_web_pinned_filters" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        Pin your favorite filters to easily reuse them.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_web_widget_focus" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_web_widget_focus" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        Create a new widget to force focus on specific field on form view. Wiget name=focus_picker.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="epl-discuss">-->
+<!--                        <h3>Discuss/E-mails</h3>-->
+
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-xs-12 col-md-6 o_setting_box" id="module_web_email_queue_limit">
+                                <div class="o_setting_left_pane">
+                                    <field name="module_web_email_queue_limit" widget="upgrade_boolean" />
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="module_web_email_queue_limit" />
+                                    <div class="text-muted">
+                                        Allow to define a limit to limit the number of e-mails sent on the cron "Mail: Email Queue Manager".
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-xs-12 col-md-6 o_setting_box" id="module_web_force_email_from">
+                                <div class="o_setting_left_pane">
+                                    <field name="module_web_force_email_from" widget="upgrade_boolean" />
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label for="module_web_force_email_from" />
+                                    <div class="text-muted">
+                                        Some mail servers (like Office 365, mailjet, ...) do not allow sending e-mails sent by an unknown sender (by a mail address that does not exist on the mail server) or by a domain not configured on the mail server.<br/><br/>
+                                        This module force the sender of each e-mails send by Odoo and add the original sender email as reply-to (if reply-to is not setted).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!--                    </div>-->
+<!--                    <div class="epl-dev-tools" groups="base.group_no_one">-->
+<!--                        <h3>Dev Tools</h3>-->
+
+<!--                        <div class="row mt16 o_settings_container">-->
+<!--                            <div class="col-xs-12 col-md-6 o_setting_box">-->
+<!--                                <div class="o_setting_left_pane">-->
+<!--                                    <field name="module_domain_field_selectable" widget="upgrade_boolean" />-->
+<!--                                </div>-->
+<!--                                <div class="o_setting_right_pane">-->
+<!--                                    <label for="module_domain_field_selectable" />-->
+<!--                                    <div class="text-muted">-->
+<!--                                        On Odoo 11.0 we can't select record on a char field with the widget "domain", with this module if you added the option "'selectable': 1" to the widget, you can select records to add to the filter.-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>

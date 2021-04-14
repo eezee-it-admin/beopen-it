@@ -1,0 +1,8 @@
+.o_base_settings .o_setting_container .settings > .app_settings_block h3 {
+    margin-bottom: 0;
+    padding: 5px 16px;
+    padding-left: 32px;
+    background-color: #F9F9F9;
+    font-size: 15px;
+    font-style: italic;
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.mail</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="web_config_settings.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='module_web_force_email_from']//div[hasclass('o_setting_right_pane')]" position="inside">
+                <div class="mt16">
+                    <label for="mail_server_restrictions"/>
+                    <field class="oe_inline" name="mail_server_restrictions" nolabel="1"/>
+                    <div class="text-muted">
+                        Mails server Restrictions:
+                        <ul>
+                            <li>No restrictions: the mails server don't have restrictions to send e-mail.</li>
+                            <li>Domaine name: the mails server allow to send e-mail by a specific domain name.</li>
+                            <li>E-mail address: the mails server allow to send e-mail by a knowed mail address.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt16" attrs="{'invisible': [('mail_server_restrictions','=','no')]}">
+                    <label for="force_from_email_alias"/>
+                    <field class="oe_inline" name="force_from_email_alias" attrs="{'required': [('mail_server_restrictions','!=','no')]}" nolabel="1"/>@<field class="oe_inline" name="alias_domain" nolabel="1" readonly="1"/>
+                    <div class="text-muted">
+                        E-mail address forced as sender address.<br/>
+                        The sender address replace the field 'from_email' of e-mails sent by Odoo.<br/>
+                        <span attrs="{'invisible': [('mail_server_restrictions','!=','domain')]}">
+                            <strong>For domain restriction:</strong> only replaced if the sender don't have an email address with the domain "<field class="oe_inline" name="alias_domain" nolabel="1" readonly="1"/>".
+                        </span>
+                    </div>
+                </div>
+                <div class="mt16" attrs="{'invisible': [('mail_server_restrictions','!=','full_email_address')]}">
+                    <label for="force_default_bounce_alias"/>
+                    <field class="oe_inline" attrs="{'required': [('mail_server_restrictions','=','full_email_address')]}" name="force_default_bounce_alias" nolabel="1"/>@<field class="oe_inline" name="alias_domain" nolabel="1" readonly="1"/>
+                    <div class="text-muted">
+                        When an email doesn’t make it to its intended destination, the bounce address indicates where non-delivery receipts—or bounce messages—are to be sent.<br/>
+                        Some mails server configuration, allow to sent e-mail only if the bounce address exists on the mails server.<br/>
+                        <strong>Very important:</strong> The system parameter "mail.icp_mail_bounce_alias" should be remove to use this address.
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
