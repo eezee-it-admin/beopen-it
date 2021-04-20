@@ -135,38 +135,42 @@ class EzeeTimesheetPortal(TimesheetCustomerPortal):
             })
         # Cutomization End
 
-        domain = AND([domain, new_search_filters[filterby]['domain']])
+        timesheets = Timesheet_sudo
+        grouped_timesheets = []
+        for fltr_by in filterby.split(','):
+            new_domain = AND([domain, new_search_filters[fltr_by]['domain']])
 
-        if search and search_in:
-            domain = AND([domain, [('name', 'ilike', search)]])
+            if search and search_in:
+                new_domain = AND([new_domain, [('name', 'ilike', search)]])
 
-        timesheet_count = Timesheet_sudo.search_count(domain)
-        # pager
-        pager = portal_pager(
-            url="/my/timesheets",
-            url_args={
-                'sortby': sortby,
-                'search_in': search_in,
-                'search': search,
-                'filterby': filterby
-            },
-            total=timesheet_count,
-            page=page,
-            step=self._items_per_page
-        )
+            timesheet_count = Timesheet_sudo.search_count(new_domain)
+            # pager
+            pager = portal_pager(
+                url="/my/timesheets",
+                url_args={
+                    'sortby': sortby,
+                    'search_in': search_in,
+                    'search': search,
+                    'filterby': fltr_by
+                },
+                total=timesheet_count,
+                page=page,
+                step=self._items_per_page
+            )
 
-        if groupby == 'project':
-            order = "project_id, %s" % order
-        timesheets = Timesheet_sudo.search(domain, order=order,
-                                           limit=self._items_per_page,
-                                           offset=pager['offset'])
-        if groupby == 'project':
-            grouped_timesheets = [
-                Timesheet_sudo.concat(*g) for k, g in groupbyelem(
-                    timesheets, itemgetter('project_id'))]
-        else:
-            grouped_timesheets = [timesheets]
+            if groupby == 'project':
+                order = "project_id, %s" % order
+            timesheets |= Timesheet_sudo.search(new_domain, order=order,
+                                               limit=self._items_per_page,
+                                               offset=pager['offset'])
+            if groupby == 'project':
+                grouped_timesheets += [
+                    Timesheet_sudo.concat(*g) for k, g in groupbyelem(
+                        timesheets, itemgetter('project_id'))]
+            else:
+                grouped_timesheets += [timesheets]
 
+        grouped_timesheets = list(set(grouped_timesheets))
         values.update({
             'timesheets': timesheets,
             'grouped_timesheets': grouped_timesheets,
@@ -384,7 +388,7 @@ class ProjectPortal(CustomerPortal):
                         sortby=None, filterby=None, search=None,
                         search_in='content', groupby='project', **kw):
         "Override to pass the filter for My Tasks"
-        slot_obj = request.env['planning.slot']
+        slot_obj = request.env['planning.slot'].sudo()
         values = self._prepare_portal_layout_values()
         searchbar_sortings = {
             'date': {'label': _('Newest'), 'order': 'create_date desc'},

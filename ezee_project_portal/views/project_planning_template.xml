@@ -28,7 +28,7 @@
                     <t t-foreach="grouped_slots" t-as="slots">
                         <thead>
                             <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
-                                <th t-if="groupby != 'none'" colspan="7">
+                                <th t-if="groupby != 'none'" colspan="8">
                                     <em class="font-weight-normal text-muted">
                                         Planning slots for project:
                                     </em>
@@ -37,13 +37,8 @@
                             </tr>
                             <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
                                 <th>#</th>
-<!--                                 <th t-else=""> -->
-<!--                                     <em class="font-weight-normal text-muted"> -->
-<!--                                         <span t-field="slots[0].sudo().project_id.label_tasks"/> for project: -->
-<!--                                     </em> -->
-<!--                                     <span t-field="slots[0].sudo().project_id.name"/> -->
-<!--                                 </th> -->
                                 <th class="text-left">Employee</th>
+                                <th class="text-center">Task</th>
                                 <th class="text-left">Role</th>
                                 <th class="text-center">Stat Date</th>
                                 <th class="text-center">End Date</th>
@@ -55,11 +50,15 @@
                             <t t-foreach="slots" t-as="slot">
                                 <tr>
                                     <td>
-<!--                                         <a t-attf-href="/my/planning_slots/#{slot.id}?{{ keep_query() }}">#<span t-field="slot.id"/></a> -->
                                         #<span t-field="slot.id"/>
                                     </td>
                                     <td class="text-left">
                                         <span t-esc="slot.sudo().employee_id.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <a t-if="slot.task_id" t-attf-href="/my/task/#{slot.task_id.id}?{{ keep_query() }}">
+                                            <span t-field="slot.task_id"/>
+                                        </a>
                                     </td>
                                     <td class="text-left">
                                         <span t-esc="slot.sudo().role_id.name"/>
