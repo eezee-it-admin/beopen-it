@@ -23,8 +23,8 @@
     "version": "14.0.1.0.0",
     "author": "Eezee-It",
     "website": "https://beopenit.beopen.be",
-    "category": "Website/eLearning",
     "license": "LGPL-3",
+    "category": "Website/eLearning",
     "depends": [
         "project",
         "project_forecast",
