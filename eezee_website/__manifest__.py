@@ -28,7 +28,5 @@
     "depends": [
         "website_helpdesk",
     ],
-    "data": [
-    ],
     "installable": True,
 }
