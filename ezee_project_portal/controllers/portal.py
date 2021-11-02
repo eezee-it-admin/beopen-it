@@ -400,12 +400,19 @@ class ProjectPortal(CustomerPortal):
             'end_date': {'label': _('End Date'), 'order': 'end_datetime desc'},
             'employee': {'label': _('Employee'), 'order': 'employee_id'},
         }
+        today = fields.Date.today()
         uid = request.env.user.id
         searchbar_filters = {
             'all': {'label': _('All'), 'domain': []},
+            'today': {'label': _('Today'), 'domain': [("start_datetime", "=", today)]},
+            'week': {
+                'label': _('This week'),
+                'domain': [('start_datetime', '>=', date_utils.start_of(today, "week")),
+                           ('start_datetime', '<=', date_utils.end_of(today, 'week'))]
+            },
             'my_slots': {
                 'label': _('My Slots'),
-                'domain': [('employee_id.user_id', '=', uid),
+                'domain': ['|', ('employee_id.user_id', '=', uid),
                            ('task_id.user_id', '=', uid)],
             },
         }
@@ -463,6 +470,25 @@ class ProjectPortal(CustomerPortal):
         domain = searchbar_filters.get(filterby,
                                        searchbar_filters.get('all'))['domain']
 
+        # Cutomization Start
+        new_search_filters = searchbar_filters.copy()
+        # extends filterby criteria with project the customer has access to
+        projects = request.env['project.project'].search([])
+        for project in projects:
+            new_search_filters.update({
+                str(project.id): {
+                    'label': project.name,
+                    'domain': [('project_id', '=', project.id)]
+                }
+            })
+        # Add domain for multiple filters
+        new_domain = []
+        for fltr_by in filterby.split(','):
+            new_domain = AND([new_domain, new_search_filters[fltr_by]['domain']])
+        if new_domain:
+            domain = new_domain
+        # Cutomization End
+
         if date_begin and date_end:
             domain += [('start_datetime', '>=', date_begin),
                        ('end_datetime', '<=', date_end)]
@@ -497,7 +523,7 @@ class ProjectPortal(CustomerPortal):
             # force sort on project first to group by project in view
             order = "project_id, %s" % order
         slots = slot_obj.search(
-            domain, order=order, limit=self._items_per_page,
+            domain, order='start_datetime desc', limit=self._items_per_page,
             offset=(page - 1) * self._items_per_page)
         request.session['my_slots_history'] = slots.ids[:100]
         if groupby == 'project':
@@ -525,3 +551,38 @@ class ProjectPortal(CustomerPortal):
             'filterby': filterby,
         })
         return request.render("ezee_project_portal.portal_my_slots", values)
+
+    @http.route(['/get_planning'], type='json', auth="user", website=True)
+    def planning(self, **kwargs):
+        slot = request.env['planning.slot'].sudo().browse(kwargs.get('slot_id'))
+        slot_data = {
+            'display_name': '[#' + str(slot.id) + '] ' + slot.display_name,
+            'employee': slot.employee_id.name,
+            'start_datetime': slot.start_datetime,
+            'end_datetime': slot.end_datetime,
+            'allocated_hours': slot.allocated_hours,
+            'name': slot.name,
+            'project': slot.project_id.name,
+            'task_id': slot.task_id.id,
+            'task': slot.task_id.name,
+            'color': self._format_planning_shifts(slot.role_id.color),
+        }
+        return request.env['ir.ui.view'].render_template('ezee_project_portal.modal_content', slot_data)
+
+    @staticmethod
+    def _format_planning_shifts(color_code):
+        switch_color = {
+            0: '#008784',   # No color (doesn't work actually...)
+            1: '#EE4B39',   # Red
+            2: '#F29648',   # Orange
+            3: '#F4C609',   # Yellow
+            4: '#55B7EA',   # Light blue
+            5: '#71405B',   # Dark purple
+            6: '#E86869',   # Salmon pink
+            7: '#008784',   # Medium blue
+            8: '#267283',   # Dark blue
+            9: '#BF1255',   # Fushia
+            10: '#2BAF73',  # Green
+            11: '#8754B0'   # Purple
+        }
+        return switch_color[color_code]

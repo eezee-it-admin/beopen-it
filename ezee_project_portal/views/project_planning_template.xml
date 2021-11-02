@@ -47,41 +47,81 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="slots" t-as="slot">
-                                <tr>
-                                    <td>
-                                        #<span t-field="slot.id"/>
-                                    </td>
-                                    <td class="text-left">
-                                        <span t-esc="slot.sudo().employee_id.name"/>
-                                    </td>
-                                    <td class="text-right">
-                                        <a t-if="slot.task_id" t-attf-href="/my/task/#{slot.task_id.id}?{{ keep_query() }}">
-                                            <span t-field="slot.task_id"/>
-                                        </a>
-                                    </td>
-                                    <td class="text-left">
-                                        <span t-esc="slot.sudo().role_id.name"/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="slot.start_datetime"/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="slot.end_datetime"/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="slot.allocated_hours"/>
-                                    </td>
-                                    <td class="text-right">
-                                        <span t-esc="slot.allocated_percentage"/>
-                                    </td>
-                                </tr>
-                            </t>
+                            <tr t-foreach='slots' t-as='slot' style="cursor: pointer;"
+                                class="button-slot-details" t-att-data-slot_id="slot.id">
+                                <td>
+                                    #<span t-field="slot.id"/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="slot.sudo().employee_id.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <a t-if="slot.task_id" t-attf-href="/my/task/#{slot.task_id.id}?{{ keep_query() }}">
+                                        <span t-field="slot.task_id"/>
+                                    </a>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="slot.sudo().role_id.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="slot.start_datetime"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="slot.end_datetime"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="slot.allocated_hours"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="slot.allocated_percentage"/>
+                                </td>
+                            </tr>
                         </tbody>
                     </t>
                 </t>
             </t>
+            <div class="modal fade" id="eezee-slot-modal" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0"/>
+                </div>
+            </div>
         </t>
+    </template>
+
+    <template id="modal_content">
+        <div class="modal-header modal-header-primary py-3 border-0 rounded-top text-light" t-att-style="'background-color: ' + color">
+            <h5 class="modal-title" t-esc="display_name"/>
+            <button type="button" class="close text-light shadow-none" data-dismiss="modal">
+                <span aria-label="Close">&amp;times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <dl class="row mt-0 mb-0">
+                <dt class="col-sm-4">Employee:</dt>
+                <dd class="col-sm-8" t-esc="employee"/>
+                <dt class="col-sm-4">Start Date:</dt>
+                <dd class="col-sm-8" t-esc="start_datetime"/>
+                <dt class="col-sm-4">Stop Date:</dt>
+                <dd class="col-sm-8" t-esc="end_datetime"/>
+                <dt class="col-sm-4">Allocated Hours:</dt>
+                <dd class="col-sm-8" t-esc="allocated_hours"/>
+                <dt class="col-sm-4">Note:</dt>
+                <dd class="col-sm-8" t-esc="name"/>
+                <t t-if="project">
+                    <dt class="col-sm-4">Project:</dt>
+                    <dd class="col-sm-8" t-esc="project"/>
+                </t>
+                <t t-if="task">
+                    <dt class="col-sm-4">Task:</dt>
+                    <dd class="col-sm-8">
+                        <a t-if="task_id" target="_blank" t-attf-href="/my/task/#{task_id}?{{ keep_query() }}">
+                            <span t-esc="task"/>
+                        </a>
+                    </dd>
+<!--                     <dd class="col-sm-8" t-esc="task"/> -->
+                </t>
+            </dl>
+        </div>
     </template>
 
 </odoo>

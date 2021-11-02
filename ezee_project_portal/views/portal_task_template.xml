@@ -4,6 +4,7 @@
     <template id="assets_frontend" inherit_id="web_editor.assets_frontend">
         <xpath expr="." position="inside">
             <link rel="stylesheet" href="/ezee_project_portal/static/src/css/project_portal.css"/>
+            <script type="text/javascript" src="/ezee_project_portal/static/src/js/eezee_project_portal.js"/>
         </xpath>
     </template>
 
