@@ -105,8 +105,6 @@
                 <dd class="col-sm-8" t-esc="end_datetime"/>
                 <dt class="col-sm-4">Allocated Hours:</dt>
                 <dd class="col-sm-8" t-esc="allocated_hours"/>
-                <dt class="col-sm-4">Note:</dt>
-                <dd class="col-sm-8" t-esc="name"/>
                 <t t-if="project">
                     <dt class="col-sm-4">Project:</dt>
                     <dd class="col-sm-8" t-esc="project"/>
@@ -118,8 +116,9 @@
                             <span t-esc="task"/>
                         </a>
                     </dd>
-<!--                     <dd class="col-sm-8" t-esc="task"/> -->
                 </t>
+                <dt class="col-sm-4">Note:</dt>
+                <dd class="col-sm-8" t-esc="name"/>
             </dl>
         </div>
     </template>
